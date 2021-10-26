@@ -15,17 +15,21 @@
  *
  */
 
-package codes.vps.mockta.state;
+package codes.vps.mockta.db;
 
+import codes.vps.mockta.OurCookie;
 import codes.vps.mockta.Util;
+import codes.vps.mockta.db.IDPDB;
+import codes.vps.mockta.db.OktaUser;
 import codes.vps.mockta.obj.okta.AMR;
 import codes.vps.mockta.obj.okta.IDP;
-import codes.vps.mockta.obj.okta.IDPType;
 import codes.vps.mockta.obj.okta.Session;
 import codes.vps.mockta.obj.okta.SessionStatus;
-import codes.vps.mockta.userdb.OktaUser;
 import lombok.Getter;
+import lombok.Setter;
+import org.apache.tomcat.util.http.SameSiteCookies;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -33,22 +37,28 @@ import java.util.Date;
 @Getter
 public class OktaSession implements Serializable {
 
+    public final static String COOKIE_NAME = "sid"; // what Okta uses
+
     private final String id;
     private final String userId;
     private final Date expires;
     private final IDP idp;
-    private final String token;
+    @Setter
+    private String token;
+    private final Date created = new Date();
+    private final String login;
 
     public OktaSession(OktaUser who) {
         this.id = Util.randomId();
         this.userId = who.getId();
+        this.login = who.getUserName();
         expires = new Date(System.currentTimeMillis() + 3600);
-        idp = new IDP(IDPType.OKTA);
+        idp = IDPDB.getIdp().represent();
         token = Util.randomId();
     }
 
     public Session represent() {
-        return new Session(id, userId, userId, expires, SessionStatus.ACTIVE, null, null, Collections.singletonList(AMR.pwd), idp);
+        return new Session(id, login, userId, expires, SessionStatus.ACTIVE, null, null, Collections.singletonList(AMR.pwd), idp);
     }
 
     public boolean isValid() {
@@ -56,4 +66,19 @@ public class OktaSession implements Serializable {
         return new Date().before(expires);
 
     }
+
+    public void setCookie(HttpServletResponse response) {
+
+        // Tomcat cookies don't support SameSite, so we use a set-cookie header.
+
+        OurCookie c = new OurCookie(COOKIE_NAME, id);
+        c.setVersion(1);
+        c.setPath("/"); // $TODO - really?
+        c.setSecure(true);
+        c.setHttpOnly(true);
+        c.setSameSite(SameSiteCookies.NONE);
+        response.addCookie(c);
+
+    }
+
 }

@@ -17,18 +17,24 @@
 
 package codes.vps.mockta.obj.okta;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 
-// https://developer.okta.com/docs/reference/api/sessions/#idp-object
+// https://developer.okta.com/docs/reference/api/apps/#app-names
+// However, this data is different depending on the application type
+// Since we only support OAuth2.0 application, the structure is hardcoded
+// for that. Also see https://developer.okta.com/docs/reference/api/apps/#credentials
+// However, the tables are not consistent with the request samples,
+// and the actual responses that we see being returned. The code follows
+// the actual observed data.
 @Getter
-public class IDP extends RepresentationModel<IDP> {
+public class AppSettings extends RepresentationModel<AppSettings> {
 
-    private final String id;
-    private final IDPType type;
+    private final OAuthClient oauthClient;
 
-    public IDP(String id, IDPType type) {
-        this.id = id;
-        this.type = type;
+    @JsonCreator
+    public AppSettings(OAuthClient oauthClient) {
+        this.oauthClient = oauthClient;
     }
 }

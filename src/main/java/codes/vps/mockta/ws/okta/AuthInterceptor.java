@@ -18,32 +18,30 @@
 package codes.vps.mockta.ws.okta;
 
 import codes.vps.mockta.MocktaApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import codes.vps.mockta.obj.okta.ErrorObject;
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.SessionDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 @Component
-public class AdminAuthInterceptor implements HandlerInterceptor {
+public class AuthInterceptor implements HandlerInterceptor {
 
-    private static Logger log = LoggerFactory.getLogger(AdminAuthInterceptor.class);
     private MocktaApplication application;
-
-    public AdminAuthInterceptor() {
-        log.info("interceptor up");
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        log.info("Handler:"+handler.getClass().getName());
         if (handler instanceof HandlerMethod) {
-            if (((HandlerMethod) handler).getBean() instanceof AdminService) {
+            Object bean = ((HandlerMethod) handler).getBean();
+            if (bean instanceof AdminService) {
 
                 boolean authOk = false;
 
@@ -70,9 +68,35 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
                     return false;
                 }
 
+            } else if (bean instanceof UserAuthenticatedService) {
+
+                ((UserAuthenticatedService)bean).setSession(getSessionFromCookie(request));
+
             }
+
+
         }
         return true;
+
+    }
+
+    public static OktaSession getSessionFromCookie(HttpServletRequest request) {
+
+        Cookie sid = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (Objects.equals(OktaSession.COOKIE_NAME, cookie.getName())) {
+                    sid = cookie;
+                    break;
+                }
+            }
+        }
+
+        if (sid == null || sid.getValue() == null) {
+            throw ErrorObject.notFound("no session cookie value").boom();
+        }
+
+        return SessionDB.getByCookie(sid.getValue());
 
     }
 
@@ -80,4 +104,5 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
     public void setApplication(MocktaApplication application) {
         this.application = application;
     }
+
 }

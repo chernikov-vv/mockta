@@ -17,11 +17,14 @@
 
 package codes.vps.mockta;
 
-import com.sun.istack.internal.NotNull;
+import lombok.NonNull;
+import org.jose4j.base64url.Base64Url;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
-import java.util.Base64;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -31,7 +34,13 @@ public class Util {
 
         byte[] id = new byte[12];
         ThreadLocalRandom.current().nextBytes(id);
-        return Base64.getEncoder().encodeToString(id);
+        // using standard base64 is a bad idea because of pluses and slashes, which
+        // may cause pain for URLs (even though they shouldn't but see
+        // https://github.com/spring-projects/spring-framework/issues/15727)
+        // return Base64.getEncoder().encodeToString(id);
+
+        // jose4j to the rescue though.
+        return Base64Url.encode(id);
 
     }
 
@@ -76,8 +85,39 @@ public class Util {
 
     }
 
+    public static <S> void whenNotNull(@Nullable S val, @NonNull Consumer<S> fun) {
+        whenNotNullOr(val, fun, null);
+    }
+
+
+    public static <S> void whenNotNull(@Nullable S val, @NonNull Consumer<S> fun, @Nullable Supplier<S> whenNull) {
+
+        S v = val;
+        if (v == null) {
+            if (whenNull != null) {
+                v = whenNull.get();
+            }
+        }
+        if (v != null) {
+            fun.accept(v);
+        }
+
+    }
+
+    public static <S> void whenNotNullOr(@Nullable S val, @Nullable Consumer<S> fun, @Nullable Runnable whenNull) {
+        if (val == null) {
+            if (whenNull != null) {
+                whenNull.run();
+            }
+        } else {
+            if (fun != null) {
+                fun.accept(val);
+            }
+        }
+    }
+
     @Nullable
-    public static <S, T> S ifNotNull(@Nullable T val, @NotNull Function<T, S> fun, @Nullable Supplier<S> whenNull) {
+    public static <S, T> S ifNotNull(@Nullable T val, @NonNull Function<T, S> fun, @Nullable Supplier<S> whenNull) {
         try {
             if (val == null) {
                 if (whenNull == null) { return null; }
@@ -89,15 +129,15 @@ public class Util {
         }
     }
 
-    @NotNull
-    public static <S, T> S makeNotNull(@Nullable T val, @NotNull Function<T, S> fun, @NotNull Supplier<S> whenNull) {
+    @NonNull
+    public static <S, T> S makeNotNull(@Nullable T val, @NonNull Function<T, S> fun, @NonNull Supplier<S> whenNull) {
         S ret = ifNotNull(val, fun, whenNull);
         if (ret == null) { throw new NullPointerException("not null must be produced"); }
         return ret;
     }
 
-    @NotNull
-    public static <T> T makeNotNull(@Nullable T val, @NotNull Supplier<T> whenNull) {
+    @NonNull
+    public static <T> T makeNotNull(@Nullable T val, @NonNull Supplier<T> whenNull) {
         return makeNotNull(val, a->a, whenNull);
     }
 
@@ -109,13 +149,73 @@ public class Util {
      * @return thrown exception.
      */
     // Thanks to http://blog.jooq.org/2012/09/14/throw-checked-exceptions-like-runtime-exceptions-in-java/
-    public static RuntimeException doThrow(@NotNull Throwable e) {
+    public static RuntimeException doThrow(@NonNull Throwable e) {
         return doThrow0(e);
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends Throwable> RuntimeException doThrow0(@NotNull Throwable e) throws E {
+    private static <E extends Throwable> RuntimeException doThrow0(@NonNull Throwable e) throws E {
         throw (E) e;
+    }
+
+    public static String escapeForSqJsString(CharSequence s) {
+        return escapeForJSString(s, '\'');
+    }
+
+    public static String escapeForJSString(CharSequence s, char quoteUsed) {
+
+        // $TODO: Okta seem to escape A LOT of characters, using \x sequence.
+        // It escapes like spaces and such. IDK why, probably a blanket security
+        // measure. This should generally work fine.
+        // We'll also screw up any code points that are >4 bytes long.
+
+        if (s == null) { return "(null)"; }
+
+        StringBuilder sb = new StringBuilder();
+        int _l = s.length();
+        for (int i=0; i<_l; i++ ) {
+
+            char c = s.charAt(i);
+
+            if (c == quoteUsed || c == '\\') {
+                sb.append('\\');
+                sb.append(c);
+            } else if (c < 0x20) {
+                sb.append(String.format("\\x%02x", (int) c));
+            } else if (c >= 0x7f) {
+                sb.append(String.format("\\u%04X", (int) c));
+            } else {
+                sb.append(c);
+            }
+
+        }
+
+        return sb.toString();
+
+    }
+
+    /**
+     * Extracts result from a {@link Callable}, throwing any produced exception as
+     * a runtime exception.
+     * @param from get result from
+     * @return result from Callable
+     */
+    public static <T> T reThrow(Callable<T> from) {
+        try {
+            return from.call();
+        } catch (Exception e) {
+            throw doThrow(e);
+        }
+    }
+
+    // https://github.com/spring-projects/spring-framework/blob/main/spring-core/src/main/java/org/springframework/core/convert/support/ConversionUtils.java
+    public static Class<?> getEnumType(Class<?> targetType) {
+        Class<?> enumType = targetType;
+        while (enumType != null && !enumType.isEnum()) {
+            enumType = enumType.getSuperclass();
+        }
+        Assert.notNull(enumType, () -> "The target type " + targetType + " does not refer to an enum");
+        return enumType;
     }
 
 

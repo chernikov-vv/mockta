@@ -17,23 +17,20 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.obj.okta.User;
-import codes.vps.mockta.db.UserDB;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-@RestController
-@RequestMapping("/api/v1/users")
-public class UsersController implements AdminService {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+@Component
+public class NoCacheInterceptor implements HandlerInterceptor {
 
-        return ResponseEntity.ok(UserDB.addUser(user).represent());
-
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        response.addHeader("cache-control", "no-cache, no-store");
+        response.addHeader("pragma", "no-cache");
+        response.addHeader("expires", "0");
+        return true;
     }
-
 }

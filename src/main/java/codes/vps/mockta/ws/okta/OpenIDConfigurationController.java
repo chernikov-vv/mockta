@@ -17,22 +17,27 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.obj.okta.Session;
-import org.springframework.http.HttpEntity;
+import codes.vps.mockta.db.KeysDB;
+import codes.vps.mockta.obj.okta.OpenIDMetaData;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping(value = "/api/v1/sessions")
-public class SessionController extends UserAuthenticatedService {
+import javax.servlet.http.HttpServletRequest;
 
-    @GetMapping("/me")
-    public HttpEntity<Session> currentSession() {
+@RestController()
+public class OpenIDConfigurationController {
 
-        return ResponseEntity.ok(session.represent());
+    @GetMapping(value={"/.well-known/openid-configuration", "oauth2/{authServer}/.well-known/openid-configuration"})
+    public ResponseEntity<OpenIDMetaData> get(HttpServletRequest request, @PathVariable(required = false) String authServer) {
+        return ResponseEntity.ok(new OpenIDMetaData(request, authServer));
+    }
 
+    @GetMapping("/oauth2/v1/keys")
+    public ResponseEntity<JsonWebKeySet> get() {
+        return ResponseEntity.ok(KeysDB.getKeys());
     }
 
 }

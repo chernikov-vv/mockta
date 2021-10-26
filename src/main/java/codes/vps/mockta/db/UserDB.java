@@ -15,11 +15,11 @@
  *
  */
 
-package codes.vps.mockta.userdb;
+package codes.vps.mockta.db;
 
 import codes.vps.mockta.obj.okta.ErrorObject;
 import codes.vps.mockta.obj.okta.User;
-import com.sun.istack.internal.NotNull;
+import lombok.NonNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -28,13 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserDB {
 
     private final static Map<String, OktaUser> users = new ConcurrentHashMap<>();
+    private final static Map<String, OktaUser> usersById = new ConcurrentHashMap<>();
 
-    @NotNull
+    @NonNull
     public static OktaUser authenticate(String userName, String password) {
 
         OktaUser forUser = users.get(userName);
         if (forUser == null || !Objects.equals(password, forUser.getPassword())) {
-            throw ErrorObject.AUTH_FAILED.boom();
+            throw ErrorObject.authFailed("wrong password").boom();
         }
         return forUser;
 
@@ -44,15 +45,28 @@ public class UserDB {
 
         OktaUser oktaUser = new OktaUser(user);
 
-        return users.compute(oktaUser.getUserName(), (k,v)->{
+        users.compute(oktaUser.getUserName(), (k,v)->{
             if (v != null) {
                 // $TODO: I couldn't find anything in Okta documentation that says
                 // what is to happen in case of an attempt to create a duplicate user.
-                throw ErrorObject.GENERIC_DUPLICATE.boom();
+                throw ErrorObject.duplicate("username "+k).boom();
             }
-            return new OktaUser(user);
+            return oktaUser;
         });
+
+        usersById.put(oktaUser.getId(), oktaUser);
+        return oktaUser;
 
     }
 
+    @NonNull
+    public static OktaUser getUser(String id) {
+
+        OktaUser user = usersById.get(id);
+        if (user == null) {
+            throw ErrorObject.notFound("user id "+id).boom();
+        }
+        return user;
+
+    }
 }

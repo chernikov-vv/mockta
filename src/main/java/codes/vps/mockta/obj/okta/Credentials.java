@@ -17,6 +17,7 @@
 
 package codes.vps.mockta.obj.okta;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -28,6 +29,7 @@ public class Credentials extends RepresentationModel<Credentials> {
     private final RecoveryQuestion recoveryQuestion = null;
     private final Provider provider = new Provider();
 
+    @JsonCreator
     public Credentials(Password password) {
         this.password = password;
     }

@@ -17,11 +17,15 @@
 
 package codes.vps.mockta.obj.okta;
 
+import lombok.Getter;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.util.Date;
 import java.util.List;
 
 // https://developer.okta.com/docs/reference/api/sessions/#session-properties
-public class Session {
+@Getter
+public class Session extends RepresentationModel<Session> {
 
     private final String id;
     private final String login;

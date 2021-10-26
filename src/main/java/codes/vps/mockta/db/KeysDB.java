@@ -15,21 +15,30 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.db;
 
+import codes.vps.mockta.Util;
 import lombok.Getter;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.RsaJwkGenerator;
 
-import java.util.Date;
+public class KeysDB {
 
-@Getter
-public class PrimaryAuthenticationResponse {
+    // we only ever use one key at this point
 
-    private final Date expiresAt;
-    private final String status = "SUCCESS"; // what else can be here?
-    private final String sessionToken;
+    @Getter
+    private final static JsonWebKeySet keys = new JsonWebKeySet();
 
-    public PrimaryAuthenticationResponse(Date expiresAt, String sessionToken) {
-        this.expiresAt = expiresAt;
-        this.sessionToken = sessionToken;
+    static {
+        RsaJsonWebKey rsaJsonWebKey = Util.reThrow(()->RsaJwkGenerator.generateJwk(2048));
+        rsaJsonWebKey.setKeyId(Util.randomId());
+        keys.addJsonWebKey(rsaJsonWebKey);
     }
+
+    public static JsonWebKey getKey() {
+        return keys.getJsonWebKeys().get(0);
+    }
+
 }

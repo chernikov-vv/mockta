@@ -15,7 +15,7 @@
  *
  */
 
-package codes.vps.mockta.userdb;
+package codes.vps.mockta.db;
 
 import codes.vps.mockta.Util;
 import codes.vps.mockta.obj.okta.Credentials;

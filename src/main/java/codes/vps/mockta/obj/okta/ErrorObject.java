@@ -38,9 +38,26 @@ public class ErrorObject extends RepresentationModel<ErrorObject> {
     @JsonIgnore
     private final HttpStatus httpError;
 
-    public final static ErrorObject AUTH_FAILED = new ErrorObject("E0000004", HttpStatus.UNAUTHORIZED, "Authentication failed");
-    public final static ErrorObject RESOURCE_NOT_FOUND = new ErrorObject("E0000007", HttpStatus.NOT_FOUND, "Resource not found");
-    public final static ErrorObject GENERIC_DUPLICATE = new ErrorObject("E0000108", HttpStatus.CONFLICT, "Object with the same primary reference already exists.");
+    // public final static ErrorObject AUTH_FAILED = new ErrorObject("E0000004", HttpStatus.UNAUTHORIZED, "Authentication failed");
+    // public final static ErrorObject RESOURCE_NOT_FOUND = new ErrorObject("E0000007", HttpStatus.NOT_FOUND, "Resource not found");
+    // public final static ErrorObject GENERIC_DUPLICATE = new ErrorObject("E0000108", HttpStatus.CONFLICT, "Object with the same primary reference already exists.");
+    // public final static ErrorObject INVALID_SESSION = new ErrorObject("E0000005", HttpStatus.FORBIDDEN, "Invalid session");
+
+    public static ErrorObject authFailed(String why) {
+        return new ErrorObject("E0000004", HttpStatus.UNAUTHORIZED, String.format("Authentication failed:%s", why));
+    }
+
+    public static ErrorObject notFound(String what) {
+        return new ErrorObject("E0000007", HttpStatus.NOT_FOUND, String.format("Resource not found:%s", what));
+    }
+
+    public static ErrorObject duplicate(String what) {
+        return new ErrorObject("E0000108", HttpStatus.CONFLICT, String.format("Object with the same primary reference exists:%s", what));
+    }
+
+    public static ErrorObject invalidSession(String why) {
+        return new ErrorObject("E0000005", HttpStatus.FORBIDDEN, String.format("Session invalid:%s", why));
+    }
 
     public static ErrorObject illegalArgument(String what) {
         return new ErrorObject("E0000002", HttpStatus.BAD_REQUEST, String.format("The request was not valid: %s", what));

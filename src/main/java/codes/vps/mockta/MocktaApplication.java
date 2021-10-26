@@ -17,14 +17,18 @@
 
 package codes.vps.mockta;
 
-import codes.vps.mockta.ws.okta.AdminAuthInterceptor;
+import codes.vps.mockta.ws.okta.AuthInterceptor;
+import codes.vps.mockta.ws.okta.NoCacheInterceptor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -37,14 +41,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @EnableSpringHttpSession
-//@EnableWebMvc
 public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
     private final String API_KEY_OPT = "mockta.api-token";
     @Getter
     private List<String> apiTokens;
 
-    private AdminAuthInterceptor adminAuthInterceptor;
+    private AuthInterceptor authInterceptor;
+    private NoCacheInterceptor noCacheInterceptor;
 
     @Bean
     // $TODO: we need to set up session expiration
@@ -62,17 +66,37 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
         List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
         if (apiTokens != null) {
             this.apiTokens = Collections.unmodifiableList(new ArrayList<>(apiTokens));
+        } else {
+            this.apiTokens = Collections.emptyList();
         }
 
     }
 
     @Autowired
-    public void setAdminAuthInterceptor(AdminAuthInterceptor adminAuthInterceptor) {
-        this.adminAuthInterceptor = adminAuthInterceptor;
+    public void setNoCacheInterceptor(NoCacheInterceptor noCacheInterceptor) {
+        this.noCacheInterceptor = noCacheInterceptor;
+    }
+
+    @Autowired
+    public void setAuthInterceptor(AuthInterceptor authInterceptor) {
+        this.authInterceptor = authInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(adminAuthInterceptor);
+        registry.addInterceptor(authInterceptor);
+        registry.addInterceptor(noCacheInterceptor);
+    }
+
+    // https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
+                .serializers(new JsonWebKeysSerializer());
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverterFactory(new EnumConverter());
     }
 }

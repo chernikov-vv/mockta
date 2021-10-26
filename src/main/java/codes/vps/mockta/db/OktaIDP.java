@@ -15,24 +15,20 @@
  *
  */
 
-package codes.vps.mockta.state;
+package codes.vps.mockta.db;
 
-import codes.vps.mockta.userdb.OktaUser;
+import codes.vps.mockta.Util;
+import codes.vps.mockta.obj.okta.IDP;
+import codes.vps.mockta.obj.okta.IDPType;
+import lombok.Getter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+public class OktaIDP {
 
-public class SessionDB {
+    @Getter
+    private final String id = Util.randomId();
 
-    private final static Map<String, OktaSession> sessions = new ConcurrentHashMap<>();
-
-    public static OktaSession createSession(OktaUser who) {
-
-        OktaSession session = new OktaSession(who);
-        sessions.put(session.getToken(), session);
-        return session;
-
+    public IDP represent() {
+        return new IDP(id, IDPType.OKTA);
     }
 
 }

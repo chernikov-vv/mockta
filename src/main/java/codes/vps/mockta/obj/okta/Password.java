@@ -17,6 +17,7 @@
 
 package codes.vps.mockta.obj.okta;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 @Getter
@@ -24,6 +25,7 @@ public class Password {
 
     private final String value;
 
+    @JsonCreator
     public Password(String value) {
         this.value = value;
     }

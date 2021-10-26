@@ -17,18 +17,11 @@
 
 package codes.vps.mockta.obj.okta;
 
-import lombok.Getter;
-import org.springframework.hateoas.RepresentationModel;
+public enum SignOnMode {
 
-// https://developer.okta.com/docs/reference/api/sessions/#idp-object
-@Getter
-public class IDP extends RepresentationModel<IDP> {
+    AUTO_LOGIN,
+    BASIC_AUTH,
+    BOOKMARK,
+    // ...
 
-    private final String id;
-    private final IDPType type;
-
-    public IDP(String id, IDPType type) {
-        this.id = id;
-        this.type = type;
-    }
 }
