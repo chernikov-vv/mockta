@@ -93,7 +93,7 @@ public class AuthNTests extends WebTests {
 
             boolean useAuthServer = i == 1;
 
-            user(r->r.get("/api/v1/sessions/me").then().statusCode(404));
+            user().get("/api/v1/sessions/me").then().statusCode(404);
 
             System.out.println("---> using auth server:"+useAuthServer);
 
@@ -145,7 +145,7 @@ public class AuthNTests extends WebTests {
 
             // String content = saveCookies(userHtml().get(authUri).then().statusCode(200)).extract().body().asString();
 
-            String content = userHtml(r->r.get(authUri).then(), r->r.extract().body().asString());
+            String content = userHtml().get(authUri).then().extract().body().asString();
 
             Document postDoc = Jsoup.parse(content);
             String javaScript = postDoc.selectFirst("script").data();
@@ -192,11 +192,13 @@ public class AuthNTests extends WebTests {
 
             ((Invocable) engine).invokeFunction("onWindowLoadHandler");
 
-            user(r->r.get("/api/v1/sessions/me")
-                    .then()
-                    .statusCode(200)
-                    .body("login", is("test1@codes.vps"))
-            );
+            for (int j=0; j<2; j++) {
+                System.out.println("session try #"+j);
+                user().get("/api/v1/sessions/me")
+                        .then()
+                        .statusCode(200)
+                        .body("login", is("test1@codes.vps"));
+            }
 
             String logOutState = Util.randomId();
             String rdr = new DefaultUriBuilderFactory().uriString("https://www.google.com?state=p&fix=in").build().toString();
@@ -222,11 +224,9 @@ public class AuthNTests extends WebTests {
 
             };
 
-            user(r->r.when().redirects().follow(false).get(fullLogOutUrl).then().statusCode(302).header("Location", urlCheck));
+            user().when().get(fullLogOutUrl).then().statusCode(302).header("Location", urlCheck);
 
-            user(r->r.get("/api/v1/sessions/me")
-                    .then()
-                    .statusCode(404));
+            user().get("/api/v1/sessions/me").then().statusCode(404);
 
         }
 

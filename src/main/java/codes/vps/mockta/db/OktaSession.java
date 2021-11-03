@@ -19,8 +19,6 @@ package codes.vps.mockta.db;
 
 import codes.vps.mockta.OurCookie;
 import codes.vps.mockta.Util;
-import codes.vps.mockta.db.IDPDB;
-import codes.vps.mockta.db.OktaUser;
 import codes.vps.mockta.obj.okta.AMR;
 import codes.vps.mockta.obj.okta.IDP;
 import codes.vps.mockta.obj.okta.Session;
@@ -52,7 +50,7 @@ public class OktaSession implements Serializable {
         this.id = Util.randomId();
         this.userId = who.getId();
         this.login = who.getUserName();
-        expires = new Date(System.currentTimeMillis() + 3600);
+        expires = new Date(System.currentTimeMillis() + 3600 * 1000);
         idp = IDPDB.getIdp().represent();
         token = Util.randomId();
     }
@@ -74,7 +72,8 @@ public class OktaSession implements Serializable {
         OurCookie c = new OurCookie(COOKIE_NAME, id);
         c.setVersion(1);
         c.setPath("/"); // $TODO - really?
-        c.setSecure(true);
+        // c.setSecure(true);
+        c.setSecure(false); // since we only support HTTP; though it looks like Chrome doesn't care
         c.setHttpOnly(true);
         c.setSameSite(SameSiteCookies.NONE);
         response.addCookie(c);
