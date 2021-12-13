@@ -30,19 +30,18 @@ public class OktaAppUser {
 
     private final Date created = new Date();
     private final OktaUser user;
-    private final OktaApp app;
-
+   
     private Date lastUpdated = new Date();
     private Map<String, String> profile;
     private final Date statusChanges = new Date(); // because we don't support changing status
 
-    public OktaAppUser(OktaUser user, OktaApp app) {
+    public OktaAppUser(OktaUser user) {
         this.user = user;
-        this.app = app;
+       
     }
 
-    public OktaAppUser(OktaUser user, OktaApp app, AppUser appUser) {
-        this(user, app);
+    public OktaAppUser(OktaUser user,  AppUser appUser) {
+        this(user);
         profile = appUser.getProfile();
     }
 
@@ -54,7 +53,9 @@ public class OktaAppUser {
 
 	@Override
 	public String toString() {
-		return "OktaAppUser [user=" + user + ", app=" + app + ", profile=" + profile + "]";
+		return "OktaAppUser [user=" + user + ", profile=" + profile + "]";
 	}
+
+	
 
 }

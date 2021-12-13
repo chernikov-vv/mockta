@@ -85,9 +85,12 @@ public class AppsController implements AdminService {
 			if (v != null) {
 				throw ErrorObject.duplicate("app user registration " + k).boom();
 			}
-			return new OktaAppUser(user, app, appUser);
+			return new OktaAppUser(user,appUser);
+			
 		}).represent();
-
+		app.getUsers().put(user.getId(), new OktaAppUser(user, appUser));
+		AppsDB.updateApp(app);
+		//return pau;
 		return ResponseEntity.ok(ret);
 
 	}
