@@ -69,6 +69,52 @@ public class OktaApp {
 
     }
 
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Map<String, OktaAppUser> getUsers() {
+		return users;
+	}
+
+	public List<String> getRedirectUris() {
+		return redirectUris;
+	}
+
+	@Override
+	public String toString() {
+		return "OktaApp [created=" + created + ", name=" + name + ", lastUpdated=" + lastUpdated + ", label=" + label
+				+ ", profile=" + profile + ", users=" + users + ", redirectUris=" + redirectUris + "]";
+	}
+
 }
 
 

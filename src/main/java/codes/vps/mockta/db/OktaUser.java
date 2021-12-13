@@ -77,4 +77,63 @@ public class OktaUser {
         this.passwordChanged = new Date();
         return this;
     }
+
+	public Date getPasswordChanged() {
+		return passwordChanged;
+	}
+
+	public void setPasswordChanged(Date passwordChanged) {
+		this.passwordChanged = passwordChanged;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	@Override
+	public String toString() {
+		return "OktaUser [userName=" + userName + ", password=" + password + ", passwordChanged=" + passwordChanged
+				+ ", firstName=" + firstName + ", lastName=" + lastName + "]";
+	}
+    
 }

@@ -51,4 +51,32 @@ public class OAuthClient extends RepresentationModel<OAuthClient> {
         this.redirectUris = new ArrayList<>(redirectUris);
     }
 
+	public String getClientUri() {
+		return clientUri;
+	}
+
+	public String getLogoUri() {
+		return logoUri;
+	}
+
+	public List<String> getRedirectUris() {
+		return redirectUris;
+	}
+
+	public List<String> getResponseTypes() {
+		return responseTypes;
+	}
+
+	public List<String> getGrantTypes() {
+		return grantTypes;
+	}
+
+	public String getApplicationType() {
+		return applicationType;
+	}
+
+	public String getWildCardRedirect() {
+		return wildCardRedirect;
+	}
+
 }

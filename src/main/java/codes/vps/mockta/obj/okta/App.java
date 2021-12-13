@@ -52,6 +52,38 @@ public class App extends RepresentationModel<App> {
         this(null, null, label, null, name, profile, settings);
     }
 
+	public String getId() {
+		return id;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
+	public SignOnMode getSignOnMode() {
+		return signOnMode;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public AppSettings getSettings() {
+		return settings;
+	}
+
 
 
 }

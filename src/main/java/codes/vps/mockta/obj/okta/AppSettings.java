@@ -37,4 +37,10 @@ public class AppSettings extends RepresentationModel<AppSettings> {
     public AppSettings(OAuthClient oauthClient) {
         this.oauthClient = oauthClient;
     }
+
+	public OAuthClient getOauthClient() {
+		return oauthClient;
+	}
+    
+    
 }
