@@ -132,7 +132,7 @@ public class OktaUser {
 
 	@Override
 	public String toString() {
-		return "OktaUser [userName=" + userName + ", password=" + password + ", passwordChanged=" + passwordChanged
+		return "OktaUser [userName=" + userName + ", passwordChanged=" + passwordChanged
 				+ ", firstName=" + firstName + ", lastName=" + lastName + "]";
 	}
     

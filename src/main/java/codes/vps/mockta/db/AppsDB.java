@@ -48,6 +48,17 @@ public class AppsDB {
 
 	}
 	
+	public static OktaApp updateApp(OktaApp oktaApp) {
+
+		
+		OktaApp oldOkaApp = apps.get(oktaApp.getName());
+
+		apps.put(oktaApp.getName(), oktaApp);
+		appsById.put(oktaApp.getId(), oktaApp);
+		return oktaApp;
+
+	}
+	
 	
 	public static OktaApp updateApp(OktaApp oktaApp,String id) {
 
