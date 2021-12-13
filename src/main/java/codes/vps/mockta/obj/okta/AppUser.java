@@ -49,4 +49,26 @@ public class AppUser extends RepresentationModel<AppUser> {
         this(null, id, null, profile, null);
     }
 
+	public String getId() {
+		return id;
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public Map<String, String> getProfile() {
+		return profile;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public Date getStatusChanges() {
+		return statusChanges;
+	}
+    
+    
+
 }

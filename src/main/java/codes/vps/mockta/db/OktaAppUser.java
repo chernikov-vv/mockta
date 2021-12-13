@@ -52,4 +52,9 @@ public class OktaAppUser {
 
     }
 
+	@Override
+	public String toString() {
+		return "OktaAppUser [user=" + user + ", app=" + app + ", profile=" + profile + "]";
+	}
+
 }

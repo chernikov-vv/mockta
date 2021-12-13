@@ -65,7 +65,7 @@ public class AuthNTests extends WebTests {
                 .body("profile.timeZone", is("Pacific/Honolulu"))
         ;
 
-        App app = new App("test1.label", "test1", "test1",
+        App app = new App("test10.label", "test10", "test10",
                 new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
 
         GetNotNullString appId = new GetNotNullString();

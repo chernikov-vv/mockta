@@ -51,4 +51,84 @@ public class User extends RepresentationModel<User> {
         this.credentials = credentials;
     }
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getActivated() {
+		return activated;
+	}
+
+	public void setActivated(Date activated) {
+		this.activated = activated;
+	}
+
+	public Date getStatusChanged() {
+		return statusChanged;
+	}
+
+	public void setStatusChanged(Date statusChanged) {
+		this.statusChanged = statusChanged;
+	}
+
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	public Date getPasswordChanged() {
+		return passwordChanged;
+	}
+
+	public void setPasswordChanged(Date passwordChanged) {
+		this.passwordChanged = passwordChanged;
+	}
+
+	public UserType getType() {
+		return type;
+	}
+
+	public void setType(UserType type) {
+		this.type = type;
+	}
+
+	public String getTransitioningToStatus() {
+		return transitioningToStatus;
+	}
+
+	public void setTransitioningToStatus(String transitioningToStatus) {
+		this.transitioningToStatus = transitioningToStatus;
+	}
+
+	public Profile getProfile() {
+		return profile;
+	}
+
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
+
+	public Credentials getCredentials() {
+		return credentials;
+	}
+
+	public void setCredentials(Credentials credentials) {
+		this.credentials = credentials;
+	}
+
 }

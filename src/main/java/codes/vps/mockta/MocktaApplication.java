@@ -17,10 +17,11 @@
 
 package codes.vps.mockta;
 
-import codes.vps.mockta.ws.okta.AuthInterceptor;
-import codes.vps.mockta.ws.okta.NoCacheInterceptor;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -29,18 +30,33 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.hateoas.client.LinkDiscoverer;
+import org.springframework.hateoas.client.LinkDiscoverers;
+import org.springframework.hateoas.mediatype.collectionjson.CollectionJsonLinkDiscoverer;
+import org.springframework.plugin.core.SimplePluginRegistry;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import codes.vps.mockta.ws.okta.AuthInterceptor;
+import codes.vps.mockta.ws.okta.NoCacheInterceptor;
+import lombok.Getter;
+import springfox.documentation.builders.ParameterBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Parameter;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSpringHttpSession
+@EnableSwagger2
 public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
     private final String API_KEY_OPT = "mockta.api-token";
@@ -94,9 +110,52 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
         return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
                 .serializers(new JsonWebKeysSerializer());
     }
+    
+    @Bean
+    public Docket swaggerSettings() {
+        Parameter parameter = new ParameterBuilder().name("Authorization").description("Authorization Token")
+                .modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+        List<Parameter> parameters = new ArrayList<Parameter>();
+        parameters.add(parameter);
+        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any()).build().apiInfo(apiInfo()).pathMapping("/")
+                .globalOperationParameters(parameters);
+    }
+    private ApiInfo apiInfo() {
+        ApiInfo apiInfo = new ApiInfo("Mock Okta ", "Mock Okta  API", "API TOS", "Terms of service",
+                "Arvind kapse", "License of API", "");
+        return apiInfo;
+    }
+    @Bean
+    public LinkDiscoverers discoverers() {
+        List<LinkDiscoverer> plugins = new ArrayList<>();
+        plugins.add(new CollectionJsonLinkDiscoverer());
+        return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
+    }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverterFactory(new EnumConverter());
     }
+
+	public List<String> getApiTokens() {
+		return apiTokens;
+	}
+
+	public void setApiTokens(List<String> apiTokens) {
+		this.apiTokens = apiTokens;
+	}
+
+	public String getAPI_KEY_OPT() {
+		return API_KEY_OPT;
+	}
+
+	public AuthInterceptor getAuthInterceptor() {
+		return authInterceptor;
+	}
+
+	public NoCacheInterceptor getNoCacheInterceptor() {
+		return noCacheInterceptor;
+	}
+    
 }

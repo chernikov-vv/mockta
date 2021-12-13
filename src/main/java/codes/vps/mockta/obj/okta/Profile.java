@@ -36,4 +36,25 @@ public class Profile extends RepresentationModel<Profile> {
         this.locale = locale;
         this.timeZone = timeZone;
     }
+
+	public String getLogin() {
+		return login;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
 }

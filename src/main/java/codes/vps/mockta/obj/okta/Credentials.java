@@ -33,4 +33,17 @@ public class Credentials extends RepresentationModel<Credentials> {
     public Credentials(Password password) {
         this.password = password;
     }
+
+	public Password getPassword() {
+		return password;
+	}
+
+	public RecoveryQuestion getRecoveryQuestion() {
+		return recoveryQuestion;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+    
 }
