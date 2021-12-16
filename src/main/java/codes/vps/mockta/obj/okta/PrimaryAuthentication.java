@@ -18,26 +18,28 @@
 package codes.vps.mockta.obj.okta;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+
 import lombok.Getter;
 
 // https://developer.okta.com/docs/reference/api/authn/#primary-authentication
 @Getter
 public class PrimaryAuthentication {
 
-    private final String audience; // deprecated
-    private final Context context;
-    private final Options options;
-    private final String password;
-    private final String token;
-    private final String username;
+	private final String audience; // deprecated
+	private final Context context;
+	private final Options options;
+	private final String password;
+	private final String token;
+	private final String username;
 
-    @JsonCreator
-    public PrimaryAuthentication(String audience, Context context, Options options, String password, String token, String username) {
-        this.audience = audience;
-        this.context = context;
-        this.options = options;
-        this.password = password;
-        this.token = token;
-        this.username = username;
-    }
+	@JsonCreator
+	public PrimaryAuthentication(String audience, Context context, Options options, String password, String token,
+			String username) {
+		this.audience = audience;
+		this.context = context;
+		this.options = options;
+		this.password = password;
+		this.token = token;
+		this.username = username;
+	}
 }

@@ -17,45 +17,43 @@
 
 package codes.vps.mockta.db;
 
+import java.util.Date;
+import java.util.Map;
+
 import codes.vps.mockta.obj.okta.AppUser;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
-import java.util.Map;
 
 @Getter
 @Setter
 public class OktaAppUser {
 
-    private final Date created = new Date();
-    private final OktaUser user;
-   
-    private Date lastUpdated = new Date();
-    private Map<String, String> profile;
-    private final Date statusChanges = new Date(); // because we don't support changing status
+	private final Date created = new Date();
+	private final OktaUser user;
 
-    public OktaAppUser(OktaUser user) {
-        this.user = user;
-       
-    }
+	private Date lastUpdated = new Date();
+	private Map<String, String> profile;
+	private final Date statusChanges = new Date(); // because we don't support changing status
 
-    public OktaAppUser(OktaUser user,  AppUser appUser) {
-        this(user);
-        profile = appUser.getProfile();
-    }
+	public OktaAppUser(OktaUser user) {
+		this.user = user;
 
-    public AppUser represent() {
+	}
 
-        return new AppUser(created, user.getId(), lastUpdated, profile, statusChanges);
+	public OktaAppUser(OktaUser user, AppUser appUser) {
+		this(user);
+		profile = appUser.getProfile();
+	}
 
-    }
+	public AppUser represent() {
+
+		return new AppUser(created, user.getId(), lastUpdated, profile, statusChanges);
+
+	}
 
 	@Override
 	public String toString() {
 		return "OktaAppUser [user=" + user + ", profile=" + profile + "]";
 	}
-
-	
 
 }

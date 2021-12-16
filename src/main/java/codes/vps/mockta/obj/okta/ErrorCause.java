@@ -22,9 +22,9 @@ import lombok.Getter;
 @Getter
 public class ErrorCause {
 
-    private final String errorSummary;
+	private final String errorSummary;
 
-    public ErrorCause(String errorSummary) {
-        this.errorSummary = errorSummary;
-    }
+	public ErrorCause(String errorSummary) {
+		this.errorSummary = errorSummary;
+	}
 }

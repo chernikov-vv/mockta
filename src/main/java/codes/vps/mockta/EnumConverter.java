@@ -17,49 +17,49 @@
 
 package codes.vps.mockta;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.lang.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class EnumConverter implements ConverterFactory<String, Enum> {
 
-    @Override
-    public <T extends Enum> Converter<String, T> getConverter(Class<T> targetType) {
-        return Util.reThrow(()->new StringToEnum(Util.getEnumType(targetType)));
-    }
+	@Override
+	public <T extends Enum> Converter<String, T> getConverter(Class<T> targetType) {
+		return Util.reThrow(() -> new StringToEnum(Util.getEnumType(targetType)));
+	}
 
-    private static class StringToEnum<T extends Enum> implements Converter<String, T> {
+	private static class StringToEnum<T extends Enum> implements Converter<String, T> {
 
-        private final Map<String, T> nameToConstant = new HashMap<>();
+		private final Map<String, T> nameToConstant = new HashMap<>();
 
-        StringToEnum(Class<T> enumType) throws Exception {
+		StringToEnum(Class<T> enumType) throws Exception {
 
-            for (T constant : enumType.getEnumConstants()) {
-                String name = constant.name();
-                JsonProperty annotation = enumType.getField(name).getAnnotation(JsonProperty.class);
-                if (annotation != null) {
-                    name = annotation.value();
-                }
-                nameToConstant.put(name, constant);
-            }
+			for (T constant : enumType.getEnumConstants()) {
+				String name = constant.name();
+				JsonProperty annotation = enumType.getField(name).getAnnotation(JsonProperty.class);
+				if (annotation != null) {
+					name = annotation.value();
+				}
+				nameToConstant.put(name, constant);
+			}
 
-        }
+		}
 
-        @Override
-        @Nullable
-        public T convert(String source) {
-            if (source.isEmpty()) {
-                // It's an empty enum identifier: reset the enum value to null.
-                return null;
-            }
-            return nameToConstant.get(source);
-        }
-    }
-
+		@Override
+		@Nullable
+		public T convert(String source) {
+			if (source.isEmpty()) {
+				// It's an empty enum identifier: reset the enum value to null.
+				return null;
+			}
+			return nameToConstant.get(source);
+		}
+	}
 
 }

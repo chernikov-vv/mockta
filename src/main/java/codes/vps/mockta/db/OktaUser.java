@@ -17,6 +17,8 @@
 
 package codes.vps.mockta.db;
 
+import java.util.Date;
+
 import codes.vps.mockta.Util;
 import codes.vps.mockta.obj.okta.Credentials;
 import codes.vps.mockta.obj.okta.ErrorObject;
@@ -25,58 +27,62 @@ import codes.vps.mockta.obj.okta.User;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Getter
 @Setter
 public class OktaUser {
 
-    private final String id = Util.randomId();
-    private final String userName;
-    private String password;
-    private Date passwordChanged;
-    private String firstName;
-    private String lastName;
-    private String locale;
-    private String timeZone;
+	private final String id = Util.randomId();
+	private final String userName;
+	private String password;
+	private Date passwordChanged;
+	private String firstName;
+	private String lastName;
+	private String locale;
+	private String timeZone;
 
-    public OktaUser(User user) {
-        Profile profile = user.getProfile();
-        Credentials creds = user.getCredentials();
+	public OktaUser(User user) {
+		Profile profile = user.getProfile();
+		Credentials creds = user.getCredentials();
 
-        // $TODO: It's unclear what errors to return when we don't have enough data
-        if (creds == null) { throw ErrorObject.illegalArgument("no credentials").boom(); }
-        if (profile == null) { throw ErrorObject.illegalArgument("no profile").boom(); }
+		// $TODO: It's unclear what errors to return when we don't have enough data
+		if (creds == null) {
+			throw ErrorObject.illegalArgument("no credentials").boom();
+		}
+		if (profile == null) {
+			throw ErrorObject.illegalArgument("no profile").boom();
+		}
 
-        String password;
-        if (creds.getPassword() == null || (password = Util.sTrim(creds.getPassword().getValue())) == null) {
-            throw ErrorObject.illegalArgument("Only plain text password is supported for user creation").boom();
-        }
+		String password;
+		if (creds.getPassword() == null || (password = Util.sTrim(creds.getPassword().getValue())) == null) {
+			throw ErrorObject.illegalArgument("Only plain text password is supported for user creation").boom();
+		}
 
-        String userName = Util.sTrim(profile.getLogin());
-        if (userName == null) { throw ErrorObject.illegalArgument("username must be specified").boom(); }
+		String userName = Util.sTrim(profile.getLogin());
+		if (userName == null) {
+			throw ErrorObject.illegalArgument("username must be specified").boom();
+		}
 
-        firstName = Util.makeNotNull(profile.getFirstName(), ()->"Jane");
-        lastName = Util.makeNotNull(profile.getLastName(), ()->"Doe");
-        locale = Util.makeNotNull(profile.getLocale(), ()->"en_US");
-        timeZone = Util.makeNotNull(profile.getLocale(), ()->"Pacific/Honolulu");
+		firstName = Util.makeNotNull(profile.getFirstName(), () -> "Jane");
+		lastName = Util.makeNotNull(profile.getLastName(), () -> "Doe");
+		locale = Util.makeNotNull(profile.getLocale(), () -> "en_US");
+		timeZone = Util.makeNotNull(profile.getLocale(), () -> "Pacific/Honolulu");
 
-        this.userName = userName;
-        setPassword(password);
+		this.userName = userName;
+		setPassword(password);
 
-    }
+	}
 
-    public User represent() {
+	public User represent() {
 
-        return new User(id, passwordChanged, new Profile(userName, firstName, lastName, locale, timeZone));
+		return new User(id, passwordChanged, new Profile(userName, firstName, lastName, locale, timeZone));
 
-    }
+	}
 
-    public OktaUser setPassword(String password) {
-        this.password = password;
-        this.passwordChanged = new Date();
-        return this;
-    }
+	public OktaUser setPassword(String password) {
+		this.password = password;
+		this.passwordChanged = new Date();
+		return this;
+	}
 
 	public Date getPasswordChanged() {
 		return passwordChanged;
@@ -132,8 +138,8 @@ public class OktaUser {
 
 	@Override
 	public String toString() {
-		return "OktaUser [userName=" + userName + ", passwordChanged=" + passwordChanged
-				+ ", firstName=" + firstName + ", lastName=" + lastName + "]";
+		return "OktaUser [userName=" + userName + ", passwordChanged=" + passwordChanged + ", firstName=" + firstName
+				+ ", lastName=" + lastName + "]";
 	}
-    
+
 }

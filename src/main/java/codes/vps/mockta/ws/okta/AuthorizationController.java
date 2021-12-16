@@ -17,20 +17,12 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.Util;
-import codes.vps.mockta.db.AppsDB;
-import codes.vps.mockta.db.IDPDB;
-import codes.vps.mockta.db.KeysDB;
-import codes.vps.mockta.db.OktaApp;
-import codes.vps.mockta.db.OktaAppUser;
-import codes.vps.mockta.db.OktaUser;
-import codes.vps.mockta.db.UserDB;
-import codes.vps.mockta.obj.model.AuthInfo;
-import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.obj.okta.OpenIDMetaData;
-import codes.vps.mockta.db.OktaSession;
-import codes.vps.mockta.db.SessionDB;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.net.URI;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -48,188 +40,185 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import codes.vps.mockta.Util;
+import codes.vps.mockta.db.AppsDB;
+import codes.vps.mockta.db.IDPDB;
+import codes.vps.mockta.db.KeysDB;
+import codes.vps.mockta.db.OktaApp;
+import codes.vps.mockta.db.OktaAppUser;
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.OktaUser;
+import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.db.UserDB;
+import codes.vps.mockta.obj.model.AuthInfo;
+import codes.vps.mockta.obj.okta.ErrorObject;
+import codes.vps.mockta.obj.okta.OpenIDMetaData;
 
 @Controller
-@RequestMapping(path = {"/oauth2/v1/authorize", "/oauth2/{authServer}/v1/authorize"})
+@RequestMapping(path = { "/oauth2/v1/authorize", "/oauth2/{authServer}/v1/authorize" })
 public class AuthorizationController {
 
-    // https://developer.okta.com/docs/reference/api/oidc/#authorize
-    @GetMapping
-    public ModelAndView authorize(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            @PathVariable(required = false) String authServer,
-            @RequestParam(name="client_id") String clientId,
-            @RequestParam(required = false) Prompt prompt,
-            @RequestParam(name = "redirect_uri") String redirectURI,
-            @RequestParam(name = "response_type") String responseType,
-            @RequestParam(name = "response_mode", required = false) ResponseMode responseMode,
-            @RequestParam String scope, // space separated
-            @RequestParam(required = false) String sessionToken,
-            @RequestParam String state,
-            @RequestParam String nonce,
-            Model model
-    ) throws Exception {
+	// https://developer.okta.com/docs/reference/api/oidc/#authorize
+	@GetMapping
+	public ModelAndView authorize(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable(required = false) String authServer, @RequestParam(name = "client_id") String clientId,
+			@RequestParam(required = false) Prompt prompt, @RequestParam(name = "redirect_uri") String redirectURI,
+			@RequestParam(name = "response_type") String responseType,
+			@RequestParam(name = "response_mode", required = false) ResponseMode responseMode,
+			@RequestParam String scope, // space separated
+			@RequestParam(required = false) String sessionToken, @RequestParam String state, @RequestParam String nonce,
+			Model model) throws Exception {
 
-        if (responseMode == null) { responseMode = ResponseMode.FRAGMENT; }
-        if (responseMode != ResponseMode.OKTA_POST_MESSAGE) {
-            // it's unclear which response code to use here. These are OIDC errors,
-            // but we don't implement redirect responses.... It's a mess.
-            // return new ModelAndView(null, HttpStatus.INTERNAL_SERVER_ERROR);
-            throw new ChokeException();
-        }
+		if (responseMode == null) {
+			responseMode = ResponseMode.FRAGMENT;
+		}
+		if (responseMode != ResponseMode.OKTA_POST_MESSAGE) {
+			// it's unclear which response code to use here. These are OIDC errors,
+			// but we don't implement redirect responses.... It's a mess.
+			// return new ModelAndView(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new ChokeException();
+		}
 
-        AuthInfo authInfo = null;
-        String error;
-        String errorDescription;
-        String frameUrl;
+		AuthInfo authInfo = null;
+		String error;
+		String errorDescription;
+		String frameUrl;
 
-        do {
+		do {
 
-            // first we need to determine the frame URL, which we can only source
-            // from the redirect URL (which is not used for anything else)
+			// first we need to determine the frame URL, which we can only source
+			// from the redirect URL (which is not used for anything else)
 
-            URI uri = new URI(redirectURI);
-            frameUrl = new DefaultUriBuilderFactory().builder().scheme(uri.getScheme()).host(uri.getHost()).port(uri.getPort()).build().toString();
-            // now we can at least generate error responses.
+			URI uri = new URI(redirectURI);
+			frameUrl = new DefaultUriBuilderFactory().builder().scheme(uri.getScheme()).host(uri.getHost())
+					.port(uri.getPort()).build().toString();
+			// now we can at least generate error responses.
 
-            if (sessionToken == null) {
-                error = "no-session-token"; // $TODO
-                errorDescription = "Only session token authorization is supported";
-                break;
-            }
+			if (sessionToken == null) {
+				error = "no-session-token"; // $TODO
+				errorDescription = "Only session token authorization is supported";
+				break;
+			}
 
-            try {
+			try {
 
-                OktaApp app = AppsDB.getApp(clientId);
-                OktaSession session = SessionDB.getByTokenOnce(sessionToken);
+				OktaApp app = AppsDB.getApp(clientId);
+				OktaSession session = SessionDB.getByTokenOnce(sessionToken);
 
-                boolean uriOK = false;
+				boolean uriOK = false;
 
-                // OK, let's validate that the caller is from an authorized website.
-                for (String allowedURI : app.getRedirectUris()) {
-                    if (redirectURI.startsWith(allowedURI)) {
-                        uriOK = true;
-                        break;
-                    }
-                }
+				// OK, let's validate that the caller is from an authorized website.
+				for (String allowedURI : app.getRedirectUris()) {
+					if (redirectURI.startsWith(allowedURI)) {
+						uriOK = true;
+						break;
+					}
+				}
 
-                if (!uriOK) {
-                    error = "uri-not-matched"; // $TODO
-                    errorDescription = "The URI of the authenticating website is not registered";
-                    break;
-                }
+				if (!uriOK) {
+					error = "uri-not-matched"; // $TODO
+					errorDescription = "The URI of the authenticating website is not registered";
+					break;
+				}
 
-                OktaUser user = UserDB.getUser(session.getUserId());
-                OktaAppUser link = app.getUsers().get(user.getId());
-                if (link == null) {
-                    error = "user-not-associated"; // $TODO
-                    errorDescription = "User not associated with the application";
-                    break;
-                }
+				OktaUser user = UserDB.getUser(session.getUserId());
+				OktaAppUser link = app.getUsers().get(user.getId());
+				if (link == null) {
+					error = "user-not-associated"; // $TODO
+					errorDescription = "User not associated with the application";
+					break;
+				}
 
-                if (!Objects.equals(responseType, "id_token")) {
-                    error = "bad-response-type";
-                    errorDescription = String.format("I only know how to respond to response_type 'id_token', not %s", responseType);
-                    break;
-                }
+				if (!Objects.equals(responseType, "id_token")) {
+					error = "bad-response-type";
+					errorDescription = String.format("I only know how to respond to response_type 'id_token', not %s",
+							responseType);
+					break;
+				}
 
-                // OK, our main performance - generate the id_token value
-                // Sample token seen Okta use:
-                // {"kid":"S_GrqnSp7DSWRY7uhiDdpTEhfVLnD3ld7-fAEXsZYCk","alg":"RS256"}
-                /*
-                {
-                  "sub": "user-id",
-                  "email": "pawel.veselov@xxx",
-                  "ver": 1,
-                  "iss": "https://xxx",
-                  "aud": "client-id",
-                  "iat": 1635181190,
-                  "exp": 1635184790,
-                  "jti": "ID.nrdU_s_YwY7D6JruXlkhxX-s485g_rP6MK5tNicpa_0",
-                  "amr": [
-                    "pwd"
-                  ],
-                  "idp": "idp-id",
-                  "nonce": "rqi8cN20xc3yQl8OhbPnpnrxwYKR0ktdeevjBofBaJwkwEPI0YG6sFQZinpRQQ1Y",
-                  "email_verified": true,
-                  "auth_time": 1635181153
-                }
-                 */
+				// OK, our main performance - generate the id_token value
+				// Sample token seen Okta use:
+				// {"kid":"S_GrqnSp7DSWRY7uhiDdpTEhfVLnD3ld7-fAEXsZYCk","alg":"RS256"}
+				/*
+				 * { "sub": "user-id", "email": "pawel.veselov@xxx", "ver": 1, "iss":
+				 * "https://xxx", "aud": "client-id", "iat": 1635181190, "exp": 1635184790,
+				 * "jti": "ID.nrdU_s_YwY7D6JruXlkhxX-s485g_rP6MK5tNicpa_0", "amr": [ "pwd" ],
+				 * "idp": "idp-id", "nonce":
+				 * "rqi8cN20xc3yQl8OhbPnpnrxwYKR0ktdeevjBofBaJwkwEPI0YG6sFQZinpRQQ1Y",
+				 * "email_verified": true, "auth_time": 1635181153 }
+				 */
 
-                OpenIDMetaData metaData = new OpenIDMetaData(request, authServer);
-                JwtClaims claims = new JwtClaims();
-                claims.setSubject(user.getId());
-                claims.setClaim("email", user.getUserName());
-                claims.setClaim("ver", 1);
-                claims.setIssuer(metaData.getIssuer());
-                claims.setAudience(clientId);
-                claims.setIssuedAtToNow();
-                NumericDate expiration = NumericDate.now();
-                expiration.addSeconds(3600);
-                claims.setExpirationTime(expiration);
-                claims.setGeneratedJwtId();
-                claims.setStringListClaim("amr", "pwd"); // password auth
-                claims.setClaim("idp", IDPDB.getIdp().getId());
-                claims.setClaim("nonce", nonce);
-                claims.setClaim("email_verified", true);
-                claims.setClaim("auth_time", session.getCreated().getTime());
+				OpenIDMetaData metaData = new OpenIDMetaData(request, authServer);
+				JwtClaims claims = new JwtClaims();
+				claims.setSubject(user.getId());
+				claims.setClaim("email", user.getUserName());
+				claims.setClaim("ver", 1);
+				claims.setIssuer(metaData.getIssuer());
+				claims.setAudience(clientId);
+				claims.setIssuedAtToNow();
+				NumericDate expiration = NumericDate.now();
+				expiration.addSeconds(3600);
+				claims.setExpirationTime(expiration);
+				claims.setGeneratedJwtId();
+				claims.setStringListClaim("amr", "pwd"); // password auth
+				claims.setClaim("idp", IDPDB.getIdp().getId());
+				claims.setClaim("nonce", nonce);
+				claims.setClaim("email_verified", true);
+				claims.setClaim("auth_time", session.getCreated().getTime());
 
-                JsonWebSignature jws = new JsonWebSignature();
-                jws.setPayload(claims.toJson());
+				JsonWebSignature jws = new JsonWebSignature();
+				jws.setPayload(claims.toJson());
 
-                JsonWebKey jwk = KeysDB.getKey();
+				JsonWebKey jwk = KeysDB.getKey();
 
-                jws.setKey(((RsaJsonWebKey)jwk).getRsaPrivateKey());
-                jws.setKeyIdHeaderValue(jwk.getKeyId());
-                jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+				jws.setKey(((RsaJsonWebKey) jwk).getRsaPrivateKey());
+				jws.setKeyIdHeaderValue(jwk.getKeyId());
+				jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
 
-                String idToken = jws.getCompactSerialization();
-                authInfo = AuthInfo.onAuth(frameUrl, state, idToken);
+				String idToken = jws.getCompactSerialization();
+				authInfo = AuthInfo.onAuth(frameUrl, state, idToken);
 
-                session.setCookie(response);
+				session.setCookie(response);
 
-            } catch (ErrorObject.MyException e) {
-                // we have to report errors using javascript here.
-                // it's unclear how we convert them properly.
-                error = e.getObject().getErrorCode();
-                errorDescription = e.getObject().getErrorSummary();
-                break;
-            }
+			} catch (ErrorObject.MyException e) {
+				// we have to report errors using javascript here.
+				// it's unclear how we convert them properly.
+				error = e.getObject().getErrorCode();
+				errorDescription = e.getObject().getErrorSummary();
+				break;
+			}
 
-            error = null;
-            errorDescription = null;
+			error = null;
+			errorDescription = null;
 
-        } while (false);
+		} while (false);
 
-        if (authInfo == null) {
-            authInfo = AuthInfo.onError(frameUrl, state, error, errorDescription);
-        }
+		if (authInfo == null) {
+			authInfo = AuthInfo.onError(frameUrl, state, error, errorDescription);
+		}
 
-        response.addHeader("x-mockta-auth-error", Util.makeNotNull(error, ()->"<none>"));
-        model.addAttribute("auth", authInfo);
+		response.addHeader("x-mockta-auth-error", Util.makeNotNull(error, () -> "<none>"));
+		model.addAttribute("auth", authInfo);
 
-        return new ModelAndView("jsp/postMessage.jsp", model.asMap());
+		return new ModelAndView("jsp/postMessage.jsp", model.asMap());
 
-    }
+	}
 
-    enum Prompt {
-        @JsonProperty("none")
-        NONE
-    }
+	enum Prompt {
+		@JsonProperty("none")
+		NONE
+	}
 
-    enum ResponseMode {
-        @JsonProperty("okta_post_message")
-        OKTA_POST_MESSAGE,
-        @JsonProperty("fragment)")
-        FRAGMENT
-    }
+	enum ResponseMode {
+		@JsonProperty("okta_post_message")
+		OKTA_POST_MESSAGE, @JsonProperty("fragment)")
+		FRAGMENT
+	}
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    static class ChokeException extends RuntimeException {}
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	static class ChokeException extends RuntimeException {
+	}
 
 }

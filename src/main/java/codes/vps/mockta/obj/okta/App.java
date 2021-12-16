@@ -17,40 +17,48 @@
 
 package codes.vps.mockta.obj.okta;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.hateoas.RepresentationModel;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import codes.vps.mockta.db.OktaAppUser;
+import lombok.Getter;
 
 // https://developer.okta.com/docs/reference/api/apps/#application-object
 @Getter
 public class App extends RepresentationModel<App> {
 
-    private final Date created;
-    private final String id;
-    private final String label;
-    private final Date lastUpdated;
-    private final String name;
-    private final String profile;
-    private final SignOnMode signOnMode = SignOnMode.BASIC_AUTH; // right?
-    private final String status = "ACTIVE";
-    private final AppSettings settings;
+	private final Date created;
+	private final String id;
+	private final String label;
+	private final Date lastUpdated;
+	private final String name;
+	private final String profile;
+	private final SignOnMode signOnMode = SignOnMode.BASIC_AUTH; // right?
+	private final String status = "ACTIVE";
+	private final AppSettings settings;
+	private Map<String, OktaAppUser> users = new ConcurrentHashMap<>();
 
-    public App(Date created, String id, String label, Date lastUpdated, String name, String profile, AppSettings settings) {
-        this.created = created;
-        this.id = id;
-        this.label = label;
-        this.lastUpdated = lastUpdated;
-        this.name = name;
-        this.profile = profile;
-        this.settings = settings;
-    }
+	public App(Date created, String id, String label, Date lastUpdated, String name, String profile,
+			Map<String, OktaAppUser> users, AppSettings settings) {
+		this.created = created;
+		this.id = id;
+		this.label = label;
+		this.lastUpdated = lastUpdated;
+		this.name = name;
+		this.profile = profile;
+		this.settings = settings;
+		this.users = users;
+	}
 
-    @JsonCreator
-    public App(String label, String name, String profile, AppSettings settings) {
-        this(null, null, label, null, name, profile, settings);
-    }
+	@JsonCreator
+	public App(String label, String name, String profile, AppSettings settings) {
+		this(null, null, label, null, name, profile, null, settings);
+	}
 
 	public String getId() {
 		return id;
@@ -83,7 +91,5 @@ public class App extends RepresentationModel<App> {
 	public AppSettings getSettings() {
 		return settings;
 	}
-
-
 
 }

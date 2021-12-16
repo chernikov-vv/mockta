@@ -17,16 +17,15 @@
 
 package codes.vps.mockta.db;
 
-import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.obj.okta.User;
-import lombok.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
+import codes.vps.mockta.obj.okta.ErrorObject;
+import codes.vps.mockta.obj.okta.User;
+import lombok.NonNull;
 
 public class UserDB {
 
@@ -46,14 +45,6 @@ public class UserDB {
 
 	public static OktaUser addUser(User user) {
 
-		// System.out.println("Call
-		// ########################################################" +
-		// user.getProfile().getLogin());
-		// for (Entry<String, OktaUser> entry : users.entrySet()) {
-		// String key = entry.getKey().toString();
-		// OktaUser value = entry.getValue();
-		// System.out.println("key, " + key + " value " + value.getFirstName());
-		// }
 		OktaUser oktaUser = new OktaUser(user);
 
 		users.compute(oktaUser.getUserName(), (k, v) -> {
@@ -66,16 +57,7 @@ public class UserDB {
 		});
 
 		usersById.put(oktaUser.getId(), oktaUser);
-		// users.put(oktaUser.getUserName(), oktaUser);
 
-		// System.out.println("Call2
-		// ########################################################" +
-		// user.getProfile().getLogin());
-		// for (Entry<String, OktaUser> entry : users.entrySet()) {
-		// String key = entry.getKey().toString();
-		// OktaUser value = entry.getValue();
-		// System.out.println("key, " + key + " value " + value.getFirstName());
-		// }
 		return oktaUser;
 
 	}
@@ -99,6 +81,15 @@ public class UserDB {
 		}
 		usersById.remove(id);
 		users.remove(user.getUserName());
+		return true;
+
+	}
+
+	public static boolean deleteAllUser() {
+
+		usersById.clear();
+		users.clear();
+
 		return true;
 
 	}

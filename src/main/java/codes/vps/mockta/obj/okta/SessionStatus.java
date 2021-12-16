@@ -20,8 +20,6 @@ package codes.vps.mockta.obj.okta;
 
 public enum SessionStatus {
 
-    ACTIVE,
-    MFA_REQUIRED,
-    MFA_ENROLL
+	ACTIVE, MFA_REQUIRED, MFA_ENROLL
 
 }
