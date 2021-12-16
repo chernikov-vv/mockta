@@ -24,11 +24,11 @@ import lombok.Getter;
 
 public class OktaIDP {
 
-    @Getter
-    private final String id = Util.randomId();
+	@Getter
+	private final String id = Util.randomId();
 
-    public IDP represent() {
-        return new IDP(id, IDPType.OKTA);
-    }
+	public IDP represent() {
+		return new IDP(id, IDPType.OKTA);
+	}
 
 }

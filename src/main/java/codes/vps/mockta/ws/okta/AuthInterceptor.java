@@ -17,92 +17,96 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.MocktaApplication;
-import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.db.OktaSession;
-import codes.vps.mockta.db.SessionDB;
+import java.util.Objects;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Objects;
+import codes.vps.mockta.MocktaApplication;
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.obj.okta.ErrorObject;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private MocktaApplication application;
+	private MocktaApplication application;
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
 
-        if (handler instanceof HandlerMethod) {
-            Object bean = ((HandlerMethod) handler).getBean();
-            if (bean instanceof AdminService) {
+		if (handler instanceof HandlerMethod) {
+			Object bean = ((HandlerMethod) handler).getBean();
+			if (bean instanceof AdminService) {
 
-                boolean authOk = false;
+				boolean authOk = false;
 
-                do {
+				do {
 
-                    String auth = request.getHeader("Authorization");
+					String auth = request.getHeader("Authorization");
 
-                    if (auth == null) { break; }
+					if (auth == null) {
+						break;
+					}
 
-                    if (!auth.startsWith("SSWS ")) {
-                        break;
-                    }
+					if (!auth.startsWith("SSWS ")) {
+						break;
+					}
 
-                    if (!application.getApiTokens().contains(auth.substring(5))) {
-                        break;
-                    }
+					if (!application.getApiTokens().contains(auth.substring(5))) {
+						break;
+					}
 
-                    authOk = true;
+					authOk = true;
 
-                } while (false);
+				} while (false);
 
-                if (!authOk) {
-                    response.sendError(401, "Authentication token invalid or missing");
-                    return false;
-                }
+				if (!authOk) {
+					response.sendError(401, "Authentication token invalid or missing");
+					return false;
+				}
 
-            } else if (bean instanceof UserAuthenticatedService) {
+			} else if (bean instanceof UserAuthenticatedService) {
 
-                ((UserAuthenticatedService)bean).setSession(getSessionFromCookie(request));
+				((UserAuthenticatedService) bean).setSession(getSessionFromCookie(request));
 
-            }
+			}
 
+		}
+		return true;
 
-        }
-        return true;
+	}
 
-    }
+	public static OktaSession getSessionFromCookie(HttpServletRequest request) {
 
-    public static OktaSession getSessionFromCookie(HttpServletRequest request) {
+		Cookie sid = null;
+		if (request.getCookies() != null) {
+			for (Cookie cookie : request.getCookies()) {
+				if (Objects.equals(OktaSession.COOKIE_NAME, cookie.getName())) {
+					sid = cookie;
+					break;
+				}
+			}
+		}
 
-        Cookie sid = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (Objects.equals(OktaSession.COOKIE_NAME, cookie.getName())) {
-                    sid = cookie;
-                    break;
-                }
-            }
-        }
+		if (sid == null || sid.getValue() == null) {
+			throw ErrorObject.notFound("no session cookie value").boom();
+		}
 
-        if (sid == null || sid.getValue() == null) {
-            throw ErrorObject.notFound("no session cookie value").boom();
-        }
+		return SessionDB.getByCookie(sid.getValue());
 
-        return SessionDB.getByCookie(sid.getValue());
+	}
 
-    }
-
-    @Autowired
-    public void setApplication(MocktaApplication application) {
-        this.application = application;
-    }
+	@Autowired
+	public void setApplication(MocktaApplication application) {
+		this.application = application;
+	}
 
 }

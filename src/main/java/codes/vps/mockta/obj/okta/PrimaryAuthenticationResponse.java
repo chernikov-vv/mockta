@@ -17,19 +17,19 @@
 
 package codes.vps.mockta.obj.okta;
 
-import lombok.Getter;
-
 import java.util.Date;
+
+import lombok.Getter;
 
 @Getter
 public class PrimaryAuthenticationResponse {
 
-    private final Date expiresAt;
-    private final String status = "SUCCESS"; // what else can be here?
-    private final String sessionToken;
+	private final Date expiresAt;
+	private final String status = "SUCCESS"; // what else can be here?
+	private final String sessionToken;
 
-    public PrimaryAuthenticationResponse(Date expiresAt, String sessionToken) {
-        this.expiresAt = expiresAt;
-        this.sessionToken = sessionToken;
-    }
+	public PrimaryAuthenticationResponse(Date expiresAt, String sessionToken) {
+		this.expiresAt = expiresAt;
+		this.sessionToken = sessionToken;
+	}
 }

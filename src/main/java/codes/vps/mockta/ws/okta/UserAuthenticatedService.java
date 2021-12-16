@@ -21,10 +21,10 @@ import codes.vps.mockta.db.OktaSession;
 
 public abstract class UserAuthenticatedService {
 
-    protected OktaSession session;
+	protected OktaSession session;
 
-    public void setSession(OktaSession session) {
-        this.session = session;
-    }
+	public void setSession(OktaSession session) {
+		this.session = session;
+	}
 
 }

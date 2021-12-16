@@ -22,7 +22,7 @@ import lombok.Getter;
 @Getter
 public class Provider {
 
-    private final String type = "OKTA";
-    private final String name = "OKTA";
+	private final String type = "OKTA";
+	private final String name = "OKTA";
 
 }

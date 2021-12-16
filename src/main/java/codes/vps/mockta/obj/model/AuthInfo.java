@@ -23,31 +23,33 @@ import lombok.Getter;
 @Getter
 public class AuthInfo {
 
-    private final String idToken;
-    private final String state;
-    private final String error;
-    private final String errorDescription;
-    private final String frameUrl;
+	private final String idToken;
+	private final String state;
+	private final String error;
+	private final String errorDescription;
+	private final String frameUrl;
 
-    private AuthInfo(String idToken, String state, String error, String errorDescription, String frameUrl) {
-        this.idToken = nes(idToken);
-        this.state = nes(state);
-        this.error = nes(error);
-        this.errorDescription = nes(errorDescription);
-        this.frameUrl = nes(frameUrl);
-    }
+	private AuthInfo(String idToken, String state, String error, String errorDescription, String frameUrl) {
+		this.idToken = nes(idToken);
+		this.state = nes(state);
+		this.error = nes(error);
+		this.errorDescription = nes(errorDescription);
+		this.frameUrl = nes(frameUrl);
+	}
 
-    private String nes(String s) {
-        if (s == null) { return null; }
-        return Util.escapeForSqJsString(s);
-    }
+	private String nes(String s) {
+		if (s == null) {
+			return null;
+		}
+		return Util.escapeForSqJsString(s);
+	}
 
-    public static AuthInfo onError(String frameUrl, String state, String error, String errorDescription) {
-        return new AuthInfo(null, state, error, errorDescription, frameUrl);
-    }
+	public static AuthInfo onError(String frameUrl, String state, String error, String errorDescription) {
+		return new AuthInfo(null, state, error, errorDescription, frameUrl);
+	}
 
-    public static AuthInfo onAuth(String frameUrl, String state, String idToken) {
-        return new AuthInfo(idToken, state, null, null, frameUrl);
-    }
+	public static AuthInfo onAuth(String frameUrl, String state, String idToken) {
+		return new AuthInfo(idToken, state, null, null, frameUrl);
+	}
 
 }

@@ -47,10 +47,9 @@ public class AppsDB {
 		return oktaApp;
 
 	}
-	
+
 	public static OktaApp updateApp(OktaApp oktaApp) {
 
-		
 		OktaApp oldOkaApp = apps.get(oktaApp.getName());
 
 		apps.put(oktaApp.getName(), oktaApp);
@@ -58,9 +57,8 @@ public class AppsDB {
 		return oktaApp;
 
 	}
-	
-	
-	public static OktaApp updateApp(OktaApp oktaApp,String id) {
+
+	public static OktaApp updateApp(OktaApp oktaApp, String id) {
 
 		OktaApp app = appsById.get(id);
 		if (app == null) {
@@ -93,6 +91,15 @@ public class AppsDB {
 
 	}
 
+	public static boolean deleteAllApp() {
+
+		appsById.clear();
+		apps.clear();
+
+		return true;
+
+	}
+
 	@NonNull
 	public static List<OktaApp> getAllApps() {
 
@@ -103,17 +110,17 @@ public class AppsDB {
 		return apps;
 
 	}
-	
+
 	@NonNull
 	public static void display() {
 
-		 System.out.println("Cal ########################################################" );
-				 
-				 for (Entry<String, OktaApp> entry : apps.entrySet()) {
-				 String key = entry.getKey().toString();
-				 OktaApp value = entry.getValue();
-				 System.out.println("key, " + key + " value " + value);
-				 }
+		System.out.println("Cal ########################################################");
+
+		for (Entry<String, OktaApp> entry : apps.entrySet()) {
+			String key = entry.getKey().toString();
+			OktaApp value = entry.getValue();
+			System.out.println("key, " + key + " value " + value);
+		}
 	}
 
 }

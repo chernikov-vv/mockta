@@ -32,39 +32,47 @@ import org.springframework.web.bind.annotation.RestController;
 import codes.vps.mockta.db.OktaUser;
 import codes.vps.mockta.db.UserDB;
 import codes.vps.mockta.obj.okta.User;
-import lombok.NonNull;
 
 @RestController
 @RequestMapping("/api/v1/users")
 public class UsersController implements AdminService {
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(UserDB.addUser(user).represent());
+	@PostMapping
+	public ResponseEntity<?> createUser(@RequestBody User user) {
+		return ResponseEntity.ok(UserDB.addUser(user).represent());
 
-    }
-    
-    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<User> getUser(@PathVariable String userId) {
-        return ResponseEntity.ok(UserDB.getUser(userId).represent());
-    }
-    
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<OktaUser>> getAllUsers() {
-        return ResponseEntity.ok(UserDB.getAllUsers());
-    }
+	}
 
-    @DeleteMapping(value = "/{userId}")
-    public ResponseEntity deleteUser(@PathVariable String userId) {
-    	
-    	boolean isRemoved = UserDB.deleteUser(userId);
-    	if(isRemoved) {
-    		 return new ResponseEntity<>(userId, HttpStatus.OK);
-    	}else {
-    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	}
-    }
-    
-   
+	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+	public ResponseEntity<User> getUser(@PathVariable String userId) {
+		return ResponseEntity.ok(UserDB.getUser(userId).represent());
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public ResponseEntity<List<OktaUser>> getAllUsers() {
+		return ResponseEntity.ok(UserDB.getAllUsers());
+	}
+
+	@DeleteMapping(value = "")
+	public ResponseEntity deleteAllUsers() {
+
+		boolean isRemoved = UserDB.deleteAllUser();
+		if (isRemoved) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@DeleteMapping(value = "/{userId}")
+	public ResponseEntity deleteUser(@PathVariable String userId) {
+
+		boolean isRemoved = UserDB.deleteUser(userId);
+		if (isRemoved) {
+			return new ResponseEntity<>(userId, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
 
 }

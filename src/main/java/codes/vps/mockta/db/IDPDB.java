@@ -21,7 +21,7 @@ import lombok.Getter;
 
 public class IDPDB {
 
-    @Getter
-    private final static OktaIDP idp = new OktaIDP();
+	@Getter
+	private final static OktaIDP idp = new OktaIDP();
 
 }

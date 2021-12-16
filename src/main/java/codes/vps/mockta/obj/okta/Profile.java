@@ -17,25 +17,26 @@
 
 package codes.vps.mockta.obj.okta;
 
-import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
+
+import lombok.Getter;
 
 @Getter
 public class Profile extends RepresentationModel<Profile> {
 
-    private final String login;
-    private final String firstName;
-    private final String lastName;
-    private final String locale;
-    private final String timeZone;
+	private final String login;
+	private final String firstName;
+	private final String lastName;
+	private final String locale;
+	private final String timeZone;
 
-    public Profile(String login, String firstName, String lastName, String locale, String timeZone) {
-        this.login = login;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.locale = locale;
-        this.timeZone = timeZone;
-    }
+	public Profile(String login, String firstName, String lastName, String locale, String timeZone) {
+		this.login = login;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.locale = locale;
+		this.timeZone = timeZone;
+	}
 
 	public String getLogin() {
 		return login;

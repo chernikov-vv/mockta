@@ -17,17 +17,18 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.obj.okta.ErrorObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import codes.vps.mockta.obj.okta.ErrorObject;
+
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(ErrorObject.MyException.class)
-    public ResponseEntity<ErrorObject> oktaErrorHandler(ErrorObject.MyException e) {
-        return new ResponseEntity<>(e.getObject(), e.getObject().getHttpError());
-    }
+	@ExceptionHandler(ErrorObject.MyException.class)
+	public ResponseEntity<ErrorObject> oktaErrorHandler(ErrorObject.MyException e) {
+		return new ResponseEntity<>(e.getObject(), e.getObject().getHttpError());
+	}
 
 }

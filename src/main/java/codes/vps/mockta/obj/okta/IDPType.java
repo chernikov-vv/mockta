@@ -20,7 +20,7 @@ package codes.vps.mockta.obj.okta;
 // https://developer.okta.com/docs/reference/api/sessions/#idp-object
 public enum IDPType {
 
-    OKTA
-    // we only support one type ATM
+	OKTA
+	// we only support one type ATM
 
 }

@@ -17,39 +17,41 @@
 
 package codes.vps.mockta.obj.okta;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
+import java.util.Date;
+
 import org.springframework.hateoas.RepresentationModel;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import lombok.Getter;
 
 @Getter
 public class User extends RepresentationModel<User> {
 
-    // https://developer.okta.com/docs/reference/api/users/#user-properties
-    private String id;
-    private Date created;
-    private Date activated;
-    private Date statusChanged;
-    private Date lastLogin;
-    private Date passwordChanged;
-    private UserType type;
-    private String transitioningToStatus = null;
-    private Profile profile;
-    private Credentials credentials;
+	// https://developer.okta.com/docs/reference/api/users/#user-properties
+	private String id;
+	private Date created;
+	private Date activated;
+	private Date statusChanged;
+	private Date lastLogin;
+	private Date passwordChanged;
+	private UserType type;
+	private String transitioningToStatus = null;
+	private Profile profile;
+	private Credentials credentials;
 
-    public User(String id, Date passwordChanged, Profile profile) {
-        this.id = id;
-        this.passwordChanged = passwordChanged;
-        this.profile = profile;
-    }
+	public User(String id, Date passwordChanged, Profile profile) {
+		this.id = id;
+		this.passwordChanged = passwordChanged;
+		this.profile = profile;
+	}
 
-    // only create with not-readonly properties
-    @JsonCreator
-    public User(Profile profile, Credentials credentials) {
-        this.profile = profile;
-        this.credentials = credentials;
-    }
+	// only create with not-readonly properties
+	@JsonCreator
+	public User(Profile profile, Credentials credentials) {
+		this.profile = profile;
+		this.credentials = credentials;
+	}
 
 	public String getId() {
 		return id;

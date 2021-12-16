@@ -57,11 +57,10 @@ public class AppsController implements AdminService {
 		return ResponseEntity.ok(AppsDB.getAllApps());
 	}
 
-	
 	@RequestMapping(value = "/display", method = RequestMethod.GET)
 	public ResponseEntity<List<OktaApp>> displayApps() {
 		AppsDB.display();
-		return new ResponseEntity<>( HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/{appId}")
@@ -70,6 +69,17 @@ public class AppsController implements AdminService {
 		boolean isRemoved = AppsDB.deleteApp(appId);
 		if (isRemoved) {
 			return new ResponseEntity<>(appId, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@DeleteMapping(value = "")
+	public ResponseEntity deleteAllApplication() {
+
+		boolean isRemoved = AppsDB.deleteAllApp();
+		if (isRemoved) {
+			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -85,12 +95,12 @@ public class AppsController implements AdminService {
 			if (v != null) {
 				throw ErrorObject.duplicate("app user registration " + k).boom();
 			}
-			return new OktaAppUser(user,appUser);
-			
+			return new OktaAppUser(user, appUser);
+
 		}).represent();
 		app.getUsers().put(user.getId(), new OktaAppUser(user, appUser));
 		AppsDB.updateApp(app);
-		//return pau;
+		// return pau;
 		return ResponseEntity.ok(ret);
 
 	}

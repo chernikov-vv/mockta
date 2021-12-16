@@ -17,28 +17,29 @@
 
 package codes.vps.mockta.db;
 
-import codes.vps.mockta.Util;
-import lombok.Getter;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 
+import codes.vps.mockta.Util;
+import lombok.Getter;
+
 public class KeysDB {
 
-    // we only ever use one key at this point
+	// we only ever use one key at this point
 
-    @Getter
-    private final static JsonWebKeySet keys = new JsonWebKeySet();
+	@Getter
+	private final static JsonWebKeySet keys = new JsonWebKeySet();
 
-    static {
-        RsaJsonWebKey rsaJsonWebKey = Util.reThrow(()->RsaJwkGenerator.generateJwk(2048));
-        rsaJsonWebKey.setKeyId(Util.randomId());
-        keys.addJsonWebKey(rsaJsonWebKey);
-    }
+	static {
+		RsaJsonWebKey rsaJsonWebKey = Util.reThrow(() -> RsaJwkGenerator.generateJwk(2048));
+		rsaJsonWebKey.setKeyId(Util.randomId());
+		keys.addJsonWebKey(rsaJsonWebKey);
+	}
 
-    public static JsonWebKey getKey() {
-        return keys.getJsonWebKeys().get(0);
-    }
+	public static JsonWebKey getKey() {
+		return keys.getJsonWebKeys().get(0);
+	}
 
 }

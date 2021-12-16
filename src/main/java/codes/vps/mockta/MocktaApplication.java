@@ -59,84 +59,86 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
-    private final String API_KEY_OPT = "mockta.api-token";
-    @Getter
-    private List<String> apiTokens;
+	private final String API_KEY_OPT = "mockta.api-token";
+	@Getter
+	private List<String> apiTokens;
 
-    private AuthInterceptor authInterceptor;
-    private NoCacheInterceptor noCacheInterceptor;
+	private AuthInterceptor authInterceptor;
+	private NoCacheInterceptor noCacheInterceptor;
 
-    @Bean
-    // $TODO: we need to set up session expiration
-    public MapSessionRepository sessionRepository() {
-        return new MapSessionRepository(new ConcurrentHashMap<>());
-    }
+	@Bean
+	// $TODO: we need to set up session expiration
+	public MapSessionRepository sessionRepository() {
+		return new MapSessionRepository(new ConcurrentHashMap<>());
+	}
 
-    public static void main(String[] args) {
-        SpringApplication.run(MocktaApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(MocktaApplication.class, args);
+	}
 
-    @Override
-    public void run(ApplicationArguments args) {
+	@Override
+	public void run(ApplicationArguments args) {
 
-        List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
-        if (apiTokens != null) {
-            this.apiTokens = Collections.unmodifiableList(new ArrayList<>(apiTokens));
-        } else {
-            this.apiTokens = Collections.emptyList();
-        }
+		List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
+		if (apiTokens != null) {
+			this.apiTokens = Collections.unmodifiableList(new ArrayList<>(apiTokens));
+		} else {
+			this.apiTokens = Collections.emptyList();
+		}
 
-    }
+	}
 
-    @Autowired
-    public void setNoCacheInterceptor(NoCacheInterceptor noCacheInterceptor) {
-        this.noCacheInterceptor = noCacheInterceptor;
-    }
+	@Autowired
+	public void setNoCacheInterceptor(NoCacheInterceptor noCacheInterceptor) {
+		this.noCacheInterceptor = noCacheInterceptor;
+	}
 
-    @Autowired
-    public void setAuthInterceptor(AuthInterceptor authInterceptor) {
-        this.authInterceptor = authInterceptor;
-    }
+	@Autowired
+	public void setAuthInterceptor(AuthInterceptor authInterceptor) {
+		this.authInterceptor = authInterceptor;
+	}
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor);
-        registry.addInterceptor(noCacheInterceptor);
-    }
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(authInterceptor);
+		registry.addInterceptor(noCacheInterceptor);
+	}
 
-    // https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
-    @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-        return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
-                .serializers(new JsonWebKeysSerializer());
-    }
-    
-    @Bean
-    public Docket swaggerSettings() {
-        Parameter parameter = new ParameterBuilder().name("Authorization").description("Authorization Token")
-                .modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-        List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(parameter);
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any()).build().apiInfo(apiInfo()).pathMapping("/")
-                .globalOperationParameters(parameters);
-    }
-    private ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo("Mock Okta ", "Mock Okta  API", "API TOS", "Terms of service",
-                "Arvind kapse", "License of API", "");
-        return apiInfo;
-    }
-    @Bean
-    public LinkDiscoverers discoverers() {
-        List<LinkDiscoverer> plugins = new ArrayList<>();
-        plugins.add(new CollectionJsonLinkDiscoverer());
-        return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
-    }
+	// https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
+	@Bean
+	public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+		return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
+				.serializers(new JsonWebKeysSerializer());
+	}
 
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverterFactory(new EnumConverter());
-    }
+	@Bean
+	public Docket swaggerSettings() {
+		Parameter parameter = new ParameterBuilder().name("Authorization").description("Authorization Token")
+				.modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(parameter);
+		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
+				.paths(PathSelectors.any()).build().apiInfo(apiInfo()).pathMapping("/")
+				.globalOperationParameters(parameters);
+	}
+
+	private ApiInfo apiInfo() {
+		ApiInfo apiInfo = new ApiInfo("Mock Okta ", "Mock Okta  API", "API TOS", "Terms of service", "Arvind kapse",
+				"License of API", "");
+		return apiInfo;
+	}
+
+	@Bean
+	public LinkDiscoverers discoverers() {
+		List<LinkDiscoverer> plugins = new ArrayList<>();
+		plugins.add(new CollectionJsonLinkDiscoverer());
+		return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
+	}
+
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addConverterFactory(new EnumConverter());
+	}
 
 	public List<String> getApiTokens() {
 		return apiTokens;
@@ -157,5 +159,5 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 	public NoCacheInterceptor getNoCacheInterceptor() {
 		return noCacheInterceptor;
 	}
-    
+
 }

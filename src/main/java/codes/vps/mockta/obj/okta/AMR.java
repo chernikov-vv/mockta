@@ -20,7 +20,7 @@ package codes.vps.mockta.obj.okta;
 // https://developer.okta.com/docs/reference/api/sessions/#amr-object
 public enum AMR {
 
-    pwd
-    // we only support pwd ATM
+	pwd
+	// we only support pwd ATM
 
 }

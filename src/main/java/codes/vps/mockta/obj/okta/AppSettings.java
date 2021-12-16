@@ -17,9 +17,11 @@
 
 package codes.vps.mockta.obj.okta;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import lombok.Getter;
 
 // https://developer.okta.com/docs/reference/api/apps/#app-names
 // However, this data is different depending on the application type
@@ -31,16 +33,15 @@ import org.springframework.hateoas.RepresentationModel;
 @Getter
 public class AppSettings extends RepresentationModel<AppSettings> {
 
-    private final OAuthClient oauthClient;
+	private final OAuthClient oauthClient;
 
-    @JsonCreator
-    public AppSettings(OAuthClient oauthClient) {
-        this.oauthClient = oauthClient;
-    }
+	@JsonCreator
+	public AppSettings(OAuthClient oauthClient) {
+		this.oauthClient = oauthClient;
+	}
 
 	public OAuthClient getOauthClient() {
 		return oauthClient;
 	}
-    
-    
+
 }

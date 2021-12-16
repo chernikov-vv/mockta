@@ -17,6 +17,14 @@
 
 package codes.vps.mockta.db;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tomcat.util.http.SameSiteCookies;
+
 import codes.vps.mockta.OurCookie;
 import codes.vps.mockta.Util;
 import codes.vps.mockta.obj.okta.AMR;
@@ -25,59 +33,54 @@ import codes.vps.mockta.obj.okta.Session;
 import codes.vps.mockta.obj.okta.SessionStatus;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.tomcat.util.http.SameSiteCookies;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
 
 @Getter
 public class OktaSession implements Serializable {
 
-    public final static String COOKIE_NAME = "sid"; // what Okta uses
+	public final static String COOKIE_NAME = "sid"; // what Okta uses
 
-    private final String id;
-    private final String userId;
-    private final Date expires;
-    private final IDP idp;
-    @Setter
-    private String token;
-    private final Date created = new Date();
-    private final String login;
+	private final String id;
+	private final String userId;
+	private final Date expires;
+	private final IDP idp;
+	@Setter
+	private String token;
+	private final Date created = new Date();
+	private final String login;
 
-    public OktaSession(OktaUser who) {
-        this.id = Util.randomId();
-        this.userId = who.getId();
-        this.login = who.getUserName();
-        expires = new Date(System.currentTimeMillis() + 3600 * 1000);
-        idp = IDPDB.getIdp().represent();
-        token = Util.randomId();
-    }
+	public OktaSession(OktaUser who) {
+		this.id = Util.randomId();
+		this.userId = who.getId();
+		this.login = who.getUserName();
+		expires = new Date(System.currentTimeMillis() + 3600 * 1000);
+		idp = IDPDB.getIdp().represent();
+		token = Util.randomId();
+	}
 
-    public Session represent() {
-        return new Session(id, login, userId, expires, SessionStatus.ACTIVE, null, null, Collections.singletonList(AMR.pwd), idp);
-    }
+	public Session represent() {
+		return new Session(id, login, userId, expires, SessionStatus.ACTIVE, null, null,
+				Collections.singletonList(AMR.pwd), idp);
+	}
 
-    public boolean isValid() {
+	public boolean isValid() {
 
-        return new Date().before(expires);
+		return new Date().before(expires);
 
-    }
+	}
 
-    public void setCookie(HttpServletResponse response) {
+	public void setCookie(HttpServletResponse response) {
 
-        // Tomcat cookies don't support SameSite, so we use a set-cookie header.
+		// Tomcat cookies don't support SameSite, so we use a set-cookie header.
 
-        OurCookie c = new OurCookie(COOKIE_NAME, id);
-        c.setVersion(1);
-        c.setPath("/"); // $TODO - really?
-        // c.setSecure(true);
-        c.setSecure(false); // since we only support HTTP; though it looks like Chrome doesn't care
-        c.setHttpOnly(true);
-        c.setSameSite(SameSiteCookies.NONE);
-        response.addCookie(c);
+		OurCookie c = new OurCookie(COOKIE_NAME, id);
+		c.setVersion(1);
+		c.setPath("/"); // $TODO - really?
+		// c.setSecure(true);
+		c.setSecure(false); // since we only support HTTP; though it looks like Chrome doesn't care
+		c.setHttpOnly(true);
+		c.setSameSite(SameSiteCookies.NONE);
+		response.addCookie(c);
 
-    }
+	}
 
 }

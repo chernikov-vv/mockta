@@ -17,24 +17,26 @@
 
 package codes.vps.mockta;
 
+import java.io.IOException;
+
+import org.jose4j.jwk.JsonWebKeySet;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.jose4j.jwk.JsonWebKeySet;
-
-import java.io.IOException;
 
 public class JsonWebKeysSerializer extends JsonSerializer<JsonWebKeySet> {
 
-    @Override
-    public void serialize(JsonWebKeySet jsonWebKeySet, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+	@Override
+	public void serialize(JsonWebKeySet jsonWebKeySet, JsonGenerator jsonGenerator,
+			SerializerProvider serializerProvider) throws IOException {
 
-        jsonGenerator.writeRaw(jsonWebKeySet.toJson());
+		jsonGenerator.writeRaw(jsonWebKeySet.toJson());
 
-    }
+	}
 
-    @Override
-    public Class<JsonWebKeySet> handledType() {
-        return JsonWebKeySet.class;
-    }
+	@Override
+	public Class<JsonWebKeySet> handledType() {
+		return JsonWebKeySet.class;
+	}
 }

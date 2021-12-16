@@ -17,18 +17,19 @@
 
 package codes.vps.mockta.obj.okta;
 
-import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
+
+import lombok.Getter;
 
 // https://developer.okta.com/docs/reference/api/sessions/#idp-object
 @Getter
 public class IDP extends RepresentationModel<IDP> {
 
-    private final String id;
-    private final IDPType type;
+	private final String id;
+	private final IDPType type;
 
-    public IDP(String id, IDPType type) {
-        this.id = id;
-        this.type = type;
-    }
+	public IDP(String id, IDPType type) {
+		this.id = id;
+		this.type = type;
+	}
 }

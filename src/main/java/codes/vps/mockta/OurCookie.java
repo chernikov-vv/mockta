@@ -17,44 +17,47 @@
 
 package codes.vps.mockta;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.tomcat.util.http.SameSiteCookies;
-
 import javax.servlet.http.Cookie;
 
+import org.apache.tomcat.util.http.SameSiteCookies;
+
+import lombok.Getter;
+import lombok.Setter;
+
 public class OurCookie extends Cookie {
-    /**
-     * Constructs a cookie with a specified name and value.
-     * <p>
-     * The name must conform to RFC 2109. That means it can contain only ASCII
-     * alphanumeric characters and cannot contain commas, semicolons, or white
-     * space or begin with a $ character. The cookie's name cannot be changed
-     * after creation.
-     * <p>
-     * The value can be anything the server chooses to send. Its value is
-     * probably of interest only to the server. The cookie's value can be
-     * changed after creation with the <code>setValue</code> method.
-     * <p>
-     * By default, cookies are created according to the Netscape cookie
-     * specification. The version can be changed with the
-     * <code>setVersion</code> method.
-     *
-     * @param name  a <code>String</code> specifying the name of the cookie
-     * @param value a <code>String</code> specifying the value of the cookie
-     * @throws IllegalArgumentException if the cookie name contains illegal characters (for example,
-     *                                  a comma, space, or semicolon) or it is one of the tokens
-     *                                  reserved for use by the cookie protocol
-     * @see #setValue
-     * @see #setVersion
-     */
-    public OurCookie(String name, String value) {
-        super(name, value);
-    }
+	/**
+	 * Constructs a cookie with a specified name and value.
+	 * <p>
+	 * The name must conform to RFC 2109. That means it can contain only ASCII
+	 * alphanumeric characters and cannot contain commas, semicolons, or white space
+	 * or begin with a $ character. The cookie's name cannot be changed after
+	 * creation.
+	 * <p>
+	 * The value can be anything the server chooses to send. Its value is probably
+	 * of interest only to the server. The cookie's value can be changed after
+	 * creation with the <code>setValue</code> method.
+	 * <p>
+	 * By default, cookies are created according to the Netscape cookie
+	 * specification. The version can be changed with the <code>setVersion</code>
+	 * method.
+	 *
+	 * @param name
+	 *            a <code>String</code> specifying the name of the cookie
+	 * @param value
+	 *            a <code>String</code> specifying the value of the cookie
+	 * @throws IllegalArgumentException
+	 *             if the cookie name contains illegal characters (for example, a
+	 *             comma, space, or semicolon) or it is one of the tokens reserved
+	 *             for use by the cookie protocol
+	 * @see #setValue
+	 * @see #setVersion
+	 */
+	public OurCookie(String name, String value) {
+		super(name, value);
+	}
 
-    @Getter
-    @Setter
-    private SameSiteCookies sameSite;
-
+	@Getter
+	@Setter
+	private SameSiteCookies sameSite;
 
 }

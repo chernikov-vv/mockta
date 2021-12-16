@@ -17,39 +17,41 @@
 
 package codes.vps.mockta.obj.okta;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import org.springframework.hateoas.RepresentationModel;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.hateoas.RepresentationModel;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Getter;
+
 @Getter
 public class OAuthClient extends RepresentationModel<OAuthClient> {
 
-    @JsonProperty("client_uri")
-    private final String clientUri = null;
-    @JsonProperty("logo_uri")
-    private final String logoUri = null;
-    @JsonProperty("redirect_uris")
-    private final List<String> redirectUris;
-    @JsonProperty("response_types")
-    private final List<String> responseTypes = Arrays.asList("id_token", "token");
-    @JsonProperty("grant_types")
-    private final List<String> grantTypes = Collections.singletonList("implicit");
-    @JsonProperty("application_type")
-    private final String applicationType = "browser";
+	@JsonProperty("client_uri")
+	private final String clientUri = null;
+	@JsonProperty("logo_uri")
+	private final String logoUri = null;
+	@JsonProperty("redirect_uris")
+	private final List<String> redirectUris;
+	@JsonProperty("response_types")
+	private final List<String> responseTypes = Arrays.asList("id_token", "token");
+	@JsonProperty("grant_types")
+	private final List<String> grantTypes = Collections.singletonList("implicit");
+	@JsonProperty("application_type")
+	private final String applicationType = "browser";
 
-    @JsonProperty("wildcard_redirect")
-    private final String wildCardRedirect = "DISABLED";
+	@JsonProperty("wildcard_redirect")
+	private final String wildCardRedirect = "DISABLED";
 
-    @JsonCreator
-    public OAuthClient(List<String> redirectUris) {
-        this.redirectUris = new ArrayList<>(redirectUris);
-    }
+	@JsonCreator
+	public OAuthClient(List<String> redirectUris) {
+		this.redirectUris = new ArrayList<>(redirectUris);
+	}
 
 	public String getClientUri() {
 		return clientUri;

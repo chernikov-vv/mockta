@@ -17,6 +17,12 @@
 
 package codes.vps.mockta.db;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import codes.vps.mockta.Util;
 import codes.vps.mockta.obj.okta.App;
 import codes.vps.mockta.obj.okta.AppSettings;
@@ -25,49 +31,45 @@ import codes.vps.mockta.obj.okta.OAuthClient;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 @Getter
 @Setter
 public class OktaApp {
 
-    private final String id = Util.randomId();
-    private final Date created = new Date();
-    private final String name; // unique
-    private Date lastUpdated;
-    private String label;
-    private String profile;
-    private final Map<String, OktaAppUser> users = new ConcurrentHashMap<>();
-    private final List<String> redirectUris = new ArrayList<>();
+	private final String id = Util.randomId();
+	private final Date created = new Date();
+	private final String name; // unique
+	private Date lastUpdated;
+	private String label;
+	private String profile;
+	private final Map<String, OktaAppUser> users = new ConcurrentHashMap<>();
+	private final List<String> redirectUris = new ArrayList<>();
 
-    public OktaApp(String name) {
-        this.name = name;
-    }
+	public OktaApp(String name) {
+		this.name = name;
+	}
 
-    public OktaApp(App app) {
+	public OktaApp(App app) {
 
-        if (app.getName() == null) { throw ErrorObject.illegalArgument("need name").boom(); }
-        name = app.getName();
+		if (app.getName() == null) {
+			throw ErrorObject.illegalArgument("need name").boom();
+		}
+		name = app.getName();
 
-        label = app.getLabel();
-        lastUpdated = new Date();
-        profile = app.getProfile();
+		label = app.getLabel();
+		lastUpdated = new Date();
+		profile = app.getProfile();
 
-        Util.whenNotNull(app.getSettings(), settings->
-                Util.whenNotNull(settings.getOauthClient(), oAuthClient ->
-                        Util.whenNotNull(oAuthClient.getRedirectUris(), redirectUris::addAll)));
+		Util.whenNotNull(app.getSettings(), settings -> Util.whenNotNull(settings.getOauthClient(),
+				oAuthClient -> Util.whenNotNull(oAuthClient.getRedirectUris(), redirectUris::addAll)));
 
-    }
+	}
 
-    public App represent() {
+	public App represent() {
 
-        return new App(created, id, label, lastUpdated, name, profile, new AppSettings(new OAuthClient(redirectUris)));
+		return new App(created, id, label, lastUpdated, name, profile, users,
+				new AppSettings(new OAuthClient(redirectUris)));
 
-    }
+	}
 
 	public Date getLastUpdated() {
 		return lastUpdated;
@@ -116,5 +118,3 @@ public class OktaApp {
 	}
 
 }
-
-
