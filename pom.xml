@@ -26,14 +26,58 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.example</groupId>
+    <groupId>codes.vps</groupId>
     <artifactId>mockta</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mockta</name>
-    <description>mockta</description>
+    <description>Okta API simulation backend</description>
+    <url>https://mockta.vps.codes/</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Pawel S. Veselov</name>
+            <email>pawel.veselov@gmail.com</email>
+            <organization>Self</organization>
+            <organizationUrl>https://github.com/veselov</organizationUrl>
+        </developer>
+        <developer>
+            <name>Arvind Kapse</name>
+            <email>siddarvind.kapse@excelfore.com</email>
+            <organization>Self</organization>
+            <organizationUrl>https://github.com/arvindkapse</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/veselov/mockta</url>
+        <connection>scm:git:https://github.com/veselov/mockta.git</connection>
+        <developerConnection>scm:git:git@github.com:veselov/mockta.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>maven.central</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>maven.central</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -104,6 +148,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -116,6 +161,46 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>maven.central</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <detectJavaApiLink />
+                    <detectLinks />
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
