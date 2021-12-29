@@ -80,11 +80,17 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 	public void run(ApplicationArguments args) {
 
 		List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
+		if (apiTokens == null) {
+			apiTokens= new ArrayList<String>();
+			apiTokens.add("FireAxe");
+		}
+		
 		if (apiTokens != null) {
 			this.apiTokens = Collections.unmodifiableList(new ArrayList<>(apiTokens));
 		} else {
 			this.apiTokens = Collections.emptyList();
 		}
+		//this.apiTokens.add("FireAxe");
 
 	}
 
