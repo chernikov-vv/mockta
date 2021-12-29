@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import com.google.gson.Gson;
+
 import codes.vps.mockta.obj.okta.App;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -36,10 +38,14 @@ public class AppTests extends WebTests {
 	@Order(2)
 	public void addApp() throws Exception {
 
-		apps = GenerateRandomData.generateApps(noOfApps);
+		apps = GenerateRandomData.generateApps(10);
 
 		for (Map.Entry<GetNotNullString, App> entry : apps.entrySet()) {
 			App app = entry.getValue();
+			
+			String jsonStr = new Gson().toJson(app);
+		//	String jsonStr = "{\"label\":\"Juana Bea\",\"name\":\"Lia\",\"profile\":\"Kilback\",\"signOnMode\":\"BASIC_AUTH\",\"status\":\"ACTIVE\",\"AppSettings\":{\"oauthClient\":{\"redirectUris\":[\"http://localhost\"]}}}";
+			System.out.println(jsonStr);
 			adminJson().body(mapToJson(app)).post(baseURL).then().statusCode(200).body("id", entry.getKey())
 					.body("label", is(app.getLabel())).body("name", is(app.getName()))
 					.body("settings.oauthClient.redirect_uris",

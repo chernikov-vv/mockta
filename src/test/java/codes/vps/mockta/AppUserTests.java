@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import com.google.gson.Gson;
+
 import codes.vps.mockta.obj.okta.User;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -40,6 +42,9 @@ public class AppUserTests extends WebTests {
 
 		for (Map.Entry<GetNotNullString, User> entry : users.entrySet()) {
 			User user = entry.getValue();
+			String jsonStr = new Gson().toJson(user);
+			//	String jsonStr = "{\"label\":\"Juana Bea\",\"name\":\"Lia\",\"profile\":\"Kilback\",\"signOnMode\":\"BASIC_AUTH\",\"status\":\"ACTIVE\",\"AppSettings\":{\"oauthClient\":{\"redirectUris\":[\"http://localhost\"]}}}";
+				System.out.println(jsonStr);
 			GetNotNullString userId = entry.getKey();
 			adminJson().body(mapToJson(user)).post(baseURL).then().statusCode(200).body("id", userId)
 					.body("profile.login", is(user.getProfile().getLogin()))
