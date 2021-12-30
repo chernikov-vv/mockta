@@ -55,6 +55,7 @@ public class UserDB {
 			}
 			return new OktaUser(user);
 		});
+
 		users.put(oktaUser.getUserName(), oktaUser);
 		usersById.put(oktaUser.getId(), oktaUser);
 
