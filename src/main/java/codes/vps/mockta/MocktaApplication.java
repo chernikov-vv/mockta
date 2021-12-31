@@ -17,11 +17,10 @@
 
 package codes.vps.mockta;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
+import codes.vps.mockta.ws.okta.AuthInterceptor;
+import codes.vps.mockta.ws.okta.NoCacheInterceptor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -38,12 +37,6 @@ import org.springframework.session.MapSessionRepository;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import codes.vps.mockta.ws.okta.AuthInterceptor;
-import codes.vps.mockta.ws.okta.NoCacheInterceptor;
-import lombok.Getter;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -54,116 +47,112 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 @SpringBootApplication
 @EnableSpringHttpSession
 @EnableSwagger2
 public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
-	private final String API_KEY_OPT = "mockta.api-token";
-	@Getter
-	private List<String> apiTokens;
+    private final String API_KEY_OPT = "mockta.api-token";
+    @Getter
+    private List<String> apiTokens;
 
-	private AuthInterceptor authInterceptor;
-	private NoCacheInterceptor noCacheInterceptor;
+    private AuthInterceptor authInterceptor;
+    private NoCacheInterceptor noCacheInterceptor;
 
-	@Bean
-	// $TODO: we need to set up session expiration
-	public MapSessionRepository sessionRepository() {
-		return new MapSessionRepository(new ConcurrentHashMap<>());
-	}
+    @Bean
+    // $TODO: we need to set up session expiration
+    public MapSessionRepository sessionRepository() {
+        return new MapSessionRepository(new ConcurrentHashMap<>());
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(MocktaApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MocktaApplication.class, args);
+    }
 
-	@Override
-	public void run(ApplicationArguments args) {
+    @Override
+    public void run(ApplicationArguments args) {
 
-		List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
-		if (apiTokens == null) {
-			apiTokens= new ArrayList<String>();
-			apiTokens.add("FireAxe");
-		}
-		
-		if (apiTokens != null) {
-			this.apiTokens = Collections.unmodifiableList(new ArrayList<>(apiTokens));
-		} else {
-			this.apiTokens = Collections.emptyList();
-		}
-		//this.apiTokens.add("FireAxe");
+        List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
 
-	}
+        if (apiTokens != null) {
+            this.apiTokens = Collections.unmodifiableList(new ArrayList<>(apiTokens));
+        } else {
+            this.apiTokens = Collections.emptyList();
+        }
 
-	@Autowired
-	public void setNoCacheInterceptor(NoCacheInterceptor noCacheInterceptor) {
-		this.noCacheInterceptor = noCacheInterceptor;
-	}
+    }
 
-	@Autowired
-	public void setAuthInterceptor(AuthInterceptor authInterceptor) {
-		this.authInterceptor = authInterceptor;
-	}
+    @Autowired
+    public void setNoCacheInterceptor(NoCacheInterceptor noCacheInterceptor) {
+        this.noCacheInterceptor = noCacheInterceptor;
+    }
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authInterceptor);
-		registry.addInterceptor(noCacheInterceptor);
-	}
+    @Autowired
+    public void setAuthInterceptor(AuthInterceptor authInterceptor) {
+        this.authInterceptor = authInterceptor;
+    }
 
-	// https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
-	@Bean
-	public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-		return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
-				.serializers(new JsonWebKeysSerializer());
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authInterceptor);
+        registry.addInterceptor(noCacheInterceptor);
+    }
 
-	@Bean
-	public Docket swaggerSettings() {
-		Parameter parameter = new ParameterBuilder().name("Authorization").description("Authorization Token")
-				.modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(parameter);
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any()).build().apiInfo(apiInfo()).pathMapping("/")
-				.globalOperationParameters(parameters);
-	}
+    // https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
+                .serializers(new JsonWebKeysSerializer());
+    }
 
-	private ApiInfo apiInfo() {
-		ApiInfo apiInfo = new ApiInfo("Mock Okta ", "Mock Okta  API", "API TOS", "Terms of service", "Arvind kapse",
-				"License of API", "");
-		return apiInfo;
-	}
+    @Bean
+    public Docket swaggerSettings() {
+        Parameter parameter = new ParameterBuilder().name("Authorization").description("Authorization Token")
+                .modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+        List<Parameter> parameters = new ArrayList<>();
+        parameters.add(parameter);
+        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any()).build().apiInfo(apiInfo()).pathMapping("/")
+                .globalOperationParameters(parameters);
+    }
 
-	@Bean
-	public LinkDiscoverers discoverers() {
-		List<LinkDiscoverer> plugins = new ArrayList<>();
-		plugins.add(new CollectionJsonLinkDiscoverer());
-		return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
-	}
+    private ApiInfo apiInfo() {
+        ApiInfo apiInfo = new ApiInfo("Mock Okta ", "Mock Okta  API", "API TOS", "Terms of service", "Arvind kapse",
+                "License of API", "");
+        return apiInfo;
+    }
 
-	@Override
-	public void addFormatters(FormatterRegistry registry) {
-		registry.addConverterFactory(new EnumConverter());
-	}
+    @Bean
+    public LinkDiscoverers discoverers() {
+        List<LinkDiscoverer> plugins = new ArrayList<>();
+        plugins.add(new CollectionJsonLinkDiscoverer());
+        return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
+    }
 
-	public List<String> getApiTokens() {
-		return apiTokens;
-	}
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverterFactory(new EnumConverter());
+    }
 
-	public void setApiTokens(List<String> apiTokens) {
-		this.apiTokens = apiTokens;
-	}
+    public List<String> getApiTokens() {
+        return apiTokens;
+    }
 
-	public String getAPI_KEY_OPT() {
-		return API_KEY_OPT;
-	}
+    public void setApiTokens(List<String> apiTokens) {
+        this.apiTokens = apiTokens;
+    }
 
-	public AuthInterceptor getAuthInterceptor() {
-		return authInterceptor;
-	}
+    public AuthInterceptor getAuthInterceptor() {
+        return authInterceptor;
+    }
 
-	public NoCacheInterceptor getNoCacheInterceptor() {
-		return noCacheInterceptor;
-	}
+    public NoCacheInterceptor getNoCacheInterceptor() {
+        return noCacheInterceptor;
+    }
 
 }
