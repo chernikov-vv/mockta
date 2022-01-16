@@ -1,17 +1,24 @@
 package codes.vps.mockta;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.javafaker.Faker;
+import com.google.gson.Gson;
 
 import codes.vps.mockta.obj.okta.App;
 import codes.vps.mockta.obj.okta.AppSettings;
 import codes.vps.mockta.obj.okta.Credentials;
+import codes.vps.mockta.obj.okta.EsAppData2;
 import codes.vps.mockta.obj.okta.OAuthClient;
 import codes.vps.mockta.obj.okta.Password;
 import codes.vps.mockta.obj.okta.Profile;
+import codes.vps.mockta.obj.okta.Tenancy;
+import codes.vps.mockta.obj.okta.TenancyInfo;
 import codes.vps.mockta.obj.okta.User;
 
 public class GenerateRandomData {
@@ -45,9 +52,23 @@ public class GenerateRandomData {
 	public static User generateUser(GetNotNullString userId) {
 
 		Faker faker = new Faker();
-
-		User user = new User(new Profile(faker.internet().emailAddress(), faker.name().firstName(),
-				faker.name().lastName(), null, null),
+		ArrayList<String> roles = new ArrayList<>();
+		roles.add("role1");
+		roles.add("role2");
+		roles.add("role3");
+		roles.add("role4");
+		Tenancy tenancyInfo = new Tenancy("tenancy String", roles);
+		ArrayList<TenancyInfo> tenancylst = new ArrayList<TenancyInfo>();
+		//tenancylst.add(tenancyInfo);
+		TenancyInfo rf = new TenancyInfo(tenancyInfo);
+		tenancylst.add(rf);
+		Map<String, List<TenancyInfo>> esAppData2 = new ConcurrentHashMap<>();
+	//	EsAppData2 espAppData2 = new EsAppData2("cliendID value ", tenancylst);
+		esAppData2.put("cliendID value ", tenancylst);
+		esAppData2.put("cliendID value2 ", tenancylst);
+		User user = new User(
+				new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(), faker.name().firstName(),
+						faker.name().lastName(), null, null, esAppData2),
 				new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
 
 		return user;
@@ -59,10 +80,27 @@ public class GenerateRandomData {
 
 		HashMap<GetNotNullString, User> users = new HashMap<>();
 		for (int i = 0; i < size; i++) {
-			User user = new User(new Profile(faker.internet().emailAddress(), faker.name().firstName(),
-					faker.name().lastName(), null, null),
-					new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
+			ArrayList<String> roles = new ArrayList<>();
+			roles.add("role1");
+			roles.add("role2");
+			roles.add("role3");
+			roles.add("role4");
+			Tenancy tenancyInfo = new Tenancy("tenancy String", roles);
+			ArrayList<TenancyInfo> tenancylst = new ArrayList<TenancyInfo>();
+			//tenancylst.add(tenancyInfo);
+			TenancyInfo rf = new TenancyInfo(tenancyInfo);
+			tenancylst.add(rf);
+			Map<String, List<TenancyInfo>> esAppData2 = new ConcurrentHashMap<>();
+		//	EsAppData2 espAppData2 = new EsAppData2("cliendID value ", tenancylst);
+			esAppData2.put("cliendID value ", tenancylst);
+			esAppData2.put("cliendID value2 ", tenancylst);
 
+			User user = new User(
+					new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(),
+							faker.name().firstName(), faker.name().lastName(), null, null, esAppData2),
+					new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
+			Gson gd = new Gson();
+			 System.out.println(new Gson().toJson(user));
 			GetNotNullString appId = new GetNotNullString();
 			users.put(appId, user);
 		}

@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import codes.vps.mockta.db.OktaAppUser;
 import lombok.Getter;
@@ -56,7 +57,7 @@ public class App extends RepresentationModel<App> {
 	}
 
 	@JsonCreator
-	public App(String label, String name, String profile, AppSettings settings) {
+	public App(String label, String name, String profile, @JsonProperty("settings") AppSettings settings) {
 		this(null, null, label, null, name, profile, null, settings);
 	}
 

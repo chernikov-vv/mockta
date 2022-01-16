@@ -37,8 +37,11 @@ public class OktaUser {
 	private Date passwordChanged;
 	private String firstName;
 	private String lastName;
+	private String email;
 	private String locale;
 	private String timeZone;
+	private Profile profile;
+	private String status;
 
 	public OktaUser(User user) {
 		Profile profile = user.getProfile();
@@ -66,6 +69,9 @@ public class OktaUser {
 		lastName = Util.makeNotNull(profile.getLastName(), () -> "Doe");
 		locale = Util.makeNotNull(profile.getLocale(), () -> "en_US");
 		timeZone = Util.makeNotNull(profile.getLocale(), () -> "Pacific/Honolulu");
+		status = Util.makeNotNull(user.getStatus(), () -> "ACTIVE");
+		this.profile = profile;
+		email = Util.makeNotNull(profile.getEmail(), () -> "Dummy@test.com");
 
 		this.userName = userName;
 		setPassword(password);
@@ -74,7 +80,8 @@ public class OktaUser {
 
 	public User represent() {
 
-		return new User(id, passwordChanged, new Profile(userName, firstName, lastName, locale, timeZone));
+		return new User(id, passwordChanged,
+				new Profile(userName, email, firstName, lastName, locale, timeZone, profile.getEsAppData2()));
 
 	}
 
@@ -134,6 +141,30 @@ public class OktaUser {
 
 	public String getPassword() {
 		return password;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Profile getProfile() {
+		return profile;
+	}
+
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@Override

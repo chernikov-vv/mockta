@@ -39,6 +39,7 @@ public class User extends RepresentationModel<User> {
 	private String transitioningToStatus = null;
 	private Profile profile;
 	private Credentials credentials;
+	private String status = "ACTIVE";
 
 	public User(String id, Date passwordChanged, Profile profile) {
 		this.id = id;
@@ -131,6 +132,14 @@ public class User extends RepresentationModel<User> {
 
 	public void setCredentials(Credentials credentials) {
 		this.credentials = credentials;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

@@ -20,6 +20,7 @@ package codes.vps.mockta.obj.okta;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 
@@ -36,7 +37,7 @@ public class AppSettings extends RepresentationModel<AppSettings> {
 	private final OAuthClient oauthClient;
 
 	@JsonCreator
-	public AppSettings(OAuthClient oauthClient) {
+	public AppSettings(@JsonProperty("oauthClient") OAuthClient oauthClient) {
 		this.oauthClient = oauthClient;
 	}
 

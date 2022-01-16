@@ -102,6 +102,9 @@ public class AppsDB {
 
 	@NonNull
 	public static List<OktaApp> getAllApps() {
+		if (appsById.values().size() == 0) {
+			return null;
+		}
 
 		List<OktaApp> apps = new ArrayList<OktaApp>(appsById.values());
 		if (apps == null) {
@@ -114,7 +117,7 @@ public class AppsDB {
 	@NonNull
 	public static void display() {
 
-		System.out.println("Cal ########################################################");
+		System.out.println("Display App  ########################################################");
 
 		for (Entry<String, OktaApp> entry : apps.entrySet()) {
 			String key = entry.getKey().toString();

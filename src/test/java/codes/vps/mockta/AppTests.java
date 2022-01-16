@@ -44,8 +44,9 @@ public class AppTests extends WebTests {
 			App app = entry.getValue();
 			
 			String jsonStr = new Gson().toJson(app);
-		//	String jsonStr = "{\"label\":\"Juana Bea\",\"name\":\"Lia\",\"profile\":\"Kilback\",\"signOnMode\":\"BASIC_AUTH\",\"status\":\"ACTIVE\",\"AppSettings\":{\"oauthClient\":{\"redirectUris\":[\"http://localhost\"]}}}";
 			System.out.println(jsonStr);
+		//	String jsonStr = "{\"label\":\"Juana Bea\",\"name\":\"Lia\",\"profile\":\"Kilback\",\"signOnMode\":\"BASIC_AUTH\",\"status\":\"ACTIVE\",\"AppSettings\":{\"oauthClient\":{\"redirectUris\":[\"http://localhost\"]}}}";
+	//		System.out.println(app.getSettings().getOauthClient().getRedirectUris());
 			adminJson().body(mapToJson(app)).post(baseURL).then().statusCode(200).body("id", entry.getKey())
 					.body("label", is(app.getLabel())).body("name", is(app.getName()))
 					.body("settings.oauthClient.redirect_uris",
@@ -75,6 +76,7 @@ public class AppTests extends WebTests {
 
 		Response response = admin().get(baseURL);
 		JsonPath jsonPathEvaluator = response.jsonPath();
+		
 		List<String> labels = jsonPathEvaluator.getList("label");
 		System.out.println("Get all App");
 		for (String label : labels) {

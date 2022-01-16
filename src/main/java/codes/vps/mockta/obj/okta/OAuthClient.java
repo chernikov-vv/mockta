@@ -49,7 +49,7 @@ public class OAuthClient extends RepresentationModel<OAuthClient> {
 	private final String wildCardRedirect = "DISABLED";
 
 	@JsonCreator
-	public OAuthClient(List<String> redirectUris) {
+	public OAuthClient(@JsonProperty("redirect_uris") List<String> redirectUris) {
 		this.redirectUris = new ArrayList<>(redirectUris);
 	}
 

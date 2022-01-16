@@ -49,7 +49,7 @@ public class AuthNTests extends WebTests {
 	@Test
 	public void successfulAuth() throws Exception {
 
-		User user = new User(new Profile("test1@codes.vps", "Guy", "BlueShirt", null, null),
+		User user = new User(new Profile("test1@codes.vps","test1@codes.vps", "Guy", "BlueShirt", null, null,null),
 				new Credentials(new Password("BubbleGumIceCream")));
 		GetNotNullString userId = new GetNotNullString();
 
@@ -110,6 +110,7 @@ public class AuthNTests extends WebTests {
 			System.out.println("sessionToken in test " + sessionToken);
 			String nonce = Util.randomId();
 			String state = Util.randomId();
+			System.out.println("aRVIND " + authUrl.getRecorded());
 			URI authUri = new DefaultUriBuilderFactory().uriString(authUrl.getRecorded())
 					.queryParam("client_id", appId.getRecorded()).queryParam("nonce", nonce)
 					.queryParam("prompt", "none").queryParam("redirect_uri", "http://localhost/path")

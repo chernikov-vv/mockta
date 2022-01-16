@@ -17,7 +17,14 @@
 
 package codes.vps.mockta.obj.okta;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.hateoas.RepresentationModel;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 
@@ -25,17 +32,30 @@ import lombok.Getter;
 public class Profile extends RepresentationModel<Profile> {
 
 	private final String login;
+	private final String email;
 	private final String firstName;
 	private final String lastName;
 	private final String locale;
 	private final String timeZone;
+	@JsonProperty("esAppData2")
+	private Map<String, List<TenancyInfo>> esAppData2 = new HashMap();
 
-	public Profile(String login, String firstName, String lastName, String locale, String timeZone) {
+	public Profile(String login, String email, String firstName, String lastName, String locale, String timeZone,
+			Map<String, List<TenancyInfo>> esAppData2) {
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.locale = locale;
 		this.timeZone = timeZone;
+		this.email = email;
+		this.esAppData2 = esAppData2;
+
+	}
+
+	@JsonCreator
+	public Profile(String login, String email, String firstName, String lastName,
+			Map<String, List<TenancyInfo>> esAppData2) {
+		this(login, email, firstName, lastName, null, null, esAppData2);
 	}
 
 	public String getLogin() {
@@ -56,6 +76,10 @@ public class Profile extends RepresentationModel<Profile> {
 
 	public String getTimeZone() {
 		return timeZone;
+	}
+
+	public String getEmail() {
+		return email;
 	}
 
 }

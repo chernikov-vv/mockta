@@ -44,7 +44,7 @@ public class AppUserTests extends WebTests {
 			User user = entry.getValue();
 			String jsonStr = new Gson().toJson(user);
 			//	String jsonStr = "{\"label\":\"Juana Bea\",\"name\":\"Lia\",\"profile\":\"Kilback\",\"signOnMode\":\"BASIC_AUTH\",\"status\":\"ACTIVE\",\"AppSettings\":{\"oauthClient\":{\"redirectUris\":[\"http://localhost\"]}}}";
-				System.out.println(jsonStr);
+			//	System.out.println(jsonStr);
 			GetNotNullString userId = entry.getKey();
 			adminJson().body(mapToJson(user)).post(baseURL).then().statusCode(200).body("id", userId)
 					.body("profile.login", is(user.getProfile().getLogin()))
@@ -63,6 +63,7 @@ public class AppUserTests extends WebTests {
 			User user = entry.getValue();
 			GetNotNullString userId = entry.getKey();
 			Response response = admin().get(baseURL + "/{userId}", userId.getRecorded());
+			System.out.println("Get Arvind" + response.getBody().asString());
 			String login = response.jsonPath().getString("profile.login");
 			assertEquals(login, user.getProfile().getLogin());
 		}
@@ -75,7 +76,7 @@ public class AppUserTests extends WebTests {
 
 		Response response = admin().get(baseURL);
 		JsonPath jsonPathEvaluator = response.jsonPath();
-		System.out.println(response.getBody().asString());
+		//System.out.println("Arvind" + response.getBody().asString());
 		List<String> logins = jsonPathEvaluator.getList("userName");
 		System.out.println("Get all Users");
 		for (String login : logins) {
