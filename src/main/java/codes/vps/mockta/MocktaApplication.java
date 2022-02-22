@@ -74,6 +74,8 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 	}
 
 	public static void main(String[] args) {
+
+
 		SpringApplication.run(MocktaApplication.class, args);
 	}
 
@@ -95,6 +97,7 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 		} else {
 			this.apiTokens = Collections.emptyList();
 		}
+		 
 
 	}
 
@@ -110,7 +113,7 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authInterceptor);
+		registry.addInterceptor(authInterceptor).excludePathPatterns("/api/v1/auth","/.well-known/openid-configuration","/oauth2/v1/keys","/oauth2/v1/authorize");
 		registry.addInterceptor(noCacheInterceptor);
 	}
 

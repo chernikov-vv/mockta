@@ -58,14 +58,15 @@ public class GenerateRandomData {
 		roles.add("role3");
 		roles.add("role4");
 		Tenancy tenancyInfo = new Tenancy("tenancy String", roles);
-		ArrayList<TenancyInfo> tenancylst = new ArrayList<TenancyInfo>();
+		ArrayList<Tenancy> tenancylst = new ArrayList<Tenancy>();
+		tenancylst.add(tenancyInfo);
 		//tenancylst.add(tenancyInfo);
-		TenancyInfo rf = new TenancyInfo(tenancyInfo);
-		tenancylst.add(rf);
-		Map<String, List<TenancyInfo>> esAppData2 = new ConcurrentHashMap<>();
+		TenancyInfo rf = new TenancyInfo(tenancylst);
+	
+		Map<String, TenancyInfo> esAppData2 = new ConcurrentHashMap<>();
 	//	EsAppData2 espAppData2 = new EsAppData2("cliendID value ", tenancylst);
-		esAppData2.put("cliendID value ", tenancylst);
-		esAppData2.put("cliendID value2 ", tenancylst);
+		esAppData2.put("cliendID value ", rf);
+		esAppData2.put("cliendID value2 ", rf);
 		User user = new User(
 				new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(), faker.name().firstName(),
 						faker.name().lastName(), null, null, esAppData2),
@@ -86,14 +87,15 @@ public class GenerateRandomData {
 			roles.add("role3");
 			roles.add("role4");
 			Tenancy tenancyInfo = new Tenancy("tenancy String", roles);
-			ArrayList<TenancyInfo> tenancylst = new ArrayList<TenancyInfo>();
+			ArrayList<Tenancy> tenancylst = new ArrayList<Tenancy>();
+			tenancylst.add(tenancyInfo);
 			//tenancylst.add(tenancyInfo);
-			TenancyInfo rf = new TenancyInfo(tenancyInfo);
-			tenancylst.add(rf);
-			Map<String, List<TenancyInfo>> esAppData2 = new ConcurrentHashMap<>();
+			TenancyInfo rf = new TenancyInfo(tenancylst);
+		
+			Map<String, TenancyInfo> esAppData2 = new ConcurrentHashMap<>();
 		//	EsAppData2 espAppData2 = new EsAppData2("cliendID value ", tenancylst);
-			esAppData2.put("cliendID value ", tenancylst);
-			esAppData2.put("cliendID value2 ", tenancylst);
+			esAppData2.put("cliendID value ", rf);
+			esAppData2.put("cliendID value2 ", rf);
 
 			User user = new User(
 					new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(),

@@ -107,7 +107,7 @@ public class AuthNTests extends WebTests {
 			userJson().body(mapToJson(pa)).post("/api/v1/authn").then().statusCode(200)
 					.body("expiresAt", notNullValue()).body("status", is("SUCCESS")).body("sessionToken", sessionToken);
 			// $TODO: check HAL object(s)
-			System.out.println("sessionToken in test " + sessionToken);
+			System.out.println("sessionToken in test " + sessionToken.getRecorded());
 			String nonce = Util.randomId();
 			String state = Util.randomId();
 			System.out.println("aRVIND " + authUrl.getRecorded());

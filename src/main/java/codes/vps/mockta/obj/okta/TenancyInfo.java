@@ -1,20 +1,22 @@
 package codes.vps.mockta.obj.okta;
 
+import java.util.List;
+
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TenancyInfo extends RepresentationModel<TenancyInfo> {
-	private final Tenancy tenancyInfo;
+	private final List<Tenancy> tenancyInfo;
 
 	@JsonCreator
-	public TenancyInfo(@JsonProperty("tenancyinfo") Tenancy tenancyInfo) {
+	public TenancyInfo(@JsonProperty("tenancyinfo") List<Tenancy> tenancys) {
 		super();
-		this.tenancyInfo = tenancyInfo;
+		this.tenancyInfo = tenancys;
 	}
 
-	public Tenancy getTenancyInfo() {
+	public List<Tenancy> getTenancyInfo() {
 		return tenancyInfo;
 	}
 

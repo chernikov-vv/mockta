@@ -38,10 +38,10 @@ public class Profile extends RepresentationModel<Profile> {
 	private final String locale;
 	private final String timeZone;
 	@JsonProperty("esAppData2")
-	private Map<String, List<TenancyInfo>> esAppData2 = new HashMap();
+	private Map<String,TenancyInfo> esAppData2 = new HashMap();
 
 	public Profile(String login, String email, String firstName, String lastName, String locale, String timeZone,
-			Map<String, List<TenancyInfo>> esAppData2) {
+			Map<String, TenancyInfo> esAppData2) {
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -54,7 +54,7 @@ public class Profile extends RepresentationModel<Profile> {
 
 	@JsonCreator
 	public Profile(String login, String email, String firstName, String lastName,
-			Map<String, List<TenancyInfo>> esAppData2) {
+			Map<String, TenancyInfo> esAppData2) {
 		this(login, email, firstName, lastName, null, null, esAppData2);
 	}
 
@@ -80,6 +80,14 @@ public class Profile extends RepresentationModel<Profile> {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public Map<String, TenancyInfo> getEsAppData2() {
+		return esAppData2;
+	}
+
+	public void setEsAppData2(Map<String, TenancyInfo> esAppData2) {
+		this.esAppData2 = esAppData2;
 	}
 
 }

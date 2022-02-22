@@ -37,7 +37,7 @@ import lombok.Setter;
 @Getter
 public class OktaSession implements Serializable {
 
-	public final static String COOKIE_NAME = "sid"; // what Okta uses
+	public final static String COOKIE_NAME = "xl4.sso.okta.mockta.sid.v2"; // what Okta uses
 
 	private final String id;
 	private final String userId;
@@ -82,5 +82,6 @@ public class OktaSession implements Serializable {
 		response.addCookie(c);
 
 	}
+
 
 }

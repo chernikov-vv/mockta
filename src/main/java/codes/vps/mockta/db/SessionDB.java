@@ -60,8 +60,14 @@ public class SessionDB {
 
 	@NonNull
 	public static OktaSession getByCookie(String sid) {
-		return foundSession(sessionsByID.get(sid), "session " + sid);
+		OktaSession session = sessionsByID.get(sid);
+		if(session==null) {
+			session=sessionsByToken.get(sid);
+		}
+		return foundSession(session, "session " + sid);
 	}
+	
+	
 
 	public static void remove(OktaSession session) {
 
