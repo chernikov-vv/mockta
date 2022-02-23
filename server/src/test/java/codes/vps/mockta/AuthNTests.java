@@ -7,7 +7,7 @@ import codes.vps.mockta.obj.okta.AppUser;
 import codes.vps.mockta.obj.okta.Credentials;
 import codes.vps.mockta.obj.okta.OAuthClient;
 import codes.vps.mockta.obj.okta.Password;
-import codes.vps.mockta.obj.okta.PrimaryAuthentication;
+import codes.vps.mockta.model.PrimaryAuthentication;
 import codes.vps.mockta.obj.okta.Profile;
 import codes.vps.mockta.obj.okta.User;
 import jdk.nashorn.api.scripting.AbstractJSObject;
@@ -110,7 +110,6 @@ public class AuthNTests extends WebTests {
 			System.out.println("sessionToken in test " + sessionToken.getRecorded());
 			String nonce = Util.randomId();
 			String state = Util.randomId();
-			System.out.println("aRVIND " + authUrl.getRecorded());
 			URI authUri = new DefaultUriBuilderFactory().uriString(authUrl.getRecorded())
 					.queryParam("client_id", appId.getRecorded()).queryParam("nonce", nonce)
 					.queryParam("prompt", "none").queryParam("redirect_uri", "http://localhost/path")
@@ -118,7 +117,7 @@ public class AuthNTests extends WebTests {
 					.queryParam("sessionToken", sessionToken.getRecorded()).queryParam("state", state)
 					.queryParam("scope", "openid email").build();
 
-			System.out.println(authUri.toString());
+			System.out.println(authUri);
 			// String content =
 			// saveCookies(userHtml().get(authUri).then().statusCode(200)).extract().body().asString();
 

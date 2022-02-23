@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.javafaker.Faker;
@@ -13,7 +12,6 @@ import com.google.gson.Gson;
 import codes.vps.mockta.obj.okta.App;
 import codes.vps.mockta.obj.okta.AppSettings;
 import codes.vps.mockta.obj.okta.Credentials;
-import codes.vps.mockta.obj.okta.EsAppData2;
 import codes.vps.mockta.obj.okta.OAuthClient;
 import codes.vps.mockta.obj.okta.Password;
 import codes.vps.mockta.obj.okta.Profile;

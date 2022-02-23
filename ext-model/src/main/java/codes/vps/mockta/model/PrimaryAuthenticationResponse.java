@@ -15,22 +15,21 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Date;
 
 import lombok.Getter;
 
-// https://developer.okta.com/docs/reference/api/authn/#options-object
 @Getter
-public class Options {
+public class PrimaryAuthenticationResponse {
 
-	private final boolean multiOptionalFactorEnroll;
-	private final boolean warnBeforePasswordExpired;
+	private final Date expiresAt;
+	private final String status = "SUCCESS"; // what else can be here?
+	private final String sessionToken;
 
-	@JsonCreator
-	public Options(boolean multiOptionalFactorEnroll, boolean warnBeforePasswordExpired) {
-		this.multiOptionalFactorEnroll = multiOptionalFactorEnroll;
-		this.warnBeforePasswordExpired = warnBeforePasswordExpired;
+	public PrimaryAuthenticationResponse(Date expiresAt, String sessionToken) {
+		this.expiresAt = expiresAt;
+		this.sessionToken = sessionToken;
 	}
 }
