@@ -47,19 +47,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import codes.vps.mockta.ws.okta.AuthInterceptor;
 import codes.vps.mockta.ws.okta.NoCacheInterceptor;
 import lombok.Getter;
-import springfox.documentation.builders.ParameterBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.schema.ModelRef;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Parameter;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSpringHttpSession
-@EnableSwagger2
 public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
 	Logger logger = LoggerFactory.getLogger(MocktaApplication.class);
@@ -125,23 +115,6 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 	public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
 		return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
 				.serializers(new JsonWebKeysSerializer());
-	}
-
-	@Bean
-	public Docket swaggerSettings() {
-		Parameter parameter = new ParameterBuilder().name("Authorization").description("Authorization Token")
-				.modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-		List<Parameter> parameters = new ArrayList<>();
-		parameters.add(parameter);
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any()).build().apiInfo(apiInfo()).pathMapping("/")
-				.globalOperationParameters(parameters);
-	}
-
-	private ApiInfo apiInfo() {
-		ApiInfo apiInfo = new ApiInfo("Mock Okta ", "Mock Okta  API", "API TOS", "Terms of service", "Arvind kapse",
-				"License of API", "");
-		return apiInfo;
 	}
 
 	@Bean

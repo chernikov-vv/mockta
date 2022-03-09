@@ -25,7 +25,6 @@ import codes.vps.mockta.obj.okta.Password;
 import codes.vps.mockta.obj.okta.Profile;
 import codes.vps.mockta.obj.okta.User;
 import com.github.javafaker.Faker;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,7 +89,6 @@ public class GenerateRandomData {
 					new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(),
 							faker.name().firstName(), faker.name().lastName(), null, null),
 					new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
-			 System.out.println(new Gson().toJson(user));
 			GetNotNullString appId = new GetNotNullString();
 			users.put(appId, user);
 		}
