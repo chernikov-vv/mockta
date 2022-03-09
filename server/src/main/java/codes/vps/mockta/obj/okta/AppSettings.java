@@ -34,15 +34,11 @@ import lombok.Getter;
 @Getter
 public class AppSettings extends RepresentationModel<AppSettings> {
 
-	private final OAuthClient oauthClient;
+    private final OAuthClient oauthClient;
 
-	@JsonCreator
-	public AppSettings(@JsonProperty("oauthClient") OAuthClient oauthClient) {
-		this.oauthClient = oauthClient;
-	}
-
-	public OAuthClient getOauthClient() {
-		return oauthClient;
-	}
+    @JsonCreator
+    public AppSettings(@JsonProperty("oauthClient") OAuthClient oauthClient) {
+        this.oauthClient = oauthClient;
+    }
 
 }

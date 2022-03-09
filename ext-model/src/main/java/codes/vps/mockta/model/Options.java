@@ -18,19 +18,18 @@
 package codes.vps.mockta.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import lombok.Getter;
 
 // https://developer.okta.com/docs/reference/api/authn/#options-object
 @Getter
 public class Options {
 
-	private final boolean multiOptionalFactorEnroll;
-	private final boolean warnBeforePasswordExpired;
+    private final boolean multiOptionalFactorEnroll;
+    private final boolean warnBeforePasswordExpired;
 
-	@JsonCreator
-	public Options(boolean multiOptionalFactorEnroll, boolean warnBeforePasswordExpired) {
-		this.multiOptionalFactorEnroll = multiOptionalFactorEnroll;
-		this.warnBeforePasswordExpired = warnBeforePasswordExpired;
-	}
+    @JsonCreator
+    public Options(boolean multiOptionalFactorEnroll, boolean warnBeforePasswordExpired) {
+        this.multiOptionalFactorEnroll = multiOptionalFactorEnroll;
+        this.warnBeforePasswordExpired = warnBeforePasswordExpired;
+    }
 }

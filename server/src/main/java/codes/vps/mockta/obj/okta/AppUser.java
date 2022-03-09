@@ -17,58 +17,36 @@
 
 package codes.vps.mockta.obj.okta;
 
-import java.util.Date;
-import java.util.Map;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import lombok.Getter;
+import java.util.Date;
+import java.util.Map;
 
 // https://developer.okta.com/docs/reference/api/apps/#application-user-object
 
 @Getter
 public class AppUser extends RepresentationModel<AppUser> {
 
-	private final Date created;
-	private final String id; // actually user's ID
-	private final Date lastUpdated;
-	private final Map<String, String> profile;
-	private final String status = "ACTIVE";
-	private final Date statusChanges;
+    private final Date created;
+    private final String id; // actually user's ID
+    private final Date lastUpdated;
+    private final Map<String, String> profile;
+    private final String status = "ACTIVE";
+    private final Date statusChanges;
 
-	public AppUser(Date created, String id, Date lastUpdated, Map<String, String> profile, Date statusChanges) {
-		this.created = created;
-		this.id = id;
-		this.lastUpdated = lastUpdated;
-		this.profile = profile;
-		this.statusChanges = statusChanges;
-	}
+    public AppUser(Date created, String id, Date lastUpdated, Map<String, String> profile, Date statusChanges) {
+        this.created = created;
+        this.id = id;
+        this.lastUpdated = lastUpdated;
+        this.profile = profile;
+        this.statusChanges = statusChanges;
+    }
 
-	@JsonCreator
-	public AppUser(String id, Map<String, String> profile) {
-		this(null, id, null, profile, null);
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
-
-	public Map<String, String> getProfile() {
-		return profile;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public Date getStatusChanges() {
-		return statusChanges;
-	}
+    @JsonCreator
+    public AppUser(String id, Map<String, String> profile) {
+        this(null, id, null, profile, null);
+    }
 
 }

@@ -17,12 +17,20 @@
 
 package codes.vps.mockta.ws.okta;
 
-import java.net.URI;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import codes.vps.mockta.Util;
+import codes.vps.mockta.db.AppsDB;
+import codes.vps.mockta.db.IDPDB;
+import codes.vps.mockta.db.KeysDB;
+import codes.vps.mockta.db.OktaApp;
+import codes.vps.mockta.db.OktaAppUser;
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.OktaUser;
+import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.db.UserDB;
+import codes.vps.mockta.obj.model.AuthInfo;
+import codes.vps.mockta.obj.okta.ErrorObject;
+import codes.vps.mockta.obj.okta.OpenIDMetaData;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -40,21 +48,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import codes.vps.mockta.Util;
-import codes.vps.mockta.db.AppsDB;
-import codes.vps.mockta.db.IDPDB;
-import codes.vps.mockta.db.KeysDB;
-import codes.vps.mockta.db.OktaApp;
-import codes.vps.mockta.db.OktaAppUser;
-import codes.vps.mockta.db.OktaSession;
-import codes.vps.mockta.db.OktaUser;
-import codes.vps.mockta.db.SessionDB;
-import codes.vps.mockta.db.UserDB;
-import codes.vps.mockta.obj.model.AuthInfo;
-import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.obj.okta.OpenIDMetaData;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.util.Objects;
 
 @Controller
 @RequestMapping(path = { "/oauth2/v1/authorize", "/oauth2/{authServer}/v1/authorize" })

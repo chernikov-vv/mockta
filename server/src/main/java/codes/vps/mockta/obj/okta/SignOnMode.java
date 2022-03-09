@@ -19,7 +19,9 @@ package codes.vps.mockta.obj.okta;
 
 public enum SignOnMode {
 
-	AUTO_LOGIN, BASIC_AUTH, BOOKMARK,
-	// ...
+    AUTO_LOGIN,
+    BASIC_AUTH,
+    BOOKMARK,
+    // ...
 
 }

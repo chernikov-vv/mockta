@@ -42,67 +42,61 @@ import codes.vps.mockta.obj.okta.ErrorObject;
 @RequestMapping("/api/v1/apps")
 public class AppsController implements AdminService {
 
-	@PostMapping
-	public ResponseEntity<App> addApplication(@RequestBody App app) {
-		return ResponseEntity.ok(AppsDB.addApp(app).represent());
-	}
+    @PostMapping
+    public ResponseEntity<App> addApplication(@RequestBody App app) {
+        return ResponseEntity.ok(AppsDB.addApp(app).represent());
+    }
 
-	@RequestMapping(value = "/{appId}", method = RequestMethod.GET)
-	public ResponseEntity<App> getApplication(@PathVariable String appId) {
-		return ResponseEntity.ok(AppsDB.getApp(appId).represent());
-	}
+    @RequestMapping(value = "/{appId}", method = RequestMethod.GET)
+    public ResponseEntity<App> getApplication(@PathVariable String appId) {
+        return ResponseEntity.ok(AppsDB.getApp(appId).represent());
+    }
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	public ResponseEntity<List<OktaApp>> getAllApplication() {
-		return ResponseEntity.ok(AppsDB.getAllApps());
-	}
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<List<OktaApp>> getAllApplication() {
+        return ResponseEntity.ok(AppsDB.getAllApps());
+    }
 
-	@RequestMapping(value = "/display", method = RequestMethod.GET)
-	public ResponseEntity<List<OktaApp>> displayApps() {
-		AppsDB.display();
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
+    @DeleteMapping(value = "/{appId}")
+    public ResponseEntity<String> deleteApplication(@PathVariable String appId) {
 
-	@DeleteMapping(value = "/{appId}")
-	public ResponseEntity deleteApplication(@PathVariable String appId) {
+        boolean isRemoved = AppsDB.deleteApp(appId);
+        if (isRemoved) {
+            return new ResponseEntity<>(appId, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
-		boolean isRemoved = AppsDB.deleteApp(appId);
-		if (isRemoved) {
-			return new ResponseEntity<>(appId, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-	}
+    @DeleteMapping(value = "")
+    public ResponseEntity<?> deleteAllApplication() {
 
-	@DeleteMapping(value = "")
-	public ResponseEntity deleteAllApplication() {
+        boolean isRemoved = AppsDB.deleteAllApp();
+        if (isRemoved) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
-		boolean isRemoved = AppsDB.deleteAllApp();
-		if (isRemoved) {
-			return new ResponseEntity<>(HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-	}
+    @PostMapping("{appId}/users")
+    public ResponseEntity<AppUser> assignUser(@PathVariable String appId, @RequestBody AppUser appUser) {
 
-	@PostMapping("{appId}/users")
-	public ResponseEntity<AppUser> assignUser(@PathVariable String appId, @RequestBody AppUser appUser) {
+        OktaApp app = AppsDB.getApp(appId);
+        OktaUser user = UserDB.getUser(appUser.getId());
 
-		OktaApp app = AppsDB.getApp(appId);
-		OktaUser user = UserDB.getUser(appUser.getId());
+        AppUser ret = app.getUsers().compute(user.getId(), (k, v) -> {
+            if (v != null) {
+                throw ErrorObject.duplicate("app user registration " + k).boom();
+            }
+            return new OktaAppUser(user, appUser);
 
-		AppUser ret = app.getUsers().compute(user.getId(), (k, v) -> {
-			if (v != null) {
-				throw ErrorObject.duplicate("app user registration " + k).boom();
-			}
-			return new OktaAppUser(user, appUser);
+        }).represent();
+        app.getUsers().put(user.getId(), new OktaAppUser(user, appUser));
+        AppsDB.updateApp(app);
+        // return pau;
+        return ResponseEntity.ok(ret);
 
-		}).represent();
-		app.getUsers().put(user.getId(), new OktaAppUser(user, appUser));
-		AppsDB.updateApp(app);
-		// return pau;
-		return ResponseEntity.ok(ret);
-
-	}
+    }
 
 }

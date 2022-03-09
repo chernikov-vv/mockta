@@ -81,7 +81,7 @@ public class OktaUser {
 	public User represent() {
 
 		return new User(id, passwordChanged,
-				new Profile(userName, email, firstName, lastName, locale, timeZone, profile.getEsAppData2()));
+				new Profile(userName, email, firstName, lastName, locale, timeZone));
 
 	}
 
@@ -89,82 +89,6 @@ public class OktaUser {
 		this.password = password;
 		this.passwordChanged = new Date();
 		return this;
-	}
-
-	public Date getPasswordChanged() {
-		return passwordChanged;
-	}
-
-	public void setPasswordChanged(Date passwordChanged) {
-		this.passwordChanged = passwordChanged;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getLocale() {
-		return locale;
-	}
-
-	public void setLocale(String locale) {
-		this.locale = locale;
-	}
-
-	public String getTimeZone() {
-		return timeZone;
-	}
-
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public Profile getProfile() {
-		return profile;
-	}
-
-	public void setProfile(Profile profile) {
-		this.profile = profile;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	@Override

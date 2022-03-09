@@ -17,15 +17,9 @@
 
 package codes.vps.mockta.obj.okta;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.hateoas.RepresentationModel;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Getter;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 public class Profile extends RepresentationModel<Profile> {
@@ -36,57 +30,20 @@ public class Profile extends RepresentationModel<Profile> {
 	private final String lastName;
 	private final String locale;
 	private final String timeZone;
-	@JsonProperty("esAppData2")
-	private Map<String,TenancyInfo> esAppData2 = new HashMap();
 
-	public Profile(String login, String email, String firstName, String lastName, String locale, String timeZone,
-			Map<String, TenancyInfo> esAppData2) {
+	public Profile(String login, String email, String firstName, String lastName, String locale, String timeZone) {
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.locale = locale;
 		this.timeZone = timeZone;
 		this.email = email;
-		this.esAppData2 = esAppData2;
 
 	}
 
 	@JsonCreator
-	public Profile(String login, String email, String firstName, String lastName,
-			Map<String, TenancyInfo> esAppData2) {
-		this(login, email, firstName, lastName, null, null, esAppData2);
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public String getLocale() {
-		return locale;
-	}
-
-	public String getTimeZone() {
-		return timeZone;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public Map<String, TenancyInfo> getEsAppData2() {
-		return esAppData2;
-	}
-
-	public void setEsAppData2(Map<String, TenancyInfo> esAppData2) {
-		this.esAppData2 = esAppData2;
+	public Profile(String login, String email, String firstName, String lastName) {
+		this(login, email, firstName, lastName, null, null);
 	}
 
 }

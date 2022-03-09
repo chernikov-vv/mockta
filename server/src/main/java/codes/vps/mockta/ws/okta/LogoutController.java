@@ -17,12 +17,9 @@
 
 package codes.vps.mockta.ws.okta;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.obj.okta.ErrorObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 
-import codes.vps.mockta.db.OktaSession;
-import codes.vps.mockta.db.SessionDB;
-import codes.vps.mockta.obj.okta.ErrorObject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLDecoder;
 
 @RestController
 @RequestMapping(path = { "/oauth2/v1/logout", "/oauth2/{authServer}/v1/logout" })

@@ -17,46 +17,46 @@
 
 package codes.vps.mockta;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 import org.apache.tomcat.util.http.SameSiteCookies;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 // https://linuxtut.com/en/0a2aca650721626055a3/
 @Component
 public class CookieEnhancer implements TomcatContextCustomizer {
 
-	@Override
-	public void customize(Context context) {
+    @Override
+    public void customize(Context context) {
 
-		context.setCookieProcessor(new Rfc6265CookieProcessor() {
+        context.setCookieProcessor(new Rfc6265CookieProcessor() {
 
-			ThreadLocal<Cookie> cookie = new ThreadLocal<>();
+            final ThreadLocal<Cookie> cookie = new ThreadLocal<>();
 
-			@Override
-			public String generateHeader(Cookie cookie, HttpServletRequest request) {
-				try {
-					this.cookie.set(cookie);
-					return super.generateHeader(cookie, request);
-				} finally {
-					this.cookie.remove();
-				}
-			}
+            @Override
+            public String generateHeader(Cookie cookie, HttpServletRequest request) {
+                try {
+                    this.cookie.set(cookie);
+                    return super.generateHeader(cookie, request);
+                } finally {
+                    this.cookie.remove();
+                }
+            }
 
-			@Override
-			public SameSiteCookies getSameSiteCookies() {
-				Cookie c = this.cookie.get();
-				if (c instanceof OurCookie) {
-					return ((OurCookie) c).getSameSite();
-				}
-				return super.getSameSiteCookies();
-			}
-		});
+            @Override
+            public SameSiteCookies getSameSiteCookies() {
+                Cookie c = this.cookie.get();
+                if (c instanceof OurCookie) {
+                    return ((OurCookie) c).getSameSite();
+                }
+                return super.getSameSiteCookies();
+            }
+        });
 
-	}
+    }
 
 }

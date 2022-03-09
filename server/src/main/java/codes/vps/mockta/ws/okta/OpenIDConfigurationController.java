@@ -17,16 +17,15 @@
 
 package codes.vps.mockta.ws.okta;
 
-import javax.servlet.http.HttpServletRequest;
-
+import codes.vps.mockta.db.KeysDB;
+import codes.vps.mockta.obj.okta.OpenIDMetaData;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import codes.vps.mockta.db.KeysDB;
-import codes.vps.mockta.obj.okta.OpenIDMetaData;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController()
 public class OpenIDConfigurationController {

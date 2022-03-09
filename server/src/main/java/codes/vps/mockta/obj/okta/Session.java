@@ -17,38 +17,37 @@
 
 package codes.vps.mockta.obj.okta;
 
-import java.util.Date;
-import java.util.List;
-
+import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 
-import lombok.Getter;
+import java.util.Date;
+import java.util.List;
 
 // https://developer.okta.com/docs/reference/api/sessions/#session-properties
 @Getter
 public class Session extends RepresentationModel<Session> {
 
-	private final String id;
-	private final String login;
-	private final String userId;
-	private final Date expiresAt;
-	private final SessionStatus status;
-	private final Date lastPasswordVerification;
-	private final Date lastFactorVerification;
-	private final List<AMR> amr;
-	private final IDP idp;
-	private final boolean mfaActive = false;
+    private final String id;
+    private final String login;
+    private final String userId;
+    private final Date expiresAt;
+    private final SessionStatus status;
+    private final Date lastPasswordVerification;
+    private final Date lastFactorVerification;
+    private final List<AMR> amr;
+    private final IDP idp;
+    private final boolean mfaActive = false;
 
-	public Session(String id, String login, String userId, Date expiresAt, SessionStatus status,
-			Date lastPasswordVerification, Date lastFactorVerification, List<AMR> amr, IDP idp) {
-		this.id = id;
-		this.login = login;
-		this.userId = userId;
-		this.expiresAt = expiresAt;
-		this.status = status;
-		this.lastPasswordVerification = lastPasswordVerification;
-		this.lastFactorVerification = lastFactorVerification;
-		this.amr = amr;
-		this.idp = idp;
-	}
+    public Session(String id, String login, String userId, Date expiresAt, SessionStatus status,
+                   Date lastPasswordVerification, Date lastFactorVerification, List<AMR> amr, IDP idp) {
+        this.id = id;
+        this.login = login;
+        this.userId = userId;
+        this.expiresAt = expiresAt;
+        this.status = status;
+        this.lastPasswordVerification = lastPasswordVerification;
+        this.lastFactorVerification = lastFactorVerification;
+        this.amr = amr;
+        this.idp = idp;
+    }
 }

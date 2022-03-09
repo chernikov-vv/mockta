@@ -1,23 +1,19 @@
 package codes.vps.mockta;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.github.javafaker.Faker;
-import com.google.gson.Gson;
-
 import codes.vps.mockta.obj.okta.App;
 import codes.vps.mockta.obj.okta.AppSettings;
 import codes.vps.mockta.obj.okta.Credentials;
 import codes.vps.mockta.obj.okta.OAuthClient;
 import codes.vps.mockta.obj.okta.Password;
 import codes.vps.mockta.obj.okta.Profile;
-import codes.vps.mockta.obj.okta.Tenancy;
-import codes.vps.mockta.obj.okta.TenancyInfo;
 import codes.vps.mockta.obj.okta.User;
+import com.github.javafaker.Faker;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GenerateRandomData {
 
@@ -37,17 +33,15 @@ public class GenerateRandomData {
 		return apps;
 	}
 
-	public static App generateApp(GetNotNullString appId) {
+	public static App generateApp() {
 
 		Faker faker = new Faker();
 
-		App app = new App(faker.funnyName().name(), faker.name().firstName(), faker.name().lastName(),
+		return new App(faker.funnyName().name(), faker.name().firstName(), faker.name().lastName(),
 				new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
-
-		return app;
 	}
 
-	public static User generateUser(GetNotNullString userId) {
+	public static User generateUser() {
 
 		Faker faker = new Faker();
 		ArrayList<String> roles = new ArrayList<>();
@@ -55,22 +49,12 @@ public class GenerateRandomData {
 		roles.add("role2");
 		roles.add("role3");
 		roles.add("role4");
-		Tenancy tenancyInfo = new Tenancy("tenancy String", roles);
-		ArrayList<Tenancy> tenancylst = new ArrayList<Tenancy>();
-		tenancylst.add(tenancyInfo);
 		//tenancylst.add(tenancyInfo);
-		TenancyInfo rf = new TenancyInfo(tenancylst);
-	
-		Map<String, TenancyInfo> esAppData2 = new ConcurrentHashMap<>();
-	//	EsAppData2 espAppData2 = new EsAppData2("cliendID value ", tenancylst);
-		esAppData2.put("cliendID value ", rf);
-		esAppData2.put("cliendID value2 ", rf);
-		User user = new User(
-				new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(), faker.name().firstName(),
-						faker.name().lastName(), null, null, esAppData2),
-				new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
 
-		return user;
+		return new User(
+				new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(), faker.name().firstName(),
+						faker.name().lastName(), null, null),
+				new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
 	}
 
 	public static Map<GetNotNullString, User> generateUsers(int size) {
@@ -84,22 +68,11 @@ public class GenerateRandomData {
 			roles.add("role2");
 			roles.add("role3");
 			roles.add("role4");
-			Tenancy tenancyInfo = new Tenancy("tenancy String", roles);
-			ArrayList<Tenancy> tenancylst = new ArrayList<Tenancy>();
-			tenancylst.add(tenancyInfo);
-			//tenancylst.add(tenancyInfo);
-			TenancyInfo rf = new TenancyInfo(tenancylst);
-		
-			Map<String, TenancyInfo> esAppData2 = new ConcurrentHashMap<>();
-		//	EsAppData2 espAppData2 = new EsAppData2("cliendID value ", tenancylst);
-			esAppData2.put("cliendID value ", rf);
-			esAppData2.put("cliendID value2 ", rf);
 
 			User user = new User(
 					new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(),
-							faker.name().firstName(), faker.name().lastName(), null, null, esAppData2),
+							faker.name().firstName(), faker.name().lastName(), null, null),
 					new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
-			Gson gd = new Gson();
 			 System.out.println(new Gson().toJson(user));
 			GetNotNullString appId = new GetNotNullString();
 			users.put(appId, user);

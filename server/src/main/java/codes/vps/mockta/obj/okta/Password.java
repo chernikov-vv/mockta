@@ -31,8 +31,4 @@ public class Password {
 		this.value = value;
 	}
 
-	public String getValue() {
-		return value;
-	}
-
 }

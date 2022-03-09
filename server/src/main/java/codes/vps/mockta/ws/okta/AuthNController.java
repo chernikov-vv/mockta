@@ -17,6 +17,13 @@
 
 package codes.vps.mockta.ws.okta;
 
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.OktaUser;
+import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.db.UserDB;
+import codes.vps.mockta.model.PrimaryAuthentication;
+import codes.vps.mockta.model.PrimaryAuthenticationResponse;
+import codes.vps.mockta.obj.okta.User;
 import org.springframework.hateoas.LinkRelation;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -28,31 +35,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import codes.vps.mockta.db.OktaSession;
-import codes.vps.mockta.db.OktaUser;
-import codes.vps.mockta.db.SessionDB;
-import codes.vps.mockta.db.UserDB;
-import codes.vps.mockta.model.PrimaryAuthentication;
-import codes.vps.mockta.model.PrimaryAuthenticationResponse;
-import codes.vps.mockta.obj.okta.User;
-
 @RestController
 @RequestMapping("/api/v1/authn")
 public class AuthNController {
 
-	@PostMapping
-	public HttpEntity<?> post(@RequestBody PrimaryAuthentication authN) {
+    @PostMapping
+    public HttpEntity<?> post(@RequestBody PrimaryAuthentication authN) {
 
-		OktaUser user = UserDB.authenticate(authN.getUsername(), authN.getPassword());
+        OktaUser user = UserDB.authenticate(authN.getUsername(), authN.getPassword());
 
-		OktaSession session = SessionDB.createSession(user);
+        OktaSession session = SessionDB.createSession(user);
 
-		PrimaryAuthenticationResponse obj = new PrimaryAuthenticationResponse(session.getExpires(), session.getToken());
-		RepresentationModel<User> model = HalModelBuilder.halModelOf(obj)
-				.embed(user.represent(), LinkRelation.of("user")).build();
+        PrimaryAuthenticationResponse obj = new PrimaryAuthenticationResponse(session.getExpires(), session.getToken());
+        RepresentationModel<User> model = HalModelBuilder.halModelOf(obj)
+                .embed(user.represent(), LinkRelation.of("user")).build();
 
-		return new ResponseEntity<>(model, HttpStatus.OK);
+        return new ResponseEntity<>(model, HttpStatus.OK);
 
-	}
+    }
 
 }

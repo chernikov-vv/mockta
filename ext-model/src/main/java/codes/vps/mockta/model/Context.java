@@ -18,17 +18,16 @@
 package codes.vps.mockta.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import lombok.Getter;
 
 // https://developer.okta.com/docs/reference/api/authn/#context-object
 @Getter
 public class Context {
 
-	private final String deviceToken;
+    private final String deviceToken;
 
-	@JsonCreator
-	public Context(String deviceToken) {
-		this.deviceToken = deviceToken;
-	}
+    @JsonCreator
+    public Context(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
 }

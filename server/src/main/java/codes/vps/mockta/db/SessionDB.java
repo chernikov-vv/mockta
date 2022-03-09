@@ -26,53 +26,57 @@ import lombok.NonNull;
 
 public class SessionDB {
 
-	private final static Map<String, OktaSession> sessionsByToken = new ConcurrentHashMap<>();
+    private final static Map<String, OktaSession> sessionsByToken = new ConcurrentHashMap<>();
 
-	// $TODO: These need to be cleaned up some how
-	private final static Map<String, OktaSession> sessionsByID = new ConcurrentHashMap<>();
+    // $TODO: These need to be cleaned up some how
+    private final static Map<String, OktaSession> sessionsByID = new ConcurrentHashMap<>();
 
-	public static OktaSession createSession(OktaUser who) {
+    public static OktaSession createSession(OktaUser who) {
 
-		OktaSession session = new OktaSession(who);
-		sessionsByToken.put(session.getToken(), session);
-		sessionsByID.put(session.getId(), session);
-		return session;
+        OktaSession session = new OktaSession(who);
+        sessionsByToken.put(session.getToken(), session);
+        sessionsByID.put(session.getId(), session);
+        return session;
 
-	}
+    }
 
-	private static OktaSession foundSession(OktaSession session, String how) {
+    private static OktaSession foundSession(OktaSession session, String how) {
 
-		if (session == null) {
-			throw ErrorObject.notFound(how).boom();
-		}
-		session.setToken(null);
-		if (!session.isValid()) {
-			throw ErrorObject.invalidSession("isValid()=false").boom(); // right?
-		}
-		return session;
+        if (session == null) {
+            throw ErrorObject.notFound(how).boom();
+        }
+        session.setToken(null);
+        if (!session.isValid()) {
+            throw ErrorObject.invalidSession("isValid()=false").boom(); // right?
+        }
+        return session;
 
-	}
+    }
 
-	@NonNull
-	public static OktaSession getByTokenOnce(String token) {
-		return foundSession(sessionsByToken.remove(token), "token " + token);
-	}
+    @NonNull
+    public static OktaSession getByTokenOnce(String token) {
+        return foundSession(sessionsByToken.remove(token), "token " + token);
+    }
 
-	@NonNull
-	public static OktaSession getByCookie(String sid) {
-		OktaSession session = sessionsByID.get(sid);
-		if(session==null) {
-			session=sessionsByToken.get(sid);
-		}
-		return foundSession(session, "session " + sid);
-	}
-	
-	
+    @NonNull
+    public static OktaSession getByCookie(String sid) {
 
-	public static void remove(OktaSession session) {
+        if (sid == null) {
+            throw ErrorObject.notFound("<no session>").boom();
+        }
 
-		Util.whenNotNull(session.getToken(), sessionsByToken::remove);
-		sessionsByID.remove(session.getId());
+        OktaSession session = sessionsByID.get(sid);
+        if (session == null) {
+            session = sessionsByToken.get(sid);
+        }
+        return foundSession(session, "session " + sid);
+    }
 
-	}
+
+    public static void remove(OktaSession session) {
+
+        Util.whenNotNull(session.getToken(), sessionsByToken::remove);
+        sessionsByID.remove(session.getId());
+
+    }
 }

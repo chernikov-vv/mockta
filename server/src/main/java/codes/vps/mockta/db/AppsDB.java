@@ -17,113 +17,96 @@
 
 package codes.vps.mockta.db;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
 import codes.vps.mockta.obj.okta.App;
 import codes.vps.mockta.obj.okta.ErrorObject;
 import lombok.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class AppsDB {
 
-	public final static Map<String, OktaApp> apps = new ConcurrentHashMap<>();
-	public final static Map<String, OktaApp> appsById = new ConcurrentHashMap<>();
+    public final static Map<String, OktaApp> apps = new ConcurrentHashMap<>();
+    public final static Map<String, OktaApp> appsById = new ConcurrentHashMap<>();
 
-	public static OktaApp addApp(App app) {
+    public static OktaApp addApp(App app) {
 
-		OktaApp oktaApp = new OktaApp(app);
+        OktaApp oktaApp = new OktaApp(app);
 
-		apps.compute(oktaApp.getName(), (k, v) -> {
-			if (v != null) {
-				throw ErrorObject.duplicate("app name " + k).boom();
-			}
-			return new OktaApp(app);
-		});
+        apps.compute(oktaApp.getName(), (k, v) -> {
+            if (v != null) {
+                throw ErrorObject.duplicate("app name " + k).boom();
+            }
+            return new OktaApp(app);
+        });
 
-		appsById.put(oktaApp.getId(), oktaApp);
-		return oktaApp;
+        appsById.put(oktaApp.getId(), oktaApp);
+        return oktaApp;
 
-	}
+    }
 
-	public static OktaApp updateApp(OktaApp oktaApp) {
+    public static OktaApp updateApp(OktaApp oktaApp) {
 
-		OktaApp oldOkaApp = apps.get(oktaApp.getName());
+        apps.put(oktaApp.getName(), oktaApp);
+        appsById.put(oktaApp.getId(), oktaApp);
+        return oktaApp;
 
-		apps.put(oktaApp.getName(), oktaApp);
-		appsById.put(oktaApp.getId(), oktaApp);
-		return oktaApp;
+    }
 
-	}
+    public static OktaApp updateApp(OktaApp oktaApp, String id) {
 
-	public static OktaApp updateApp(OktaApp oktaApp, String id) {
+        OktaApp app = appsById.get(id);
+        if (app == null) {
+            throw ErrorObject.notFound("app id " + id).boom();
+        }
+        return app;
 
-		OktaApp app = appsById.get(id);
-		if (app == null) {
-			throw ErrorObject.notFound("app id " + id).boom();
-		}
-		return app;
+    }
 
-	}
+    @NonNull
+    public static OktaApp getApp(String id) {
 
-	@NonNull
-	public static OktaApp getApp(String id) {
+        OktaApp app = appsById.get(id);
+        if (app == null) {
+            throw ErrorObject.notFound("app id " + id).boom();
+        }
+        return app;
 
-		OktaApp app = appsById.get(id);
-		if (app == null) {
-			throw ErrorObject.notFound("app id " + id).boom();
-		}
-		return app;
+    }
 
-	}
+    public static boolean deleteApp(String id) {
 
-	public static boolean deleteApp(String id) {
+        OktaApp app = appsById.get(id);
+        if (app == null) {
+            throw ErrorObject.notFound("app id " + id).boom();
+        }
+        appsById.remove(id);
+        apps.remove(app.getName());
+        return true;
 
-		OktaApp app = appsById.get(id);
-		if (app == null) {
-			throw ErrorObject.notFound("app id " + id).boom();
-		}
-		appsById.remove(id);
-		apps.remove(app.getName());
-		return true;
+    }
 
-	}
+    public static boolean deleteAllApp() {
 
-	public static boolean deleteAllApp() {
+        appsById.clear();
+        apps.clear();
 
-		appsById.clear();
-		apps.clear();
+        return true;
 
-		return true;
+    }
 
-	}
+    @NonNull
+    public static List<OktaApp> getAllApps() {
 
-	@NonNull
-	public static List<OktaApp> getAllApps() {
-		if (appsById.values().size() == 0) {
-			return null;
-		}
+        if (appsById.values().size() == 0) {
+            return Collections.emptyList();
+        }
 
-		List<OktaApp> apps = new ArrayList<OktaApp>(appsById.values());
-		if (apps == null) {
-			throw ErrorObject.notFound("No Apps  ").boom();
-		}
-		return apps;
+        return new ArrayList<>(appsById.values());
 
-	}
-
-	@NonNull
-	public static void display() {
-
-		System.out.println("Display App  ########################################################");
-
-		for (Entry<String, OktaApp> entry : apps.entrySet()) {
-			String key = entry.getKey().toString();
-			OktaApp value = entry.getValue();
-			System.out.println("key, " + key + " value " + value);
-		}
-	}
+    }
 
 }

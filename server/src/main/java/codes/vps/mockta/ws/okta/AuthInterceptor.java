@@ -17,169 +17,106 @@
 
 package codes.vps.mockta.ws.okta;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Objects;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-
+import codes.vps.mockta.MocktaApplication;
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.obj.okta.ErrorObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import codes.vps.mockta.MocktaApplication;
-import codes.vps.mockta.db.OktaSession;
-import codes.vps.mockta.db.SessionDB;
-import codes.vps.mockta.obj.okta.ErrorObject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-	private MocktaApplication application;
+    private MocktaApplication application;
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-		if (handler instanceof HandlerMethod) {
-			Object bean = ((HandlerMethod) handler).getBean();
-			if (bean instanceof AdminService) {
+        if (handler instanceof HandlerMethod) {
+            Object bean = ((HandlerMethod) handler).getBean();
+            if (bean instanceof AdminService) {
 
-//				 boolean authOk = false;
-//				//
-//				 do {
-//				
-//				 String auth = request.getHeader("Authorization");
-//				
-//				 if (auth == null) {
-//				 break;
-//				 }
-//				
-//				 if (!auth.startsWith("SSWS ")) {
-//				 break;
-//				 }
-//				
-//				 if (!application.getApiTokens().contains(auth.substring(5))) {
-//				 break;
-//				 }
-//				
-//				 authOk = true;
-//				
-//				 } while (false);
-//				
-//				 if (!authOk) {
-//				 response.sendError(401, "Authentication token invalid or missing");
-//				 return false;
-//				 }
+                boolean authOk = false;
 
-			} else if (bean instanceof UserAuthenticatedService) {
+                do {
 
-				OktaSession oktSession = getSessionFromCookie(request);
-				if (oktSession == null) {
-					oktSession = getSessionFromRequest(request);
-				}
-				if (oktSession == null) {
-					throw ErrorObject.notFound("No session value found in request or Cookie").boom();
-				}
+                    String auth = request.getHeader("Authorization");
 
-				((UserAuthenticatedService) bean).setSession(oktSession);
+                    if (auth == null) {
+                        break;
+                    }
 
-			}
+                    if (!auth.startsWith("SSWS ")) {
+                        break;
+                    }
 
-		}
-		return true;
+                    if (!application.getApiTokens().contains(auth.substring(5))) {
+                        break;
+                    }
 
-	}
+                    authOk = true;
 
-	public static OktaSession getSessionFromCookie(HttpServletRequest request) {
+                } while (false);
 
-		Cookie sid = null;
-		if (request.getCookies() != null) {
-			for (Cookie cookie : request.getCookies()) {
-				if (Objects.equals(OktaSession.COOKIE_NAME, cookie.getName())) {
-					sid = cookie;
-					break;
-				}
-			}
-		}
+                if (!authOk) {
+                    response.sendError(401, "Authentication token invalid or missing");
+                    return false;
+                }
 
-		if (sid == null || sid.getValue() == null) {
-			return null;
-		}
-		OktaSession session = SessionDB.getByCookie(sid.getValue());
-		
-		
-		return session;
+            } else if (bean instanceof UserAuthenticatedService) {
 
-	}
+                OktaSession oktSession = getSessionFromCookie(request);
+                if (oktSession == null) {
+                    oktSession = getSessionFromRequest(request);
+                }
+                if (oktSession == null) {
+                    throw ErrorObject.notFound("No session value found in request or Cookie").boom();
+                }
 
-	public static OktaSession getSessionFromRequest(HttpServletRequest request) {
+                ((UserAuthenticatedService) bean).setSession(oktSession);
 
-		String sid = request.getParameter("sessionToken");
-		String bodyJson = getBody(request);
-		
-		if (sid == null && bodyJson!=null && bodyJson.length()>0) {
-			
-			System.out.println("get body " +bodyJson );
-			JsonObject jsonObject =JsonParser.parseString(bodyJson).getAsJsonObject();
-			sid =jsonObject.get("sessionToken").getAsString();
-			
-		}
-		if (sid == null) {
-			return null;
-		}
+            }
 
-		return SessionDB.getByCookie(sid);
+        }
+        return true;
 
-	}
+    }
 
-	@Autowired
-	public void setApplication(MocktaApplication application) {
-		this.application = application;
-	}
+    public static OktaSession getSessionFromCookie(HttpServletRequest request) {
 
-	public static String getBody(HttpServletRequest request) {
+        Cookie sid = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (Objects.equals(OktaSession.COOKIE_NAME, cookie.getName())) {
+                    sid = cookie;
+                    break;
+                }
+            }
+        }
 
-		String body = null;
-		StringBuilder stringBuilder = new StringBuilder();
-		BufferedReader bufferedReader = null;
+        if (sid == null || sid.getValue() == null) {
+            return null;
+        }
 
-		try {
-			InputStream inputStream = request.getInputStream();
-			if (inputStream != null) {
-				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-				char[] charBuffer = new char[128];
-				int bytesRead = -1;
-				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-					stringBuilder.append(charBuffer, 0, bytesRead);
-				}
-			} else {
-				stringBuilder.append("");
-			}
-		} catch (IOException ex) {
-			// throw ex;
-			return "";
-		} finally {
-			if (bufferedReader != null) {
-				try {
-					bufferedReader.close();
-				} catch (IOException ex) {
+        return SessionDB.getByCookie(sid.getValue());
 
-				}
-			}
-		}
+    }
 
-		body = stringBuilder.toString();
-		return body;
-	}
+    public static OktaSession getSessionFromRequest(HttpServletRequest request) {
+        String sid = request.getParameter("sessionToken");
+        return SessionDB.getByCookie(sid);
+    }
+
+    @Autowired
+    public void setApplication(MocktaApplication application) {
+        this.application = application;
+    }
 
 }

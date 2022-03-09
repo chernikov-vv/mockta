@@ -17,21 +17,20 @@
 
 package codes.vps.mockta.ws.okta;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class NoCacheInterceptor implements HandlerInterceptor {
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
-		response.addHeader("cache-control", "no-cache, no-store");
-		response.addHeader("pragma", "no-cache");
-		response.addHeader("expires", "0");
-		return true;
-	}
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        response.addHeader("cache-control", "no-cache, no-store");
+        response.addHeader("pragma", "no-cache");
+        response.addHeader("expires", "0");
+        return true;
+    }
 }

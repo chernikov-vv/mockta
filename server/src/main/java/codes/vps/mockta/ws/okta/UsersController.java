@@ -54,7 +54,7 @@ public class UsersController implements AdminService {
 	}
 
 	@DeleteMapping(value = "")
-	public ResponseEntity deleteAllUsers() {
+	public ResponseEntity<?> deleteAllUsers() {
 
 		boolean isRemoved = UserDB.deleteAllUser();
 		if (isRemoved) {
@@ -65,7 +65,7 @@ public class UsersController implements AdminService {
 	}
 
 	@DeleteMapping(value = "/{userId}")
-	public ResponseEntity deleteUser(@PathVariable String userId) {
+	public ResponseEntity<?> deleteUser(@PathVariable String userId) {
 
 		boolean isRemoved = UserDB.deleteUser(userId);
 		if (isRemoved) {
