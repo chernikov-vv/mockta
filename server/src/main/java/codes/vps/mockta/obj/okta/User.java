@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package codes.vps.mockta.obj.okta;
 
 import java.util.Date;
 
+import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 @Getter
+@Setter
 public class User extends RepresentationModel<User> {
 
 	// https://developer.okta.com/docs/reference/api/users/#user-properties
@@ -52,94 +54,6 @@ public class User extends RepresentationModel<User> {
 	public User(Profile profile, Credentials credentials) {
 		this.profile = profile;
 		this.credentials = credentials;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Date getActivated() {
-		return activated;
-	}
-
-	public void setActivated(Date activated) {
-		this.activated = activated;
-	}
-
-	public Date getStatusChanged() {
-		return statusChanged;
-	}
-
-	public void setStatusChanged(Date statusChanged) {
-		this.statusChanged = statusChanged;
-	}
-
-	public Date getLastLogin() {
-		return lastLogin;
-	}
-
-	public void setLastLogin(Date lastLogin) {
-		this.lastLogin = lastLogin;
-	}
-
-	public Date getPasswordChanged() {
-		return passwordChanged;
-	}
-
-	public void setPasswordChanged(Date passwordChanged) {
-		this.passwordChanged = passwordChanged;
-	}
-
-	public UserType getType() {
-		return type;
-	}
-
-	public void setType(UserType type) {
-		this.type = type;
-	}
-
-	public String getTransitioningToStatus() {
-		return transitioningToStatus;
-	}
-
-	public void setTransitioningToStatus(String transitioningToStatus) {
-		this.transitioningToStatus = transitioningToStatus;
-	}
-
-	public Profile getProfile() {
-		return profile;
-	}
-
-	public void setProfile(Profile profile) {
-		this.profile = profile;
-	}
-
-	public Credentials getCredentials() {
-		return credentials;
-	}
-
-	public void setCredentials(Credentials credentials) {
-		this.credentials = credentials;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 }

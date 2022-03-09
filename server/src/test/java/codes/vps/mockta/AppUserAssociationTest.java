@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2022 Pawel S. Veselov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package codes.vps.mockta;
 
 import static org.hamcrest.Matchers.is;
@@ -20,7 +37,6 @@ import io.restassured.response.Response;
 public class AppUserAssociationTest extends WebTests {
 
     static GetNotNullString appId = null;
-    static String baseAppURL = "/api/v1/apps";
 
     @Test
     @Order(1)
@@ -30,7 +46,7 @@ public class AppUserAssociationTest extends WebTests {
         appId = new GetNotNullString();
         App app1 = GenerateRandomData.generateApp();
 
-        adminJson().body(mapToJson(app1)).post(baseAppURL).then().statusCode(200).body("id", appId)
+        adminJson().body(mapToJson(app1)).post("/api/v1/apps").then().statusCode(200).body("id", appId)
                 .body("label", is(app1.getLabel())).body("name", is(app1.getName()))
                 .body("settings.oauthClient.redirect_uris", is(app1.getSettings().getOauthClient().getRedirectUris()));
 
@@ -51,7 +67,7 @@ public class AppUserAssociationTest extends WebTests {
 
         // get App
 
-        Response response = admin().get(baseAppURL + "/{appId}", appId.getRecorded());
+        Response response = admin().get("/api/v1/apps/{appId}", appId.getRecorded());
 
         System.out.println(response.getBody().asPrettyString());
         // Duplicate test
@@ -73,7 +89,7 @@ public class AppUserAssociationTest extends WebTests {
                 .statusCode(200).body("id", notNullValue());
         // .body("profile.joy", is(profile.get("fun")));
 
-        response = admin().get(baseAppURL + "/{appId}", appId.getRecorded());
+        response = admin().get("/api/v1/apps/{appId}", appId.getRecorded());
 
         System.out.println(response.getBody().asPrettyString());
 

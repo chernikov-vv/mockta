@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,12 +89,12 @@ public class AppsController implements AdminService {
             if (v != null) {
                 throw ErrorObject.duplicate("app user registration " + k).boom();
             }
-            return new OktaAppUser(user, appUser);
+            return new OktaAppUser(user, app, appUser);
 
         }).represent();
-        app.getUsers().put(user.getId(), new OktaAppUser(user, appUser));
-        AppsDB.updateApp(app);
-        // return pau;
+
+        AppsDB.updateApp(app); // $TODO why?
+
         return ResponseEntity.ok(ret);
 
     }

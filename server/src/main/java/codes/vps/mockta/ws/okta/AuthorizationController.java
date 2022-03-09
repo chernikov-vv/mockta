@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import codes.vps.mockta.db.IDPDB;
 import codes.vps.mockta.db.KeysDB;
 import codes.vps.mockta.db.OktaApp;
 import codes.vps.mockta.db.OktaAppUser;
-import codes.vps.mockta.db.OktaSession;
 import codes.vps.mockta.db.OktaUser;
-import codes.vps.mockta.db.SessionDB;
 import codes.vps.mockta.db.UserDB;
 import codes.vps.mockta.obj.model.AuthInfo;
 import codes.vps.mockta.obj.okta.ErrorObject;
 import codes.vps.mockta.obj.okta.OpenIDMetaData;
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.SessionDB;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -54,23 +54,28 @@ import java.net.URI;
 import java.util.Objects;
 
 @Controller
-@RequestMapping(path = { "/oauth2/v1/authorize", "/oauth2/{authServer}/v1/authorize" })
+@RequestMapping(path = {"/oauth2/v1/authorize", "/oauth2/{authServer}/v1/authorize"})
 public class AuthorizationController {
 
 	// https://developer.okta.com/docs/reference/api/oidc/#authorize
 	@GetMapping
-	public ModelAndView authorize(HttpServletRequest request, HttpServletResponse response,
-			@PathVariable(required = false) String authServer, @RequestParam(name = "client_id") String clientId,
-			@RequestParam(required = false) Prompt prompt, @RequestParam(name = "redirect_uri") String redirectURI,
+	public ModelAndView authorize(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(required = false) String authServer,
+			@RequestParam(name="client_id") String clientId,
+			@RequestParam(required = false) Prompt prompt,
+			@RequestParam(name = "redirect_uri") String redirectURI,
 			@RequestParam(name = "response_type") String responseType,
 			@RequestParam(name = "response_mode", required = false) ResponseMode responseMode,
 			@RequestParam String scope, // space separated
-			@RequestParam(required = false) String sessionToken, @RequestParam String state, @RequestParam String nonce,
-			Model model) throws Exception {
+			@RequestParam(required = false) String sessionToken,
+			@RequestParam String state,
+			@RequestParam String nonce,
+			Model model
+	) throws Exception {
 
-		if (responseMode == null) {
-			responseMode = ResponseMode.FRAGMENT;
-		}
+		if (responseMode == null) { responseMode = ResponseMode.FRAGMENT; }
 		if (responseMode != ResponseMode.OKTA_POST_MESSAGE) {
 			// it's unclear which response code to use here. These are OIDC errors,
 			// but we don't implement redirect responses.... It's a mess.
@@ -89,8 +94,7 @@ public class AuthorizationController {
 			// from the redirect URL (which is not used for anything else)
 
 			URI uri = new URI(redirectURI);
-			frameUrl = new DefaultUriBuilderFactory().builder().scheme(uri.getScheme()).host(uri.getHost())
-					.port(uri.getPort()).build().toString();
+			frameUrl = new DefaultUriBuilderFactory().builder().scheme(uri.getScheme()).host(uri.getHost()).port(uri.getPort()).build().toString();
 			// now we can at least generate error responses.
 
 			if (sessionToken == null) {
@@ -130,22 +134,32 @@ public class AuthorizationController {
 
 				if (!Objects.equals(responseType, "id_token")) {
 					error = "bad-response-type";
-					errorDescription = String.format("I only know how to respond to response_type 'id_token', not %s",
-							responseType);
+					errorDescription = String.format("I only know how to respond to response_type 'id_token', not %s", responseType);
 					break;
 				}
 
 				// OK, our main performance - generate the id_token value
 				// Sample token seen Okta use:
 				// {"kid":"S_GrqnSp7DSWRY7uhiDdpTEhfVLnD3ld7-fAEXsZYCk","alg":"RS256"}
-				/*
-				 * { "sub": "user-id", "email": "pawel.veselov@xxx", "ver": 1, "iss":
-				 * "https://xxx", "aud": "client-id", "iat": 1635181190, "exp": 1635184790,
-				 * "jti": "ID.nrdU_s_YwY7D6JruXlkhxX-s485g_rP6MK5tNicpa_0", "amr": [ "pwd" ],
-				 * "idp": "idp-id", "nonce":
-				 * "rqi8cN20xc3yQl8OhbPnpnrxwYKR0ktdeevjBofBaJwkwEPI0YG6sFQZinpRQQ1Y",
-				 * "email_verified": true, "auth_time": 1635181153 }
-				 */
+                /*
+                {
+                  "sub": "user-id",
+                  "email": "pawel.veselov@xxx",
+                  "ver": 1,
+                  "iss": "https://xxx",
+                  "aud": "client-id",
+                  "iat": 1635181190,
+                  "exp": 1635184790,
+                  "jti": "ID.nrdU_s_YwY7D6JruXlkhxX-s485g_rP6MK5tNicpa_0",
+                  "amr": [
+                    "pwd"
+                  ],
+                  "idp": "idp-id",
+                  "nonce": "rqi8cN20xc3yQl8OhbPnpnrxwYKR0ktdeevjBofBaJwkwEPI0YG6sFQZinpRQQ1Y",
+                  "email_verified": true,
+                  "auth_time": 1635181153
+                }
+                 */
 
 				OpenIDMetaData metaData = new OpenIDMetaData(request, authServer);
 				JwtClaims claims = new JwtClaims();
@@ -170,7 +184,7 @@ public class AuthorizationController {
 
 				JsonWebKey jwk = KeysDB.getKey();
 
-				jws.setKey(((RsaJsonWebKey) jwk).getRsaPrivateKey());
+				jws.setKey(((RsaJsonWebKey)jwk).getRsaPrivateKey());
 				jws.setKeyIdHeaderValue(jwk.getKeyId());
 				jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
 
@@ -196,7 +210,7 @@ public class AuthorizationController {
 			authInfo = AuthInfo.onError(frameUrl, state, error, errorDescription);
 		}
 
-		response.addHeader("x-mockta-auth-error", Util.makeNotNull(error, () -> "<none>"));
+		response.addHeader("x-mockta-auth-error", Util.makeNotNull(error, ()->"<none>"));
 		model.addAttribute("auth", authInfo);
 
 		return new ModelAndView("jsp/postMessage.jsp", model.asMap());
@@ -210,12 +224,12 @@ public class AuthorizationController {
 
 	enum ResponseMode {
 		@JsonProperty("okta_post_message")
-		OKTA_POST_MESSAGE, @JsonProperty("fragment)")
+		OKTA_POST_MESSAGE,
+		@JsonProperty("fragment)")
 		FRAGMENT
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	static class ChokeException extends RuntimeException {
-	}
+	static class ChokeException extends RuntimeException {}
 
 }

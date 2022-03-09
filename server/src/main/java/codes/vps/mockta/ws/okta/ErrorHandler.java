@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 
 package codes.vps.mockta.ws.okta;
 
+import codes.vps.mockta.obj.okta.ErrorObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import codes.vps.mockta.obj.okta.ErrorObject;
 
 @RestControllerAdvice
 public class ErrorHandler {

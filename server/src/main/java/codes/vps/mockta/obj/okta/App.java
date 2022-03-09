@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 
 package codes.vps.mockta.obj.okta;
 
-import codes.vps.mockta.db.OktaAppUser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -39,10 +38,10 @@ public class App extends RepresentationModel<App> {
     private final SignOnMode signOnMode = SignOnMode.BASIC_AUTH; // right?
     private final String status = "ACTIVE";
     private final AppSettings settings;
-    private final Map<String, OktaAppUser> users;
+    private final Map<String, AppUser> users;
 
     public App(Date created, String id, String label, Date lastUpdated, String name, String profile,
-               Map<String, OktaAppUser> users, AppSettings settings) {
+               Map<String, AppUser> users, AppSettings settings) {
         this.created = created;
         this.id = id;
         this.label = label;

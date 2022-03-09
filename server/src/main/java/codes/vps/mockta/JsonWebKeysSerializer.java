@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,17 @@
 
 package codes.vps.mockta;
 
-import java.io.IOException;
-
-import org.jose4j.jwk.JsonWebKeySet;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.jose4j.jwk.JsonWebKeySet;
+
+import java.io.IOException;
 
 public class JsonWebKeysSerializer extends JsonSerializer<JsonWebKeySet> {
 
 	@Override
-	public void serialize(JsonWebKeySet jsonWebKeySet, JsonGenerator jsonGenerator,
-			SerializerProvider serializerProvider) throws IOException {
+	public void serialize(JsonWebKeySet jsonWebKeySet, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
 
 		jsonGenerator.writeRaw(jsonWebKeySet.toJson());
 

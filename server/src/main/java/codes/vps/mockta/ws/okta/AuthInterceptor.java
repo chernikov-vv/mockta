@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@
 package codes.vps.mockta.ws.okta;
 
 import codes.vps.mockta.MocktaApplication;
+import codes.vps.mockta.obj.okta.ErrorObject;
 import codes.vps.mockta.db.OktaSession;
 import codes.vps.mockta.db.SessionDB;
-import codes.vps.mockta.obj.okta.ErrorObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -49,9 +49,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
                     String auth = request.getHeader("Authorization");
 
-                    if (auth == null) {
-                        break;
-                    }
+                    if (auth == null) { break; }
 
                     if (!auth.startsWith("SSWS ")) {
                         break;
@@ -72,17 +70,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 
             } else if (bean instanceof UserAuthenticatedService) {
 
-                OktaSession oktSession = getSessionFromCookie(request);
-                if (oktSession == null) {
-                    oktSession = getSessionFromRequest(request);
-                }
-                if (oktSession == null) {
-                    throw ErrorObject.notFound("No session value found in request or Cookie").boom();
-                }
-
-                ((UserAuthenticatedService) bean).setSession(oktSession);
+                ((UserAuthenticatedService)bean).setSession(getSessionFromCookie(request));
 
             }
+
 
         }
         return true;
@@ -102,16 +93,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         if (sid == null || sid.getValue() == null) {
-            return null;
+            throw ErrorObject.notFound("no session cookie value").boom();
         }
 
         return SessionDB.getByCookie(sid.getValue());
 
-    }
-
-    public static OktaSession getSessionFromRequest(HttpServletRequest request) {
-        String sid = request.getParameter("sessionToken");
-        return SessionDB.getByCookie(sid);
     }
 
     @Autowired

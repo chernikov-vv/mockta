@@ -17,12 +17,12 @@
 
 package codes.vps.mockta.db;
 
-import java.util.Date;
-import java.util.Map;
-
 import codes.vps.mockta.obj.okta.AppUser;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -30,18 +30,19 @@ public class OktaAppUser {
 
 	private final Date created = new Date();
 	private final OktaUser user;
+	private final OktaApp app;
 
 	private Date lastUpdated = new Date();
 	private Map<String, String> profile;
 	private final Date statusChanges = new Date(); // because we don't support changing status
 
-	public OktaAppUser(OktaUser user) {
+	public OktaAppUser(OktaUser user, OktaApp app) {
 		this.user = user;
-
+		this.app = app;
 	}
 
-	public OktaAppUser(OktaUser user, AppUser appUser) {
-		this(user);
+	public OktaAppUser(OktaUser user, OktaApp app, AppUser appUser) {
+		this(user, app);
 		profile = appUser.getProfile();
 	}
 
@@ -53,7 +54,7 @@ public class OktaAppUser {
 
 	@Override
 	public String toString() {
-		return "OktaAppUser [user=" + user + ", profile=" + profile + "]";
+		return "OktaAppUser [user=" + user + " for app "+app+", profile=" + profile + "]";
 	}
 
 }

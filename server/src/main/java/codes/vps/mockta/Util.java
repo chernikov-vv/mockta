@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,16 @@
 
 package codes.vps.mockta;
 
+import lombok.NonNull;
+import org.jose4j.base64url.Base64Url;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import org.jose4j.base64url.Base64Url;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-
-import lombok.NonNull;
 
 public class Util {
 
@@ -46,25 +45,22 @@ public class Util {
 	}
 
 	/**
-	 * This method trims the specified string, and returns NULL if the string was
-	 * {@code null}, or empty.
+	 * This method trims the specified string, and returns NULL if the string
+	 * was {@code null}, or empty.
 	 *
-	 * @param s
-	 *            string to trim
+	 * @param s string to trim
 	 * @return trimmed string, or {@code null}
 	 */
 	@Nullable
 	public static String sTrim(String s) {
 
-		if (s == null) {
-			return null;
-		}
+		if (s == null) { return null; }
 		StringBuilder sb = new StringBuilder();
 		boolean trailing = false;
 		int wsPos = -1;
 
 		int l = s.length();
-		for (int i = 0; i < l; i++) {
+		for (int i=0; i<l; i++) {
 
 			char c = s.charAt(i);
 			if (Character.isWhitespace(c)) {
@@ -84,9 +80,7 @@ public class Util {
 
 		}
 
-		if (sb.length() == 0) {
-			return null;
-		}
+		if (sb.length() == 0) { return null; }
 		return sb.toString();
 
 	}
@@ -94,6 +88,7 @@ public class Util {
 	public static <S> void whenNotNull(@Nullable S val, @NonNull Consumer<S> fun) {
 		whenNotNullOr(val, fun, null);
 	}
+
 
 	public static <S> void whenNotNull(@Nullable S val, @NonNull Consumer<S> fun, @Nullable Supplier<S> whenNull) {
 
@@ -125,9 +120,7 @@ public class Util {
 	public static <S, T> S ifNotNull(@Nullable T val, @NonNull Function<T, S> fun, @Nullable Supplier<S> whenNull) {
 		try {
 			if (val == null) {
-				if (whenNull == null) {
-					return null;
-				}
+				if (whenNull == null) { return null; }
 				return whenNull.get();
 			}
 			return fun.apply(val);
@@ -139,28 +132,23 @@ public class Util {
 	@NonNull
 	public static <S, T> S makeNotNull(@Nullable T val, @NonNull Function<T, S> fun, @NonNull Supplier<S> whenNull) {
 		S ret = ifNotNull(val, fun, whenNull);
-		if (ret == null) {
-			throw new NullPointerException("not null must be produced");
-		}
+		if (ret == null) { throw new NullPointerException("not null must be produced"); }
 		return ret;
 	}
 
 	@NonNull
 	public static <T> T makeNotNull(@Nullable T val, @NonNull Supplier<T> whenNull) {
-		return makeNotNull(val, a -> a, whenNull);
+		return makeNotNull(val, a->a, whenNull);
 	}
 
 	/**
-	 * Enables to throw an exception as a run-time exception. This method does not
-	 * declare any thrown exceptions, but any exception can be safely passed to it,
-	 * so it is re-thrown to the caller as-is.
-	 * 
-	 * @param e
-	 *            exception to throw
+	 * Enables to throw an exception as a run-time exception.
+	 * This method does not declare any thrown exceptions, but any exception
+	 * can be safely passed to it, so it is re-thrown to the caller as-is.
+	 * @param e exception to throw
 	 * @return thrown exception.
 	 */
-	// Thanks to
-	// http://blog.jooq.org/2012/09/14/throw-checked-exceptions-like-runtime-exceptions-in-java/
+	// Thanks to http://blog.jooq.org/2012/09/14/throw-checked-exceptions-like-runtime-exceptions-in-java/
 	public static RuntimeException doThrow(@NonNull Throwable e) {
 		return doThrow0(e);
 	}
@@ -181,13 +169,11 @@ public class Util {
 		// measure. This should generally work fine.
 		// We'll also screw up any code points that are >4 bytes long.
 
-		if (s == null) {
-			return "(null)";
-		}
+		if (s == null) { return "(null)"; }
 
 		StringBuilder sb = new StringBuilder();
 		int _l = s.length();
-		for (int i = 0; i < _l; i++) {
+		for (int i=0; i<_l; i++ ) {
 
 			char c = s.charAt(i);
 
@@ -209,11 +195,9 @@ public class Util {
 	}
 
 	/**
-	 * Extracts result from a {@link Callable}, throwing any produced exception as a
-	 * runtime exception.
-	 * 
-	 * @param from
-	 *            get result from
+	 * Extracts result from a {@link Callable}, throwing any produced exception as
+	 * a runtime exception.
+	 * @param from get result from
 	 * @return result from Callable
 	 */
 	public static <T> T reThrow(Callable<T> from) {
@@ -233,5 +217,6 @@ public class Util {
 		Assert.notNull(enumType, () -> "The target type " + targetType + " does not refer to an enum");
 		return enumType;
 	}
+
 
 }

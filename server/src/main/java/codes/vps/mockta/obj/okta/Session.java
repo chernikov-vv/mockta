@@ -38,8 +38,7 @@ public class Session extends RepresentationModel<Session> {
     private final IDP idp;
     private final boolean mfaActive = false;
 
-    public Session(String id, String login, String userId, Date expiresAt, SessionStatus status,
-                   Date lastPasswordVerification, Date lastFactorVerification, List<AMR> amr, IDP idp) {
+    public Session(String id, String login, String userId, Date expiresAt, SessionStatus status, Date lastPasswordVerification, Date lastFactorVerification, List<AMR> amr, IDP idp) {
         this.id = id;
         this.login = login;
         this.userId = userId;

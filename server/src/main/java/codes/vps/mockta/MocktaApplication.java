@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -60,6 +62,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
+	Logger logger = LoggerFactory.getLogger(MocktaApplication.class);
+
 	private final String API_KEY_OPT = "mockta.api-token";
 	@Getter
 	private List<String> apiTokens;
@@ -81,13 +85,12 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 
 	@Override
 	public void run(ApplicationArguments args) {
-		System.out.println(
-				"Application started with command-line arguments: {} " + Arrays.toString(args.getSourceArgs()));
-		System.out.println("NonOptionArgs: {}" + args.getNonOptionArgs());
-		System.out.println("OptionNames: {}" + args.getOptionNames());
+		logger.debug("Application started with command-line arguments: {}", Arrays.toString(args.getSourceArgs()));
+		logger.debug("NonOptionArgs: {}", args.getNonOptionArgs());
+		logger.debug("OptionNames: {}", args.getOptionNames());
 
 		for (String name : args.getOptionNames()) {
-			System.out.println("arg-" + name + "=" + args.getOptionValues(name));
+			logger.debug("arg-{}={}", name, args.getOptionValues(name));
 		}
 
 		List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
@@ -151,22 +154,6 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addConverterFactory(new EnumConverter());
-	}
-
-	public List<String> getApiTokens() {
-		return apiTokens;
-	}
-
-	public void setApiTokens(List<String> apiTokens) {
-		this.apiTokens = apiTokens;
-	}
-
-	public AuthInterceptor getAuthInterceptor() {
-		return authInterceptor;
-	}
-
-	public NoCacheInterceptor getNoCacheInterceptor() {
-		return noCacheInterceptor;
 	}
 
 }

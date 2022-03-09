@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +38,10 @@ public class ErrorObject extends RepresentationModel<ErrorObject> {
     @JsonIgnore
     private final HttpStatus httpError;
 
-    // public final static ErrorObject AUTH_FAILED = new ErrorObject("E0000004",
-    // HttpStatus.UNAUTHORIZED, "Authentication failed");
-    // public final static ErrorObject RESOURCE_NOT_FOUND = new
-    // ErrorObject("E0000007", HttpStatus.NOT_FOUND, "Resource not found");
-    // public final static ErrorObject GENERIC_DUPLICATE = new
-    // ErrorObject("E0000108", HttpStatus.CONFLICT, "Object with the same primary
-    // reference already exists.");
-    // public final static ErrorObject INVALID_SESSION = new ErrorObject("E0000005",
-    // HttpStatus.FORBIDDEN, "Invalid session");
+    // public final static ErrorObject AUTH_FAILED = new ErrorObject("E0000004", HttpStatus.UNAUTHORIZED, "Authentication failed");
+    // public final static ErrorObject RESOURCE_NOT_FOUND = new ErrorObject("E0000007", HttpStatus.NOT_FOUND, "Resource not found");
+    // public final static ErrorObject GENERIC_DUPLICATE = new ErrorObject("E0000108", HttpStatus.CONFLICT, "Object with the same primary reference already exists.");
+    // public final static ErrorObject INVALID_SESSION = new ErrorObject("E0000005", HttpStatus.FORBIDDEN, "Invalid session");
 
     public static ErrorObject authFailed(String why) {
         return new ErrorObject("E0000004", HttpStatus.UNAUTHORIZED, String.format("Authentication failed:%s", why));

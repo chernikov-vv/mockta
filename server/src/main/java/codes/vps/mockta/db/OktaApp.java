@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package codes.vps.mockta.db;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import codes.vps.mockta.Util;
 import codes.vps.mockta.obj.okta.App;
 import codes.vps.mockta.obj.okta.AppSettings;
+import codes.vps.mockta.obj.okta.AppUser;
 import codes.vps.mockta.obj.okta.ErrorObject;
 import codes.vps.mockta.obj.okta.OAuthClient;
 import lombok.Getter;
@@ -66,15 +68,15 @@ public class OktaApp {
 
 	public App represent() {
 
+		Map<String, AppUser> users = new HashMap<>();
+		for (Map.Entry<String, OktaAppUser> me : this.users.entrySet()) {
+			users.put(me.getKey(), me.getValue().represent());
+		}
+
 		return new App(created, id, label, lastUpdated, name, profile, users,
 				new AppSettings(new OAuthClient(redirectUris)));
 
 	}
 
-	@Override
-	public String toString() {
-		return "OktaApp [created=" + created + ", name=" + name + ", lastUpdated=" + lastUpdated + ", label=" + label
-				+ ", profile=" + profile + ", users=" + users + ", redirectUris=" + redirectUris + "]";
-	}
 
 }

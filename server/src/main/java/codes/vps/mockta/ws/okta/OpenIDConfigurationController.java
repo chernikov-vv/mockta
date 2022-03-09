@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestController()
 public class OpenIDConfigurationController {
 
-	@GetMapping(value = { "/.well-known/openid-configuration", "oauth2/{authServer}/.well-known/openid-configuration" })
-	public ResponseEntity<OpenIDMetaData> get(HttpServletRequest request,
-			@PathVariable(required = false) String authServer) {
+	@GetMapping(value={"/.well-known/openid-configuration", "oauth2/{authServer}/.well-known/openid-configuration"})
+	public ResponseEntity<OpenIDMetaData> get(HttpServletRequest request, @PathVariable(required = false) String authServer) {
 		return ResponseEntity.ok(new OpenIDMetaData(request, authServer));
 	}
 

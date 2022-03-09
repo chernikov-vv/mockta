@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,17 +59,8 @@ public class SessionDB {
     }
 
     @NonNull
-    public static OktaSession getByCookie(String sid) {
-
-        if (sid == null) {
-            throw ErrorObject.notFound("<no session>").boom();
-        }
-
-        OktaSession session = sessionsByID.get(sid);
-        if (session == null) {
-            session = sessionsByToken.get(sid);
-        }
-        return foundSession(session, "session " + sid);
+    public static OktaSession getByCookie(@NonNull String sid) {
+        return foundSession(sessionsByID.get(sid), "session "+sid);
     }
 
 

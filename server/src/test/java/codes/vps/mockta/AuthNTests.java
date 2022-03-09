@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2022 Pawel S. Veselov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package codes.vps.mockta;
 
 import codes.vps.mockta.db.KeysDB;
@@ -49,79 +66,104 @@ public class AuthNTests extends WebTests {
     @Test
     public void successfulAuth() throws Exception {
 
-        User user = new User(new Profile("test1@codes.vps", "test1@codes.vps", "Guy", "BlueShirt", null, null),
-                new Credentials(new Password("BubbleGumIceCream")));
+        User user = new User(new Profile("test1@codes.vps", "test1@codes.vps", "Guy", "BlueShirt", null, null), new Credentials(new Password("BubbleGumIceCream")));
         GetNotNullString userId = new GetNotNullString();
 
-        adminJson().body(mapToJson(user)).post("/api/v1/users").then().statusCode(200).body("id", userId)
+        adminJson()
+                .body(mapToJson(user))
+                .post("/api/v1/users")
+                .then()
+                .statusCode(200)
+                .body("id", userId)
                 .body("profile.login", is(user.getProfile().getLogin()))
                 .body("profile.firstName", is(user.getProfile().getFirstName()))
-                .body("profile.lastName", is(user.getProfile().getLastName())).body("profile.locale", is("en_US"))
-                .body("profile.timeZone", is("Pacific/Honolulu"));
-
-        System.out.println("USER ID " + userId.getRecorded());
+                .body("profile.lastName", is(user.getProfile().getLastName()))
+                .body("profile.locale", is("en_US"))
+                .body("profile.timeZone", is("Pacific/Honolulu"))
+        ;
 
         App app = new App("test1.label", "test1", "test1",
-                new AppSettings(new OAuthClient(Collections.singletonList("http://localhost/"))));
+                new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
 
         GetNotNullString appId = new GetNotNullString();
 
-        adminJson().body(mapToJson(app)).post("/api/v1/apps").then().statusCode(200).body("id", appId)
-                .body("label", is(app.getLabel())).body("name", is(app.getName()))
+        adminJson().body(mapToJson(app)).post("/api/v1/apps").then()
+                .statusCode(200)
+                .body("id", appId)
+                .body("label", is(app.getLabel()))
+                .body("name", is(app.getName()))
                 .body("settings.oauthClient.redirect_uris", is(app.getSettings().getOauthClient().getRedirectUris()));
 
-        System.out.println("appId " + appId.getRecorded());
         Map<String, String> profile = new LinkedHashMap<>();
         profile.put("foo", "bar");
         AppUser association = new AppUser(userId.getRecorded(), profile);
 
-        adminJson().body(mapToJson(association)).post("/api/v1/apps/{appId}/users", appId.getRecorded()).then()
-                .statusCode(200).body("id", notNullValue()).body("profile.foo", is(profile.get("foo")));
+        adminJson()
+                .body(mapToJson(association))
+                .post("/api/v1/apps/{appId}/users", appId.getRecorded())
+                .then()
+                .statusCode(200)
+                .body("id", notNullValue())
+                .body("profile.foo", is(profile.get("foo")));
 
-        for (int i = 0; i < 2; i++) {
+        for (int i=0; i<2; i++) {
 
             boolean useAuthServer = i == 1;
 
             user().get("/api/v1/sessions/me").then().statusCode(404);
 
-            System.out.println("---> using auth server:" + useAuthServer);
+            System.out.println("---> using auth server:"+useAuthServer);
 
             String baseUrl = "http://localhost:" + serverPort;
 
-            GetSpecificString issuerId = new GetSpecificString(useAuthServer ? baseUrl + "/oauth2/default" : baseUrl);
+            GetSpecificString issuerId = new GetSpecificString(useAuthServer ? baseUrl  + "/oauth2/default" : baseUrl);
             GetNotNullString authUrl = new GetNotNullString();
             GetNotNullString logOutUrl = new GetNotNullString();
 
             String wkc = "/.well-known/openid-configuration";
 
-            userJson().get(useAuthServer ? "oauth2/default" + wkc : wkc).then().statusCode(200).body("issuer", issuerId)
-                    .body("authorization_endpoint", authUrl).body("end_session_endpoint", logOutUrl);
+            userJson()
+                    .get(useAuthServer ? "oauth2/default" + wkc : wkc)
+                    .then()
+                    .statusCode(200)
+                    .body("issuer", issuerId)
+                    .body("authorization_endpoint", authUrl)
+                    .body("end_session_endpoint", logOutUrl);
 
             // OK, we created all the admin objects, now we should try logging in.
 
-            PrimaryAuthentication pa = new PrimaryAuthentication(null, null, null, "BubbleGumIceCream", null,
-                    "test1@codes.vps");
+            PrimaryAuthentication pa = new PrimaryAuthentication(null, null, null, "BubbleGumIceCream", null, "test1@codes.vps");
 
             GetNotNullString sessionToken = new GetNotNullString();
 
-            userJson().body(mapToJson(pa)).post("/api/v1/authn").then().statusCode(200)
-                    .body("expiresAt", notNullValue()).body("status", is("SUCCESS")).body("sessionToken", sessionToken);
+            userJson()
+                    .body(mapToJson(pa))
+                    .post("/api/v1/authn")
+                    .then()
+                    .statusCode(200)
+                    .body("expiresAt", notNullValue())
+                    .body("status", is("SUCCESS"))
+                    .body("sessionToken", sessionToken);
             // $TODO: check HAL object(s)
-            System.out.println("sessionToken in test " + sessionToken.getRecorded());
+
             String nonce = Util.randomId();
             String state = Util.randomId();
             URI authUri = new DefaultUriBuilderFactory().uriString(authUrl.getRecorded())
-                    .queryParam("client_id", appId.getRecorded()).queryParam("nonce", nonce)
-                    .queryParam("prompt", "none").queryParam("redirect_uri", "http://localhost/path")
-                    .queryParam("response_mode", "okta_post_message").queryParam("response_type", "id_token")
-                    .queryParam("sessionToken", sessionToken.getRecorded()).queryParam("state", state)
-                    .queryParam("scope", "openid email").build();
+                    .queryParam("client_id", appId.getRecorded())
+                    .queryParam("nonce", nonce)
+                    .queryParam("prompt", "none")
+                    .queryParam("redirect_uri", "http://localhost/path")
+                    .queryParam("response_mode", "okta_post_message")
+                    .queryParam("response_type", "id_token")
+                    .queryParam("sessionToken", sessionToken.getRecorded())
+                    .queryParam("state", state)
+                    .queryParam("scope", "openid email")
+                    .build();
 
-            System.out.println(authUri);
-            // String content =
-            // saveCookies(userHtml().get(authUri).then().statusCode(200)).extract().body().asString();
+            // String content = saveCookies(userHtml().get(authUri).then().statusCode(200)).extract().body().asString();
 
             String content = userHtml().get(authUri).then().extract().body().asString();
+
             Document postDoc = Jsoup.parse(content);
             String javaScript = postDoc.selectFirst("script").data();
 
@@ -144,23 +186,19 @@ public class AuthNTests extends WebTests {
                     Assertions.assertEquals(state, data.getMember("state"));
                     Assertions.assertFalse(data.hasMember("error"));
                     Assertions.assertFalse(data.hasMember("error_description"));
-                    //
-                    JwtConsumer jwtConsumer = new JwtConsumerBuilder().setExpectedIssuer(issuerId.getRecorded())
+
+                    // $TODO: verify actual values inside the JWT
+                    JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                            .setExpectedIssuer(issuerId.getRecorded())
                             .setRequireExpirationTime() // the JWT must have an expiration time
-                            .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to
-                            // account for clock skew
+                            .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
                             .setRequireSubject() // the JWT must have a subject claim
                             .setVerificationKey(KeysDB.getKey().getKey()) // verify the signature with the public key
-                            .setJwsAlgorithmConstraints( // only allow the expected signature algorithm(s) in the given
-                                    // context
-                                    AlgorithmConstraints.ConstraintType.PERMIT, AlgorithmIdentifiers.RSA_USING_SHA256) // which
-                            // is
-                            // only
-                            // RS256
-                            // here
-                            .setExpectedAudience(appId.getRecorded()).build(); // create the JwtConsumer instance
-                    Assertions
-                            .assertDoesNotThrow(() -> jwtConsumer.processToClaims((String) data.getMember("id_token")));
+                            .setJwsAlgorithmConstraints( // only allow the expected signature algorithm(s) in the given context
+                                    AlgorithmConstraints.ConstraintType.PERMIT, AlgorithmIdentifiers.RSA_USING_SHA256) // which is only RS256 here
+                            .setExpectedAudience(appId.getRecorded())
+                            .build(); // create the JwtConsumer instance
+                    Assertions.assertDoesNotThrow(() -> jwtConsumer.processToClaims((String) data.getMember("id_token")));
 
                     return null;
                 }
@@ -171,29 +209,28 @@ public class AuthNTests extends WebTests {
 
             ((Invocable) engine).invokeFunction("onWindowLoadHandler");
 
-            for (int j = 0; j < 2; j++) {
-                System.out.println("session try #" + j);
-                user().get("/api/v1/sessions/me").then().statusCode(200).body("login", is("test1@codes.vps"));
+            for (int j=0; j<2; j++) {
+                System.out.println("session try #"+j);
+                user().get("/api/v1/sessions/me")
+                        .then()
+                        .statusCode(200)
+                        .body("login", is("test1@codes.vps"));
             }
 
             String logOutState = Util.randomId();
-            String rdr = new DefaultUriBuilderFactory().uriString("https://www.google.com?state=p&fix=in").build()
-                    .toString();
-            String fullLogOutUrl = new DefaultUriBuilderFactory().uriString(logOutUrl.getRecorded())
-                    .replaceQueryParam("state", logOutState).replaceQueryParam("post_logout_redirect_uri", rdr).build()
-                    .toString();
+            String rdr = new DefaultUriBuilderFactory().uriString("https://www.google.com?state=p&fix=in").build().toString();
+            String fullLogOutUrl = new DefaultUriBuilderFactory().uriString(logOutUrl.getRecorded()).replaceQueryParam("state", logOutState).replaceQueryParam("post_logout_redirect_uri", rdr).build().toString();
 
             Matcher<Object> urlCheck = new BaseMatcher<Object>() {
                 @Override
                 public boolean matches(Object o) {
                     // https://stackoverflow.com/a/13592324/622266
-                    UriComponents uc = UriComponentsBuilder.fromUriString((String) o).build();
-                    if (!Objects.equals(uc.getScheme(), "https") || !Objects.equals(uc.getHost(), "www.google.com")) {
-                        return false;
-                    }
+                    UriComponents uc = UriComponentsBuilder.fromUriString((String)o).build();
+                    if (!Objects.equals(uc.getScheme(), "https") ||
+                            !Objects.equals(uc.getHost(), "www.google.com")) { return false; }
                     MultiValueMap<String, String> parameters = uc.getQueryParams();
-                    return Arrays.equals(parameters.get("fix").toArray(), new Object[]{"in"})
-                            && Arrays.equals(parameters.get("state").toArray(), new Object[]{logOutState});
+                    return Arrays.equals(parameters.get("fix").toArray(), new Object[]{"in"}) &&
+                            Arrays.equals(parameters.get("state").toArray(), new Object[]{logOutState});
 
                 }
 
@@ -205,6 +242,7 @@ public class AuthNTests extends WebTests {
             };
 
             user().when().get(fullLogOutUrl).then().statusCode(302).header("Location", urlCheck);
+
             user().get("/api/v1/sessions/me").then().statusCode(404);
 
         }

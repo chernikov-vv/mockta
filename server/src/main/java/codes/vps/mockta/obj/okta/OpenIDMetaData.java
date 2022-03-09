@@ -18,21 +18,18 @@
 // https://developer.okta.com/docs/reference/api/oidc/#response-properties-9
 package codes.vps.mockta.obj.okta;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import codes.vps.mockta.Util;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import codes.vps.mockta.Util;
-import lombok.Getter;
+import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 public class OpenIDMetaData extends RepresentationModel<OpenIDMetaData> {
@@ -87,7 +84,7 @@ public class OpenIDMetaData extends RepresentationModel<OpenIDMetaData> {
 	public OpenIDMetaData(HttpServletRequest request, String authServer) {
 
 		UriBuilder ub = new DefaultUriBuilderFactory().builder();
-		URI incoming = Util.reThrow(() -> new URI(request.getRequestURL().toString()));
+		URI incoming = Util.reThrow(()->new URI(request.getRequestURL().toString()));
 		ub.scheme(incoming.getScheme());
 		ub.host(incoming.getHost());
 		ub.port(incoming.getPort());
@@ -100,10 +97,38 @@ public class OpenIDMetaData extends RepresentationModel<OpenIDMetaData> {
 
 		authorizationEndpoint = ub.build().toString();
 
-		claimsSupported = Arrays.asList("iss", "ver", "sub", "aud", "iat", "exp", "jti", "auth_time", "amr", "idp",
-				"nonce", "name", "nickname", "preferred_username", "given_name", "middle_name", "family_name", "email",
-				"email_verified", "profile", "zoneinfo", "locale", "address", "phone_number", "picture", "website",
-				"gender", "birthdate", "updated_at", "at_hash", "c_hash");
+		claimsSupported = Arrays.asList("iss",
+				"ver",
+				"sub",
+				"aud",
+				"iat",
+				"exp",
+				"jti",
+				"auth_time",
+				"amr",
+				"idp",
+				"nonce",
+				"name",
+				"nickname",
+				"preferred_username",
+				"given_name",
+				"middle_name",
+				"family_name",
+				"email",
+				"email_verified",
+				"profile",
+				"zoneinfo",
+				"locale",
+				"address",
+				"phone_number",
+				"picture",
+				"website",
+				"gender",
+				"birthdate",
+				"updated_at",
+				"at_hash",
+				"c_hash"
+		);
 
 		ub.replacePath("/oauth2");
 		if (authServer != null) {
@@ -113,11 +138,19 @@ public class OpenIDMetaData extends RepresentationModel<OpenIDMetaData> {
 
 		endSessionEndpoint = ub.build().toString();
 
-		grantTypesSupported = Arrays.asList("authorization_code", "implicit", "refresh_token", "password");
+		grantTypesSupported = Arrays.asList("authorization_code",
+				"implicit",
+				"refresh_token",
+				"password"
+		);
 
 		introspectionEndpoint = ub.replacePath("oauth2/v1/introspect").build().toString();
-		introspectionEndpointAuthMethodsSupported = Arrays.asList("client_secret_basic", "client_secret_post",
-				"client_secret_jwt", "private_key_jwt", "none");
+		introspectionEndpointAuthMethodsSupported = Arrays.asList(    "client_secret_basic",
+				"client_secret_post",
+				"client_secret_jwt",
+				"private_key_jwt",
+				"none"
+		);
 
 		ub.replacePath(null);
 		if (authServer != null) {
@@ -130,29 +163,55 @@ public class OpenIDMetaData extends RepresentationModel<OpenIDMetaData> {
 
 		registrationEndpoint = ub.replacePath("/oauth/v1/clients").build().toString();
 
-		requestObjectSigningAlgorithms = Arrays.asList("HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "ES256",
-				"ES384", "ES512");
+		requestObjectSigningAlgorithms = Arrays.asList("HS256",
+				"HS384",
+				"HS512",
+				"RS256",
+				"RS384",
+				"RS512",
+				"ES256",
+				"ES384",
+				"ES512"
+		);
 
-		/*
-		 * responseModesSupported = Arrays.asList("query", "fragment", "form_post",
-		 * "okta_post_message");
-		 * 
-		 */
+        /*
+        responseModesSupported = Arrays.asList("query",
+                "fragment",
+                "form_post",
+                "okta_post_message");
+
+         */
 		responseModesSupported = Collections.singletonList("okta_post_message");
 
-		/*
-		 * responseTypesSupported = Arrays.asList( "code", "id_token", "code id_token",
-		 * "code token", "id_token token", "code id_token token" );
-		 */
+        /*
+        responseTypesSupported = Arrays.asList(    "code",
+                "id_token",
+                "code id_token",
+                "code token",
+                "id_token token",
+                "code id_token token"
+        );
+         */
 
 		responseTypesSupported = Collections.singletonList("id_token");
 
 		revocationEndpoint = ub.replacePath("/oauth2/v1/revoke").build().toString();
 
-		revocationEndpointAuthMethodsSupported = Arrays.asList("client_secret_basic", "client_secret_post",
-				"client_secret_jwt", "private_key_jwt", "none");
+		revocationEndpointAuthMethodsSupported = Arrays.asList(    "client_secret_basic",
+				"client_secret_post",
+				"client_secret_jwt",
+				"private_key_jwt",
+				"none"
+		);
 
-		scopesSupported = Arrays.asList("openid", "email", "profile", "address", "phone", "offline_access", "groups");
+		scopesSupported = Arrays.asList(    "openid",
+				"email",
+				"profile",
+				"address",
+				"phone",
+				"offline_access",
+				"groups"
+		);
 
 		subjectTypesSupported = Collections.singletonList("public");
 
@@ -162,11 +221,16 @@ public class OpenIDMetaData extends RepresentationModel<OpenIDMetaData> {
 
 		userInfoEndpoint = ub.replacePath("/oauth2/v1/userinfo").build().toString();
 
-		tokenEndpointAuthMethodsSupported = Arrays.asList("client_secret_basic", "client_secret_post",
-				"client_secret_jwt", "private_key_jwt", "none");
+		tokenEndpointAuthMethodsSupported = Arrays.asList(    "client_secret_basic",
+				"client_secret_post",
+				"client_secret_jwt",
+				"private_key_jwt",
+				"none"
+		);
 
 		codeChallengeMethodsSupported = Collections.singletonList("S256");
 
 	}
+
 
 }

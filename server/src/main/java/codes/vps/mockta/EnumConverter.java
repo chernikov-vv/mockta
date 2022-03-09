@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,20 @@
 
 package codes.vps.mockta;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.lang.Nullable;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class EnumConverter implements ConverterFactory<String, Enum> {
 
 	@Override
 	public <T extends Enum> Converter<String, T> getConverter(Class<T> targetType) {
-		return Util.reThrow(() -> new StringToEnum(Util.getEnumType(targetType)));
+		return Util.reThrow(()->new StringToEnum(Util.getEnumType(targetType)));
 	}
 
 	private static class StringToEnum<T extends Enum> implements Converter<String, T> {
@@ -61,5 +60,6 @@ public class EnumConverter implements ConverterFactory<String, Enum> {
 			return nameToConstant.get(source);
 		}
 	}
+
 
 }
