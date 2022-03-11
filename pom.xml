@@ -88,6 +88,20 @@
         <plugins>
 
             <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <!--
+                      You must have a "mockta.sign" profile defined in
+                      ~/.m2/settings.xml for this to work. The profile must point to
+                      the correct signing key
+                      -->
+                    <releaseProfiles>mockta.sign</releaseProfiles>
+                    <useReleaseProfile>true</useReleaseProfile>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <extensions>true</extensions>
