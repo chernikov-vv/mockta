@@ -27,7 +27,7 @@
 
     <groupId>codes.vps</groupId>
     <artifactId>mockta</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>mockta</name>
     <description>Okta API simulation backend</description>
     <url>https://mockta.vps.codes/</url>
@@ -65,7 +65,7 @@
         <url>https://github.com/veselov/mockta</url>
         <connection>scm:git:https://github.com/veselov/mockta.git</connection>
         <developerConnection>scm:git:git@github.com:veselov/mockta.git</developerConnection>
-        <tag>v0.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
