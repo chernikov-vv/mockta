@@ -20,7 +20,7 @@ package codes.vps.mockta.db;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import codes.vps.mockta.obj.okta.ErrorObject;
 import lombok.NonNull;
 

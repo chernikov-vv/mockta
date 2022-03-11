@@ -17,7 +17,7 @@
 
 package codes.vps.mockta.db;
 
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import codes.vps.mockta.obj.okta.IDP;
 import codes.vps.mockta.obj.okta.IDPType;
 import lombok.Getter;

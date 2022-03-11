@@ -15,21 +15,20 @@
  *
  */
 
-package codes.vps.mockta.ws.okta;
+package codes.vps.mockta;
 
-import codes.vps.mockta.model.HealthCheck;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@RestController
-@RequestMapping("/api/v1/health")
-public class HealthCheckController {
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<HealthCheck> healthCheck() {
-		return ResponseEntity.ok(new HealthCheck());
-	}
+public class HealthCheckTests extends WebTests {
+
+    @Test
+    public void check() {
+
+        Response r = inJson(request()).get("/api/v1/health");
+        Assertions.assertTrue(r.jsonPath().getBoolean("ok"));
+
+    }
 
 }

@@ -18,7 +18,7 @@
 package codes.vps.mockta.db;
 
 import codes.vps.mockta.OurCookie;
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import codes.vps.mockta.obj.okta.AMR;
 import codes.vps.mockta.obj.okta.IDP;
 import codes.vps.mockta.obj.okta.Session;
@@ -39,7 +39,7 @@ public class OktaSession implements Serializable {
 
 	private final String id;
 	private final String userId;
-	private final Date expires;
+	private Date expires;
 	private final IDP idp;
 	@Setter
 	private String token;
@@ -50,7 +50,7 @@ public class OktaSession implements Serializable {
 		this.id = Util.randomId();
 		this.userId = who.getId();
 		this.login = who.getUserName();
-		expires = new Date(System.currentTimeMillis() + 3600 * 1000);
+		refresh();
 		idp = IDPDB.getIdp().represent();
 		token = Util.randomId();
 	}
@@ -63,6 +63,10 @@ public class OktaSession implements Serializable {
 
 		return new Date().before(expires);
 
+	}
+
+	public void refresh() {
+		expires = new Date(System.currentTimeMillis() + 3600 * 1000);
 	}
 
 	public void setCookie(HttpServletResponse response) {

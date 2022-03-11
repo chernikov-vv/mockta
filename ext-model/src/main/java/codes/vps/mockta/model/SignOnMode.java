@@ -15,12 +15,13 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
-// https://developer.okta.com/docs/reference/api/sessions/#amr-object
-public enum AMR {
+public enum SignOnMode {
 
-    pwd
-    // we only support pwd ATM
+    AUTO_LOGIN,
+    BASIC_AUTH,
+    BOOKMARK,
+    // ...
 
 }

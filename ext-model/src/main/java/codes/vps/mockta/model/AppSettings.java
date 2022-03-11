@@ -15,7 +15,7 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
 import org.springframework.hateoas.RepresentationModel;
 

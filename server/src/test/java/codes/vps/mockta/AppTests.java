@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import codes.vps.mockta.obj.okta.App;
+import codes.vps.mockta.model.App;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 

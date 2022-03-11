@@ -17,11 +17,16 @@
 
 package codes.vps.mockta.ws.okta;
 
+import codes.vps.mockta.db.OktaSession;
+import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.model.SessionToken;
 import codes.vps.mockta.obj.okta.Session;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,9 +34,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/sessions")
 public class SessionController extends UserAuthenticatedService {
 
+    @PostMapping()
+    @IsSkipAuth
+    public HttpEntity<Session> createSession(@RequestBody SessionToken token) {
+        return ResponseEntity.ok(SessionDB.getByTokenOnce(token.getSessionToken()).represent());
+    }
+
     @GetMapping("/me")
     public HttpEntity<Session> currentSession() {
         return ResponseEntity.ok(session.represent());
+    }
+
+    @PostMapping("/{sessionId}/lifecycle/refresh")
+    @IsSkipAuth
+    public HttpEntity<Session> refresh(@PathVariable String sessionId) {
+        OktaSession s = SessionDB.getByCookie(sessionId);
+        s.refresh();
+        return ResponseEntity.ok(s.represent());
     }
 
 }

@@ -18,12 +18,14 @@
 package codes.vps.mockta.db;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import codes.vps.mockta.Util;
-import codes.vps.mockta.obj.okta.Credentials;
+import codes.vps.mockta.util.Util;
+import codes.vps.mockta.model.Credentials;
 import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.obj.okta.Profile;
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.Profile;
+import codes.vps.mockta.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,8 +42,8 @@ public class OktaUser {
 	private String email;
 	private String locale;
 	private String timeZone;
-	private Profile profile;
 	private String status;
+	private Map<String, String> extProfileProperties = new HashMap<>();
 
 	public OktaUser(User user) {
 		Profile profile = user.getProfile();
@@ -70,8 +72,8 @@ public class OktaUser {
 		locale = Util.makeNotNull(profile.getLocale(), () -> "en_US");
 		timeZone = Util.makeNotNull(profile.getLocale(), () -> "Pacific/Honolulu");
 		status = Util.makeNotNull(user.getStatus(), () -> "ACTIVE");
-		this.profile = profile;
 		email = Util.makeNotNull(profile.getEmail(), () -> "Dummy@test.com");
+		extProfileProperties.putAll(profile);
 
 		this.userName = userName;
 		setPassword(password);
@@ -80,8 +82,16 @@ public class OktaUser {
 
 	public User represent() {
 
-		return new User(id, passwordChanged,
-				new Profile(userName, email, firstName, lastName, locale, timeZone));
+		Profile p = new Profile();
+		p.putAll(extProfileProperties);
+		p.setLogin(userName)
+			.setEmail(email)
+			.setFirstName(firstName)
+			.setLastName(lastName)
+			.setLocale(locale)
+			.setTimeZone(timeZone);
+
+		return new User(id, passwordChanged, p);
 
 	}
 
@@ -89,12 +99,6 @@ public class OktaUser {
 		this.password = password;
 		this.passwordChanged = new Date();
 		return this;
-	}
-
-	@Override
-	public String toString() {
-		return "OktaUser [userName=" + userName + ", passwordChanged=" + passwordChanged + ", firstName=" + firstName
-				+ ", lastName=" + lastName + "]";
 	}
 
 }

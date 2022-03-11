@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.User;
 import lombok.NonNull;
 
 public class UserDB {

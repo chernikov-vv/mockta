@@ -17,7 +17,7 @@
 
 package codes.vps.mockta;
 
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.User;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.MethodOrderer;

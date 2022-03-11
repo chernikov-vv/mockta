@@ -17,19 +17,12 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.model.HealthCheck;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@RestController
-@RequestMapping("/api/v1/health")
-public class HealthCheckController {
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<HealthCheck> healthCheck() {
-		return ResponseEntity.ok(new HealthCheck());
-	}
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface IsAdminService {
 }

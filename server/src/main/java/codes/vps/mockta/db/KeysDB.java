@@ -17,7 +17,7 @@
 
 package codes.vps.mockta.db;
 
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import lombok.Getter;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;

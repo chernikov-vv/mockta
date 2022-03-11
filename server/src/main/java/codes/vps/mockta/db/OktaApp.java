@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import codes.vps.mockta.Util;
-import codes.vps.mockta.obj.okta.App;
-import codes.vps.mockta.obj.okta.AppSettings;
-import codes.vps.mockta.obj.okta.AppUser;
+import codes.vps.mockta.util.Util;
+import codes.vps.mockta.model.App;
+import codes.vps.mockta.model.AppSettings;
+import codes.vps.mockta.model.AppUser;
 import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.obj.okta.OAuthClient;
+import codes.vps.mockta.model.OAuthClient;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -28,9 +28,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import codes.vps.mockta.obj.okta.App;
-import codes.vps.mockta.obj.okta.AppUser;
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.App;
+import codes.vps.mockta.model.AppUser;
+import codes.vps.mockta.model.User;
 import io.restassured.response.Response;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

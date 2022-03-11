@@ -15,21 +15,11 @@
  *
  */
 
-package codes.vps.mockta.ws.okta;
+package codes.vps.mockta.util;
 
-import codes.vps.mockta.model.HealthCheck;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+@FunctionalInterface
+public interface RunnableT<X extends Throwable> {
 
-@RestController
-@RequestMapping("/api/v1/health")
-public class HealthCheckController {
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<HealthCheck> healthCheck() {
-		return ResponseEntity.ok(new HealthCheck());
-	}
+    void run() throws X;
 
 }

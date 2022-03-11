@@ -17,16 +17,15 @@
 
 package codes.vps.mockta;
 
-import codes.vps.mockta.obj.okta.App;
-import codes.vps.mockta.obj.okta.AppSettings;
-import codes.vps.mockta.obj.okta.Credentials;
-import codes.vps.mockta.obj.okta.OAuthClient;
-import codes.vps.mockta.obj.okta.Password;
-import codes.vps.mockta.obj.okta.Profile;
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.App;
+import codes.vps.mockta.model.AppSettings;
+import codes.vps.mockta.model.Credentials;
+import codes.vps.mockta.model.OAuthClient;
+import codes.vps.mockta.model.Password;
+import codes.vps.mockta.model.Profile;
+import codes.vps.mockta.model.User;
 import com.github.javafaker.Faker;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,17 +59,15 @@ public class GenerateRandomData {
 	public static User generateUser() {
 
 		Faker faker = new Faker();
-		ArrayList<String> roles = new ArrayList<>();
-		roles.add("role1");
-		roles.add("role2");
-		roles.add("role3");
-		roles.add("role4");
-		//tenancylst.add(tenancyInfo);
 
 		return new User(
-				new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(), faker.name().firstName(),
-						faker.name().lastName(), null, null),
+				new Profile()
+						.setEmail(faker.internet().emailAddress())
+						.setLogin(faker.internet().emailAddress())
+						.setFirstName(faker.name().firstName())
+						.setLastName(faker.name().lastName()),
 				new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
+
 	}
 
 	public static Map<GetNotNullString, User> generateUsers(int size) {
@@ -79,16 +76,10 @@ public class GenerateRandomData {
 
 		HashMap<GetNotNullString, User> users = new HashMap<>();
 		for (int i = 0; i < size; i++) {
-			ArrayList<String> roles = new ArrayList<>();
-			roles.add("role1");
-			roles.add("role2");
-			roles.add("role3");
-			roles.add("role4");
 
 			User user = new User(
-					new Profile(faker.internet().emailAddress(), faker.internet().emailAddress(),
-							faker.name().firstName(), faker.name().lastName(), null, null),
-					new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
+					new Profile().setEmail(faker.internet().emailAddress()).setLogin(faker.internet().emailAddress()).setFirstName(faker.name().firstName()).setLastName(faker.name().lastName()),
+ 					new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
 			GetNotNullString appId = new GetNotNullString();
 			users.put(appId, user);
 		}

@@ -18,6 +18,7 @@
 package codes.vps.mockta.ws.okta;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,8 @@ import codes.vps.mockta.db.OktaApp;
 import codes.vps.mockta.db.OktaAppUser;
 import codes.vps.mockta.db.OktaUser;
 import codes.vps.mockta.db.UserDB;
-import codes.vps.mockta.obj.okta.App;
-import codes.vps.mockta.obj.okta.AppUser;
+import codes.vps.mockta.model.App;
+import codes.vps.mockta.model.AppUser;
 import codes.vps.mockta.obj.okta.ErrorObject;
 
 @RestController
@@ -53,8 +54,8 @@ public class AppsController implements AdminService {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<OktaApp>> getAllApplication() {
-        return ResponseEntity.ok(AppsDB.getAllApps());
+    public ResponseEntity<List<App>> getAllApplication() {
+        return ResponseEntity.ok(AppsDB.getAllApps().stream().map(OktaApp::represent).collect(Collectors.toList()));
     }
 
     @DeleteMapping(value = "/{appId}")

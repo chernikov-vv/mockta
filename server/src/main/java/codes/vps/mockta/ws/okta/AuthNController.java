@@ -23,7 +23,7 @@ import codes.vps.mockta.db.SessionDB;
 import codes.vps.mockta.db.UserDB;
 import codes.vps.mockta.model.PrimaryAuthentication;
 import codes.vps.mockta.model.PrimaryAuthenticationResponse;
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.User;
 import org.springframework.hateoas.LinkRelation;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;

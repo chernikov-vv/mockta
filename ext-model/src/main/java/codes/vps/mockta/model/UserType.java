@@ -15,10 +15,7 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
-import lombok.Getter;
-
-@Getter
-public class RecoveryQuestion {
+public class UserType {
 }

@@ -15,35 +15,23 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 
+// https://developer.okta.com/docs/reference/api/users/#credentials-object
 @Getter
-public class Profile extends RepresentationModel<Profile> {
+public class Credentials extends RepresentationModel<Credentials> {
 
-	private final String login;
-	private final String email;
-	private final String firstName;
-	private final String lastName;
-	private final String locale;
-	private final String timeZone;
+    private final Password password;
+    private final RecoveryQuestion recoveryQuestion = null;
+    private final Provider provider = new Provider();
 
-	public Profile(String login, String email, String firstName, String lastName, String locale, String timeZone) {
-		this.login = login;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.locale = locale;
-		this.timeZone = timeZone;
-		this.email = email;
-
-	}
-
-	@JsonCreator
-	public Profile(String login, String email, String firstName, String lastName) {
-		this(login, email, firstName, lastName, null, null);
-	}
+    @JsonCreator
+    public Credentials(Password password) {
+        this.password = password;
+    }
 
 }

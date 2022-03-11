@@ -15,7 +15,14 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
-public class UserType {
+import lombok.Getter;
+
+@Getter
+public class Provider {
+
+	private final String type = "OKTA";
+	private final String name = "OKTA";
+
 }

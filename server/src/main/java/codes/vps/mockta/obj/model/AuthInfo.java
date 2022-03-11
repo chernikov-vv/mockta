@@ -17,7 +17,7 @@
 
 package codes.vps.mockta.obj.model;
 
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import lombok.Getter;
 
 @Getter

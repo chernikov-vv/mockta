@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Pawel S. Veselov
+ * Copyright (c) 2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,13 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.util;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+@FunctionalInterface
+public interface OnDemandMaker<T> {
 
-import lombok.Getter;
+    T make() throws Exception;
 
-@Getter
-public class Password {
-
-	private final String value;
-
-	@JsonCreator
-	public Password(String value) {
-		this.value = value;
-	}
+    default void close(T what) throws Exception {}
 
 }

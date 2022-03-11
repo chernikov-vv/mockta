@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Pawel S. Veselov
+ * Copyright (c) 2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,14 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 
-// https://developer.okta.com/docs/reference/api/users/#credentials-object
 @Getter
-public class Credentials extends RepresentationModel<Credentials> {
+public class HealthCheck extends RepresentationModel<HealthCheck> {
 
-    private final Password password;
-    private final RecoveryQuestion recoveryQuestion = null;
-    private final Provider provider = new Provider();
-
-    @JsonCreator
-    public Credentials(Password password) {
-        this.password = password;
-    }
+    final boolean ok = true;
 
 }

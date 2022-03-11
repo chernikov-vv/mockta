@@ -17,7 +17,7 @@
 
 package codes.vps.mockta.obj.okta;
 
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;

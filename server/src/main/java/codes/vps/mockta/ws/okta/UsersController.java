@@ -31,14 +31,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import codes.vps.mockta.db.OktaUser;
 import codes.vps.mockta.db.UserDB;
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.User;
 
 @RestController
 @RequestMapping("/api/v1/users")
 public class UsersController implements AdminService {
 
 	@PostMapping
-	public ResponseEntity<?> createUser(@RequestBody User user) {
+	public ResponseEntity<User> createUser(@RequestBody User user) {
 		return ResponseEntity.ok(UserDB.addUser(user).represent());
 
 	}

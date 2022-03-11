@@ -15,13 +15,20 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
-public enum SignOnMode {
+import com.fasterxml.jackson.annotation.JsonCreator;
 
-    AUTO_LOGIN,
-    BASIC_AUTH,
-    BOOKMARK,
-    // ...
+import lombok.Getter;
+
+@Getter
+public class Password {
+
+	private final String value;
+
+	@JsonCreator
+	public Password(String value) {
+		this.value = value;
+	}
 
 }

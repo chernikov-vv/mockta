@@ -40,8 +40,21 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         if (handler instanceof HandlerMethod) {
-            Object bean = ((HandlerMethod) handler).getBean();
-            if (bean instanceof AdminService) {
+
+            HandlerMethod hm = (HandlerMethod)handler;
+
+            if (hm.getMethodAnnotation(IsSkipAuth.class) != null) {
+                return true;
+            }
+
+            Object bean = hm.getBean();
+
+            boolean isAdmin = hm.getMethodAnnotation(IsAdminService.class) != null;
+            if (!isAdmin) {
+                isAdmin = bean instanceof AdminService;
+            }
+
+            if (isAdmin) {
 
                 boolean authOk = false;
 

@@ -17,7 +17,7 @@
 
 package codes.vps.mockta.db;
 
-import codes.vps.mockta.obj.okta.AppUser;
+import codes.vps.mockta.model.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,14 +47,7 @@ public class OktaAppUser {
 	}
 
 	public AppUser represent() {
-
 		return new AppUser(created, user.getId(), lastUpdated, profile, statusChanges);
-
-	}
-
-	@Override
-	public String toString() {
-		return "OktaAppUser [user=" + user + " for app "+app+", profile=" + profile + "]";
 	}
 
 }

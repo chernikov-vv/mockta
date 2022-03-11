@@ -21,6 +21,7 @@ import static io.restassured.RestAssured.given;
 
 import java.io.IOException;
 
+import codes.vps.mockta.util.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParseException;
@@ -63,6 +64,10 @@ public abstract class WebTests {
 		return jacksonObjectMapper.readValue(json, clazz);
 	}
 
+	protected RequestSpecification inJson(RequestSpecification r) {
+		return r.accept("application/json");
+	}
+
 	protected RequestSpecification request() {
 		return given().when().redirects().follow(false).filter(cookies).port(serverPort).log().ifValidationFails()
 				.then().log().ifValidationFails().given();
@@ -82,7 +87,7 @@ public abstract class WebTests {
 
 	protected RequestSpecification user() {
 		// we set the "Accept" header, otherwise we get application/hal+json
-		return request().accept("application/json");
+		return inJson(request());
 	}
 
 	RequestSpecification userJson() {

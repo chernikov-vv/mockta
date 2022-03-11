@@ -17,7 +17,7 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import codes.vps.mockta.db.AppsDB;
 import codes.vps.mockta.db.IDPDB;
 import codes.vps.mockta.db.KeysDB;

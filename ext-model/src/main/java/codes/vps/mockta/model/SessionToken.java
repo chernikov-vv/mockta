@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,18 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 @Getter
-public class Provider {
+public class SessionToken {
 
-	private final String type = "OKTA";
-	private final String name = "OKTA";
+    private final String sessionToken;
 
+    @JsonCreator
+    public SessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Pawel S. Veselov
+ * Copyright (c) 2021-2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 // https://developer.okta.com/docs/reference/api/oidc/#response-properties-9
 package codes.vps.mockta.obj.okta;
 
-import codes.vps.mockta.Util;
+import codes.vps.mockta.util.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;

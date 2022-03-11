@@ -19,14 +19,16 @@ package codes.vps.mockta;
 
 import codes.vps.mockta.db.KeysDB;
 import codes.vps.mockta.model.PrimaryAuthentication;
-import codes.vps.mockta.obj.okta.App;
-import codes.vps.mockta.obj.okta.AppSettings;
-import codes.vps.mockta.obj.okta.AppUser;
-import codes.vps.mockta.obj.okta.Credentials;
-import codes.vps.mockta.obj.okta.OAuthClient;
-import codes.vps.mockta.obj.okta.Password;
-import codes.vps.mockta.obj.okta.Profile;
-import codes.vps.mockta.obj.okta.User;
+import codes.vps.mockta.model.App;
+import codes.vps.mockta.model.AppSettings;
+import codes.vps.mockta.model.AppUser;
+import codes.vps.mockta.model.Credentials;
+import codes.vps.mockta.model.OAuthClient;
+import codes.vps.mockta.model.Password;
+import codes.vps.mockta.model.Profile;
+import codes.vps.mockta.model.User;
+import codes.vps.mockta.util.RFC3339;
+import codes.vps.mockta.util.Util;
 import jdk.nashorn.api.scripting.AbstractJSObject;
 import jdk.nashorn.api.scripting.JSObject;
 import org.hamcrest.BaseMatcher;
@@ -51,8 +53,10 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.net.URI;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -66,7 +70,9 @@ public class AuthNTests extends WebTests {
     @Test
     public void successfulAuth() throws Exception {
 
-        User user = new User(new Profile("test1@codes.vps", "test1@codes.vps", "Guy", "BlueShirt", null, null), new Credentials(new Password("BubbleGumIceCream")));
+        Profile p = new Profile().setEmail("test1@codes.vps").setLogin("test1@codes.vps").setFirstName("Guy").setLastName("BlueShirt");
+        p.put("bestFriend", "Buddy");
+        User user = new User(p, new Credentials(new Password("BubbleGumIceCream")));
         GetNotNullString userId = new GetNotNullString();
 
         adminJson()
@@ -76,10 +82,12 @@ public class AuthNTests extends WebTests {
                 .statusCode(200)
                 .body("id", userId)
                 .body("profile.login", is(user.getProfile().getLogin()))
+                .body("profile.email", is(user.getProfile().getEmail()))
                 .body("profile.firstName", is(user.getProfile().getFirstName()))
                 .body("profile.lastName", is(user.getProfile().getLastName()))
                 .body("profile.locale", is("en_US"))
                 .body("profile.timeZone", is("Pacific/Honolulu"))
+                .body("profile.bestFriend", is("Buddy"))
         ;
 
         App app = new App("test1.label", "test1", "test1",
@@ -216,6 +224,24 @@ public class AuthNTests extends WebTests {
                         .statusCode(200)
                         .body("login", is("test1@codes.vps"));
             }
+
+            // check that the refreshing works.
+            GetNotNullString expires = new GetNotNullString();
+            GetNotNullString sessionId = new GetNotNullString();
+            user().get("/api/v1/sessions/me")
+                    .then()
+                    .statusCode(200)
+                    .body("expiresAt", expires)
+                    .body("id", sessionId);
+            long exp1 = new RFC3339(expires.getRecorded()).getDate();
+            Thread.sleep(2);
+            user().post("/api/v1/sessions/{sessionId}/lifecycle/refresh", sessionId.getRecorded())
+                    .then()
+                    .statusCode(200)
+                    .body("expiresAt", expires);
+            long exp2 = new RFC3339(expires.getRecorded()).getDate();
+            Assertions.assertTrue(exp2 > exp1);
+
 
             String logOutState = Util.randomId();
             String rdr = new DefaultUriBuilderFactory().uriString("https://www.google.com?state=p&fix=in").build().toString();

@@ -17,7 +17,7 @@
 
 package codes.vps.mockta.db;
 
-import codes.vps.mockta.obj.okta.App;
+import codes.vps.mockta.model.App;
 import codes.vps.mockta.obj.okta.ErrorObject;
 import lombok.NonNull;
 

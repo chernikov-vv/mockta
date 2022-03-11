@@ -15,12 +15,10 @@
  *
  */
 
-package codes.vps.mockta.obj.okta;
+package codes.vps.mockta.model;
 
-// https://developer.okta.com/docs/reference/api/sessions/#amr-object
-public enum AMR {
+import lombok.Getter;
 
-    pwd
-    // we only support pwd ATM
-
+@Getter
+public class RecoveryQuestion {
 }

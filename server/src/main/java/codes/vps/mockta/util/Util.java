@@ -15,7 +15,7 @@
  *
  */
 
-package codes.vps.mockta;
+package codes.vps.mockta.util;
 
 import lombok.NonNull;
 import org.jose4j.base64url.Base64Url;
@@ -207,6 +207,22 @@ public class Util {
 			throw doThrow(e);
 		}
 	}
+
+	/**
+	 * Executes a {@link RunnableT}, throwing any produced exception as
+	 * a runtime exception.
+	 * @param r Runnable to execute
+	 */
+	public static void reThrow(RunnableT<? extends Throwable> r) {
+
+		try {
+			r.run();
+		} catch (Throwable e) {
+			throw doThrow(e);
+		}
+
+	}
+
 
 	// https://github.com/spring-projects/spring-framework/blob/main/spring-core/src/main/java/org/springframework/core/convert/support/ConversionUtils.java
 	public static Class<?> getEnumType(Class<?> targetType) {
