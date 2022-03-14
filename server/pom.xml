@@ -85,8 +85,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
+            <groupId>javax.servlet.jsp.jstl</groupId>
+            <artifactId>javax.servlet.jsp.jstl-api</artifactId>
+            <version>1.2.2</version>
         </dependency>
 
         <dependency>
@@ -120,6 +121,15 @@
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
         </dependency>
+
+        <dependency>
+            <!-- have to pull the JSTL library explicitly from apache, using a:javax.servlet:jstl:1.2
+            fails with security check over CVE-2015-0254 -->
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-impl</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
 
     </dependencies>
 

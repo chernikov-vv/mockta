@@ -17,12 +17,9 @@
 
 package codes.vps.mockta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
+import codes.vps.mockta.ws.okta.AuthInterceptor;
+import codes.vps.mockta.ws.okta.NoCacheInterceptor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +39,10 @@ import org.springframework.session.config.annotation.web.http.EnableSpringHttpSe
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import codes.vps.mockta.ws.okta.AuthInterceptor;
-import codes.vps.mockta.ws.okta.NoCacheInterceptor;
-import lombok.Getter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @EnableSpringHttpSession
@@ -55,8 +51,6 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 	Logger logger = LoggerFactory.getLogger(MocktaApplication.class);
 
 	private final String API_KEY_OPT = "mockta.api-token";
-	@Getter
-	private List<String> apiTokens;
 
 	private AuthInterceptor authInterceptor;
 	private NoCacheInterceptor noCacheInterceptor;
@@ -86,11 +80,8 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 		List<String> apiTokens = args.getOptionValues(API_KEY_OPT);
 
 		if (apiTokens != null) {
-			this.apiTokens = Collections.unmodifiableList(new ArrayList<>(apiTokens));
-		} else {
-			this.apiTokens = Collections.emptyList();
+			authInterceptor.setApiTokens(apiTokens);
 		}
-		 
 
 	}
 
@@ -121,12 +112,16 @@ public class MocktaApplication implements ApplicationRunner, WebMvcConfigurer {
 	public LinkDiscoverers discoverers() {
 		List<LinkDiscoverer> plugins = new ArrayList<>();
 		plugins.add(new CollectionJsonLinkDiscoverer());
-		return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
+		return new LinkDiscoverers(SimplePluginRegistry.of(plugins));
 	}
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addConverterFactory(new EnumConverter());
+	}
+
+	public List<String> getApiTokens() {
+		return authInterceptor.getApiTokens();
 	}
 
 }

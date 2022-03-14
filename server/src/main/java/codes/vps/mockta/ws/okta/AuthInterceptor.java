@@ -29,12 +29,18 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private MocktaApplication application;
+    private final Set<String> apiTokens = new HashSet<>();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -68,7 +74,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                         break;
                     }
 
-                    if (!application.getApiTokens().contains(auth.substring(5))) {
+                    if (!apiTokens.contains(auth.substring(5))) {
                         break;
                     }
 
@@ -113,9 +119,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     }
 
-    @Autowired
-    public void setApplication(MocktaApplication application) {
-        this.application = application;
+    public void setApiTokens(Collection<String> tokens) {
+        apiTokens.clear();
+        apiTokens.addAll(tokens);
     }
 
+    public List<String> getApiTokens() {
+        return new ArrayList<>(apiTokens);
+    }
 }
