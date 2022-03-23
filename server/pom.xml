@@ -23,7 +23,7 @@
     <parent>
         <groupId>codes.vps</groupId>
         <artifactId>mockta</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.2</version>
     </parent>
     <packaging>war</packaging>
 
