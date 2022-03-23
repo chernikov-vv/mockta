@@ -53,6 +53,11 @@ public class AppsController implements AdminService {
         return ResponseEntity.ok(AppsDB.getApp(appId).represent());
     }
 
+    @RequestMapping(value = "/{appId}", method = RequestMethod.PUT)
+    public ResponseEntity<App> putApplication(@PathVariable String appId, @RequestBody App app) {
+        return ResponseEntity.ok(AppsDB.updateApp(appId, app).represent());
+    }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<List<App>> getAllApplication() {
         return ResponseEntity.ok(AppsDB.getAllApps().stream().map(OktaApp::represent).collect(Collectors.toList()));
@@ -83,20 +88,19 @@ public class AppsController implements AdminService {
     @PostMapping("{appId}/users")
     public ResponseEntity<AppUser> assignUser(@PathVariable String appId, @RequestBody AppUser appUser) {
 
-        OktaApp app = AppsDB.getApp(appId);
-        OktaUser user = UserDB.getUser(appUser.getId());
+        try (OktaApp app = AppsDB.getApp(appId); OktaUser user = UserDB.getUser(appUser.getId())) {
 
-        AppUser ret = app.getUsers().compute(user.getId(), (k, v) -> {
-            if (v != null) {
-                throw ErrorObject.duplicate("app user registration " + k).boom();
-            }
-            return new OktaAppUser(user, app, appUser);
+            AppUser ret = app.getUsers().compute(user.getId(), (k, v) -> {
+                if (v != null) {
+                    throw ErrorObject.duplicate("app user registration " + k).boom();
+                }
+                return new OktaAppUser(user, app, appUser);
 
-        }).represent();
+            }).represent();
 
-        AppsDB.updateApp(app); // $TODO why?
+            return ResponseEntity.ok(ret);
 
-        return ResponseEntity.ok(ret);
+        }
 
     }
 

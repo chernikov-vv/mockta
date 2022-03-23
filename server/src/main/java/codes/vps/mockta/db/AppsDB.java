@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AppsDB {
@@ -40,7 +41,7 @@ public class AppsDB {
             if (v != null) {
                 throw ErrorObject.duplicate("app name " + k).boom();
             }
-            return new OktaApp(app);
+            return oktaApp;
         });
 
         appsById.put(oktaApp.getId(), oktaApp);
@@ -48,21 +49,27 @@ public class AppsDB {
 
     }
 
-    public static OktaApp updateApp(OktaApp oktaApp) {
+    public static OktaApp updateApp(String id, App app) {
 
-        apps.put(oktaApp.getName(), oktaApp);
-        appsById.put(oktaApp.getId(), oktaApp);
-        return oktaApp;
+        try (OktaApp oktaApp = getApp(id)) {
 
-    }
+            apps.compute(app.getName(), (k, v) -> {
+                if (v != null && v != oktaApp) {
+                    throw ErrorObject.duplicate("app name " + k).boom();
+                }
+                return oktaApp;
+            });
 
-    public static OktaApp updateApp(OktaApp oktaApp, String id) {
+            oktaApp.updateFrom(app);
 
-        OktaApp app = appsById.get(id);
-        if (app == null) {
-            throw ErrorObject.notFound("app id " + id).boom();
+            if (!Objects.equals(oktaApp.getName(), oktaApp.getSavedName())) {
+                apps.remove(oktaApp.getSavedName());
+                oktaApp.setSavedName(oktaApp.getName());
+            }
+
+            return oktaApp;
+
         }
-        return app;
 
     }
 
@@ -73,6 +80,7 @@ public class AppsDB {
         if (app == null) {
             throw ErrorObject.notFound("app id " + id).boom();
         }
+        app.checkOut();
         return app;
 
     }
@@ -89,6 +97,7 @@ public class AppsDB {
 
     }
 
+    // $TODO: REMOVE THIS
     public static boolean deleteAllApp() {
 
         appsById.clear();

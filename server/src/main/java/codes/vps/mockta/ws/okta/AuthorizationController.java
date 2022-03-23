@@ -17,19 +17,19 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.util.Util;
 import codes.vps.mockta.db.AppsDB;
 import codes.vps.mockta.db.IDPDB;
 import codes.vps.mockta.db.KeysDB;
 import codes.vps.mockta.db.OktaApp;
 import codes.vps.mockta.db.OktaAppUser;
+import codes.vps.mockta.db.OktaSession;
 import codes.vps.mockta.db.OktaUser;
+import codes.vps.mockta.db.SessionDB;
 import codes.vps.mockta.db.UserDB;
 import codes.vps.mockta.obj.model.AuthInfo;
 import codes.vps.mockta.obj.okta.ErrorObject;
 import codes.vps.mockta.obj.okta.OpenIDMetaData;
-import codes.vps.mockta.db.OktaSession;
-import codes.vps.mockta.db.SessionDB;
+import codes.vps.mockta.util.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -103,9 +103,8 @@ public class AuthorizationController {
 				break;
 			}
 
-			try {
+			try (OktaApp app = AppsDB.getApp(clientId)) {
 
-				OktaApp app = AppsDB.getApp(clientId);
 				OktaSession session = SessionDB.getByTokenOnce(sessionToken);
 
 				boolean uriOK = false;
@@ -213,7 +212,7 @@ public class AuthorizationController {
 		response.addHeader("x-mockta-auth-error", Util.makeNotNull(error, ()->"<none>"));
 		model.addAttribute("auth", authInfo);
 
-		return new ModelAndView("jsp/postMessage.jsp", model.asMap());
+		return new ModelAndView("postMessage", model.asMap());
 
 	}
 

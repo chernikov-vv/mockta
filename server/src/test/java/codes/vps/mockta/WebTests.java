@@ -17,31 +17,20 @@
 
 package codes.vps.mockta;
 
-import static io.restassured.RestAssured.given;
-
-import java.io.IOException;
-
 import codes.vps.mockta.util.Util;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.filter.cookie.CookieFilter;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParseException;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 
-import io.restassured.filter.cookie.CookieFilter;
-import io.restassured.specification.RequestSpecification;
+import static io.restassured.RestAssured.given;
 
-@SpringBootTest(classes = MocktaApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, args = "--mockta.api-token=FireAxe")
-public abstract class WebTests {
-
-	@Autowired
-	MocktaApplication app;
-
-	@LocalServerPort
-	protected int serverPort;
+public abstract class WebTests extends Tests {
 
 	@Autowired
 	private MappingJackson2HttpMessageConverter springMvcJacksonConverter;

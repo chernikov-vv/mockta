@@ -18,6 +18,8 @@
 package codes.vps.mockta.ws.okta;
 
 import codes.vps.mockta.obj.okta.ErrorObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,8 +27,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ErrorHandler {
 
+	Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
+
 	@ExceptionHandler(ErrorObject.MyException.class)
 	public ResponseEntity<ErrorObject> oktaErrorHandler(ErrorObject.MyException e) {
+		logger.warn("Request exception : "+e.getObject(), e);
 		return new ResponseEntity<>(e.getObject(), e.getObject().getHttpError());
 	}
 

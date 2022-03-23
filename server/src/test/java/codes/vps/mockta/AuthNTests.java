@@ -18,14 +18,15 @@
 package codes.vps.mockta;
 
 import codes.vps.mockta.db.KeysDB;
-import codes.vps.mockta.model.PrimaryAuthentication;
 import codes.vps.mockta.model.App;
 import codes.vps.mockta.model.AppSettings;
 import codes.vps.mockta.model.AppUser;
 import codes.vps.mockta.model.Credentials;
 import codes.vps.mockta.model.OAuthClient;
 import codes.vps.mockta.model.Password;
+import codes.vps.mockta.model.PrimaryAuthentication;
 import codes.vps.mockta.model.Profile;
+import codes.vps.mockta.model.SignOnMode;
 import codes.vps.mockta.model.User;
 import codes.vps.mockta.util.RFC3339;
 import codes.vps.mockta.util.Util;
@@ -53,10 +54,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.net.URI;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -90,8 +89,14 @@ public class AuthNTests extends WebTests {
                 .body("profile.bestFriend", is("Buddy"))
         ;
 
-        App app = new App("test1.label", "test1", "test1",
-                new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
+//        App app = App(SignOnMode.OPENID_CONNECT, "test1.label", "test1", "test1",
+//                new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
+        App app = App.builder()
+                .signOnMode(SignOnMode.OPENID_CONNECT)
+                .label("test1.label")
+                .name("test1")
+                .profile("test1")
+                .settings(new AppSettings(new OAuthClient(Collections.singletonList("http://localhost")))).build();
 
         GetNotNullString appId = new GetNotNullString();
 

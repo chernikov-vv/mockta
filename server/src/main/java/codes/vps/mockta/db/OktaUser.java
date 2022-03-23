@@ -17,21 +17,21 @@
 
 package codes.vps.mockta.db;
 
+import codes.vps.mockta.model.Credentials;
+import codes.vps.mockta.model.Profile;
+import codes.vps.mockta.model.User;
+import codes.vps.mockta.obj.okta.ErrorObject;
+import codes.vps.mockta.util.Util;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import codes.vps.mockta.util.Util;
-import codes.vps.mockta.model.Credentials;
-import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.model.Profile;
-import codes.vps.mockta.model.User;
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
-public class OktaUser {
+public class OktaUser extends DBObject {
 
 	private final String id = Util.randomId();
 	private final String userName;

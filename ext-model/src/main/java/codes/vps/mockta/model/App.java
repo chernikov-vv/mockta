@@ -17,44 +17,35 @@
 
 package codes.vps.mockta.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
 import java.util.Map;
 
 // https://developer.okta.com/docs/reference/api/apps/#application-object
-@Getter
+@EqualsAndHashCode(callSuper = true)
+@Value
+@Builder
+@JsonDeserialize(builder = App.AppBuilder.class)
 public class App extends RepresentationModel<App> {
 
-    private final Date created;
-    private final String id;
-    private final String label;
-    private final Date lastUpdated;
-    private final String name;
-    private final String profile;
-    private final SignOnMode signOnMode = SignOnMode.BASIC_AUTH; // right?
-    private final String status = "ACTIVE";
-    private final AppSettings settings;
-    private final Map<String, AppUser> users;
+    Date created;
+    String id;
+    String label;
+    Date lastUpdated;
+    String name;
+    String profile;
+    SignOnMode signOnMode;
+    String status = "ACTIVE";
+    AppSettings settings;
+    Map<String, AppUser> users;
 
-    public App(Date created, String id, String label, Date lastUpdated, String name, String profile,
-               Map<String, AppUser> users, AppSettings settings) {
-        this.created = created;
-        this.id = id;
-        this.label = label;
-        this.lastUpdated = lastUpdated;
-        this.name = name;
-        this.profile = profile;
-        this.settings = settings;
-        this.users = users;
-    }
-
-    @JsonCreator
-    public App(String label, String name, String profile, @JsonProperty("settings") AppSettings settings) {
-        this(null, null, label, null, name, profile, null, settings);
-    }
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class AppBuilder {}
 
 }

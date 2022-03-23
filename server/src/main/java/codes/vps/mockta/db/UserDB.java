@@ -70,6 +70,7 @@ public class UserDB {
 		if (user == null) {
 			throw ErrorObject.notFound("user id " + id).boom();
 		}
+		user.checkOut();
 		return user;
 
 	}
@@ -98,11 +99,7 @@ public class UserDB {
 	@NonNull
 	public static List<OktaUser> getAllUsers() {
 
-		List<OktaUser> users = new ArrayList<OktaUser>(usersById.values());
-		if (users == null) {
-			throw ErrorObject.notFound("No users  ").boom();
-		}
-		return users;
+		return new ArrayList<>(usersById.values());
 
 	}
 

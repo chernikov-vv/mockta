@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import codes.vps.mockta.model.SignOnMode;
 import codes.vps.mockta.util.Util;
 import codes.vps.mockta.model.App;
 import codes.vps.mockta.model.AppSettings;
@@ -35,31 +36,38 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OktaApp {
+public class OktaApp extends DBObject {
 
 	private final String id = Util.randomId();
 	private final Date created = new Date();
-	private final String name; // unique
+	private String name; // unique
+	private String savedName;
 	private Date lastUpdated;
 	private String label;
 	private String profile;
+	private SignOnMode signOnMode;
 	private final Map<String, OktaAppUser> users = new ConcurrentHashMap<>();
 	private final List<String> redirectUris = new ArrayList<>();
-
-	public OktaApp(String name) {
-		this.name = name;
-	}
 
 	public OktaApp(App app) {
 
 		if (app.getName() == null) {
 			throw ErrorObject.illegalArgument("need name").boom();
 		}
+
+		updateFrom(app);
+		savedName = name;
+
+	}
+
+	public void updateFrom(App app) {
+
 		name = app.getName();
 
 		label = app.getLabel();
 		lastUpdated = new Date();
 		profile = app.getProfile();
+		signOnMode = app.getSignOnMode();
 
 		Util.whenNotNull(app.getSettings(), settings -> Util.whenNotNull(settings.getOauthClient(),
 				oAuthClient -> Util.whenNotNull(oAuthClient.getRedirectUris(), redirectUris::addAll)));
@@ -68,13 +76,28 @@ public class OktaApp {
 
 	public App represent() {
 
-		Map<String, AppUser> users = new HashMap<>();
-		for (Map.Entry<String, OktaAppUser> me : this.users.entrySet()) {
-			users.put(me.getKey(), me.getValue().represent());
-		}
+		try {
 
-		return new App(created, id, label, lastUpdated, name, profile, users,
-				new AppSettings(new OAuthClient(redirectUris)));
+			Map<String, AppUser> users = new HashMap<>();
+			for (Map.Entry<String, OktaAppUser> me : this.users.entrySet()) {
+				users.put(me.getKey(), me.getValue().represent());
+			}
+
+			return App.builder()
+					.created(created)
+					.id(id)
+					.signOnMode(signOnMode)
+					.label(label)
+					.lastUpdated(lastUpdated)
+					.name(name)
+					.profile(profile)
+					.users(users)
+					.settings(new AppSettings(new OAuthClient(redirectUris)))
+					.build();
+
+		} finally {
+			close();
+		}
 
 	}
 

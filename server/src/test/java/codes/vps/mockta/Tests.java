@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Pawel S. Veselov
+ * Copyright (c) 2022 Pawel S. Veselov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,21 @@
  *
  */
 
-package codes.vps.mockta.model;
+package codes.vps.mockta;
 
-public enum SignOnMode {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 
-    AUTO_LOGIN,
-    BASIC_AUTH,
-    BOOKMARK,
-    OPENID_CONNECT // that's what Okta is using for "SPA"
-    // ...
+@SpringBootTest(classes = MocktaApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, args = "--mockta.api-token=FireAxe")
+public abstract class Tests {
+
+    @Autowired
+    protected MocktaApplication app;
+
+    @LocalServerPort
+    protected int serverPort;
+
+
 
 }

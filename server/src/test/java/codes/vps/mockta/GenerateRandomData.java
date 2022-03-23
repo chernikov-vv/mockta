@@ -23,6 +23,7 @@ import codes.vps.mockta.model.Credentials;
 import codes.vps.mockta.model.OAuthClient;
 import codes.vps.mockta.model.Password;
 import codes.vps.mockta.model.Profile;
+import codes.vps.mockta.model.SignOnMode;
 import codes.vps.mockta.model.User;
 import com.github.javafaker.Faker;
 
@@ -38,8 +39,7 @@ public class GenerateRandomData {
 		HashMap<GetNotNullString, App> apps = new HashMap<>();
 		for (int i = 0; i < size; i++) {
 
-			App app = new App(faker.funnyName().name(), faker.name().firstName(), faker.name().lastName(),
-					new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
+			App app = generateApp();
 
 			GetNotNullString appId = new GetNotNullString();
 			apps.put(appId, app);
@@ -52,8 +52,13 @@ public class GenerateRandomData {
 
 		Faker faker = new Faker();
 
-		return new App(faker.funnyName().name(), faker.name().firstName(), faker.name().lastName(),
-				new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
+		return App.builder()
+				.signOnMode(SignOnMode.OPENID_CONNECT)
+				.name(faker.funnyName().name())
+				.label(faker.name().firstName())
+				.profile(faker.name().lastName())
+				.settings(new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))))
+				.build();
 	}
 
 	public static User generateUser() {

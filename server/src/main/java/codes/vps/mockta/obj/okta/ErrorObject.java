@@ -20,6 +20,7 @@ package codes.vps.mockta.obj.okta;
 import codes.vps.mockta.util.Util;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpStatus;
 
@@ -28,6 +29,7 @@ import java.util.List;
 
 // https://developer.okta.com/docs/reference/error-codes/
 @Getter
+@ToString
 public class ErrorObject extends RepresentationModel<ErrorObject> {
 
     private final String errorCode;

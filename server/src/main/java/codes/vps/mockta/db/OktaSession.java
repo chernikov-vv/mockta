@@ -79,7 +79,7 @@ public class OktaSession implements Serializable {
 		// c.setSecure(true);
 		c.setSecure(false); // since we only support HTTP; though it looks like Chrome doesn't care
 		c.setHttpOnly(true);
-		c.setSameSite(SameSiteCookies.NONE);
+		c.setSameSite(SameSiteCookies.STRICT);
 		response.addCookie(c);
 
 	}
