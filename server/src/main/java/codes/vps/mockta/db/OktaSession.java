@@ -18,16 +18,16 @@
 package codes.vps.mockta.db;
 
 import codes.vps.mockta.OurCookie;
-import codes.vps.mockta.util.Util;
 import codes.vps.mockta.obj.okta.AMR;
 import codes.vps.mockta.obj.okta.IDP;
 import codes.vps.mockta.obj.okta.Session;
 import codes.vps.mockta.obj.okta.SessionStatus;
+import codes.vps.mockta.util.Util;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.tomcat.util.http.SameSiteCookies;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -79,7 +79,7 @@ public class OktaSession implements Serializable {
 		// c.setSecure(true);
 		c.setSecure(false); // since we only support HTTP; though it looks like Chrome doesn't care
 		c.setHttpOnly(true);
-		c.setSameSite(SameSiteCookies.STRICT);
+		c.setSameSite(SameSiteCookies.LAX);
 		response.addCookie(c);
 
 	}

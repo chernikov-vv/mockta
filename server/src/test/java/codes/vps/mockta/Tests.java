@@ -19,7 +19,7 @@ package codes.vps.mockta;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
 @SpringBootTest(classes = MocktaApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, args = "--mockta.api-token=FireAxe")
 public abstract class Tests {

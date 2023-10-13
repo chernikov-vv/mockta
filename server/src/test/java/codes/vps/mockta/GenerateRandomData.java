@@ -29,13 +29,13 @@ import com.github.javafaker.Faker;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GenerateRandomData {
 
 	public static Map<GetNotNullString, App> generateApps(int size) {
 
-		Faker faker = new Faker();
 		HashMap<GetNotNullString, App> apps = new HashMap<>();
 		for (int i = 0; i < size; i++) {
 
@@ -79,7 +79,7 @@ public class GenerateRandomData {
 
 		Faker faker = new Faker();
 
-		HashMap<GetNotNullString, User> users = new HashMap<>();
+		Map<GetNotNullString, User> users = new LinkedHashMap<>();
 		for (int i = 0; i < size; i++) {
 
 			User user = new User(

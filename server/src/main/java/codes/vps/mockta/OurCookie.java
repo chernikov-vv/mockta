@@ -17,11 +17,10 @@
 
 package codes.vps.mockta;
 
+import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.tomcat.util.http.SameSiteCookies;
-
-import javax.servlet.http.Cookie;
 
 public class OurCookie extends Cookie {
 	/**

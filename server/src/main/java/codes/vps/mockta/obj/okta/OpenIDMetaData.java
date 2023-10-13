@@ -20,12 +20,12 @@ package codes.vps.mockta.obj.okta;
 
 import codes.vps.mockta.util.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;

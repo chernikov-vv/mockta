@@ -17,21 +17,18 @@
 
 package codes.vps.mockta.ws.okta;
 
-import codes.vps.mockta.MocktaApplication;
-import codes.vps.mockta.obj.okta.ErrorObject;
 import codes.vps.mockta.db.OktaSession;
 import codes.vps.mockta.db.SessionDB;
-import org.springframework.beans.factory.annotation.Autowired;
+import codes.vps.mockta.obj.okta.ErrorObject;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -45,11 +42,14 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        if (handler instanceof HandlerMethod) {
-
-            HandlerMethod hm = (HandlerMethod)handler;
+        if (handler instanceof HandlerMethod hm) {
 
             if (hm.getMethodAnnotation(IsSkipAuth.class) != null) {
+                return true;
+            }
+
+            if (!hm.getMethod().getDeclaringClass().getPackageName().startsWith(getClass().getPackageName())) {
+                // if it's not our handler, don't bother
                 return true;
             }
 

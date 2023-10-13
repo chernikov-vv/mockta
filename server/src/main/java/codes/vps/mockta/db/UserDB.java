@@ -17,20 +17,22 @@
 
 package codes.vps.mockta.db;
 
+import codes.vps.mockta.model.User;
+import codes.vps.mockta.obj.okta.ErrorObject;
+import codes.vps.mockta.util.Page;
+import lombok.NonNull;
+
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import codes.vps.mockta.obj.okta.ErrorObject;
-import codes.vps.mockta.model.User;
-import lombok.NonNull;
-
 public class UserDB {
 
 	public final static Map<String, OktaUser> users = new ConcurrentHashMap<>();
-	public final static Map<String, OktaUser> usersById = new ConcurrentHashMap<>();
+	public final static LinkedHashMap<String, OktaUser> usersById = new LinkedHashMap<>();
 
 	@NonNull
 	public static OktaUser authenticate(String userName, String password) {
@@ -87,19 +89,45 @@ public class UserDB {
 
 	}
 
+	public static Page<OktaUser, String> page(String fromId, int pageSize) {
+
+		boolean recording = false;
+		String next = null;
+		int recorded = 0;
+		List<OktaUser> page = new ArrayList<>();
+
+		for (Map.Entry<String, OktaUser> me : usersById.entrySet()) {
+
+			String key = me.getKey();
+
+			if (recorded == pageSize) {
+				next = key;
+				break;
+			}
+
+			if (!recording) {
+				if (fromId == null || Objects.equals(fromId, key)) {
+					recording = true;
+				} else {
+					continue;
+				}
+			}
+
+			page.add(me.getValue());
+			recorded++;
+
+		}
+
+		return new Page<>(usersById.size(), page, next);
+
+	}
+
 	public static boolean deleteAllUser() {
 
 		usersById.clear();
 		users.clear();
 
 		return true;
-
-	}
-
-	@NonNull
-	public static List<OktaUser> getAllUsers() {
-
-		return new ArrayList<>(usersById.values());
 
 	}
 

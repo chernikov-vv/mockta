@@ -17,9 +17,14 @@
 
 package codes.vps.mockta.ws.okta;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import codes.vps.mockta.db.AppsDB;
+import codes.vps.mockta.db.OktaApp;
+import codes.vps.mockta.db.OktaAppUser;
+import codes.vps.mockta.db.OktaUser;
+import codes.vps.mockta.db.UserDB;
+import codes.vps.mockta.model.App;
+import codes.vps.mockta.model.AppUser;
+import codes.vps.mockta.obj.okta.ErrorObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,14 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import codes.vps.mockta.db.AppsDB;
-import codes.vps.mockta.db.OktaApp;
-import codes.vps.mockta.db.OktaAppUser;
-import codes.vps.mockta.db.OktaUser;
-import codes.vps.mockta.db.UserDB;
-import codes.vps.mockta.model.App;
-import codes.vps.mockta.model.AppUser;
-import codes.vps.mockta.obj.okta.ErrorObject;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/apps")
@@ -58,7 +57,7 @@ public class AppsController implements AdminService {
         return ResponseEntity.ok(AppsDB.updateApp(appId, app).represent());
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<App>> getAllApplication() {
         return ResponseEntity.ok(AppsDB.getAllApps().stream().map(OktaApp::represent).collect(Collectors.toList()));
     }
@@ -74,7 +73,7 @@ public class AppsController implements AdminService {
         }
     }
 
-    @DeleteMapping(value = "")
+    @DeleteMapping
     public ResponseEntity<?> deleteAllApplication() {
 
         boolean isRemoved = AppsDB.deleteAllApp();

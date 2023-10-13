@@ -18,15 +18,24 @@
 package codes.vps.mockta;
 
 import codes.vps.mockta.model.User;
+import io.restassured.http.Header;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.LinkRelation;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppUserTests extends WebTests {
 
-    static int noOfUsers = 10;
+    static int noOfUsers = 20;
     static Map<GetNotNullString, User> users = null;
     static String baseURL = "/api/v1/users";
 
@@ -44,7 +53,7 @@ public class AppUserTests extends WebTests {
 
         Response response = admin().delete(baseURL);
         int statusCode = response.getStatusCode();
-        assertEquals(statusCode, 200);
+        assertEquals(200, statusCode);
 
     }
 
@@ -85,15 +94,43 @@ public class AppUserTests extends WebTests {
     @Order(4)
     public void getAllUsers() {
 
-        Response response = admin().get(baseURL);
-        JsonPath jsonPathEvaluator = response.jsonPath();
-        //System.out.println("Arvind" + response.getBody().asString());
-        List<String> logins = jsonPathEvaluator.getList("userName");
-        System.out.println("Get all Users");
-        for (String login : logins) {
-            System.out.println("Login : " + login);
+        String url = baseURL;
+        Set<String> userNames = new HashSet<>();
+
+        do {
+
+            Response response = admin().get(url);
+            // response.then().log().all();
+            JsonPath jsonPathEvaluator = response.jsonPath();
+            List<String> logins = jsonPathEvaluator.getList("profile.login");
+            userNames.addAll(logins);
+            var links = getLinks(response);
+
+            Response self = admin().get(links.get(IanaLinkRelations.SELF));
+            Assertions.assertEquals(response.getBody().asString(), self.getBody().asString());
+
+            url = links.get(IanaLinkRelations.NEXT);
+
+        } while (url != null);
+
+        // assertEquals(noOfUsers, userNames.size());
+        assertEquals(users.values().stream().map(u->u.getProfile().getLogin()).collect(Collectors.toSet()), userNames);
+
+    }
+
+
+    private Map<LinkRelation, String> getLinks(Response r) {
+
+        var links = r.getHeaders().getList("link");
+        Map<LinkRelation, String> result = new HashMap<>();
+        if (links != null) {
+            for (Header h : links) {
+                Link l = Link.valueOf(h.getValue());
+                Assertions.assertFalse(result.containsKey(l.getRel()));
+                result.put(l.getRel(), l.getHref());
+            }
         }
-        assertEquals(noOfUsers, logins.size());
+        return result;
 
     }
 
@@ -101,29 +138,18 @@ public class AppUserTests extends WebTests {
     @Order(5)
     public void deleteUser() {
 
-        for (Map.Entry<GetNotNullString, User> entry : users.entrySet()) {
-            GetNotNullString userId = entry.getKey();
-
-            Response response = admin().delete(baseURL + "/{userId}", userId.getRecorded());
-            int statusCode = response.getStatusCode();
-            assertEquals(statusCode, 200);
-
-            break;
-        }
+        Map.Entry<GetNotNullString, User> sacrifice = users.entrySet().iterator().next();
+        GetNotNullString userId = sacrifice.getKey();
+        users.remove(userId);
+        Response response = admin().delete(baseURL + "/{userId}", userId.getRecorded());
+        int statusCode = response.getStatusCode();
+        assertEquals(200, statusCode);
 
     }
 
     @Test
     @Order(6)
     public void getAllUserPostDelete() {
-        Response response = admin().get(baseURL);
-        JsonPath jsonPathEvaluator = response.jsonPath();
-        List<String> logins = jsonPathEvaluator.getList("userName");
-        System.out.println("Get all Users");
-        for (String login : logins) {
-            System.out.println("Login : " + login);
-        }
-        assertEquals(noOfUsers - 1, logins.size());
-
+        getAllUsers();
     }
 }

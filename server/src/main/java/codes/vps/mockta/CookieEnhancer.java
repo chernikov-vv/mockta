@@ -17,14 +17,13 @@
 
 package codes.vps.mockta;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 import org.apache.tomcat.util.http.SameSiteCookies;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 // https://linuxtut.com/en/0a2aca650721626055a3/
 @Component
