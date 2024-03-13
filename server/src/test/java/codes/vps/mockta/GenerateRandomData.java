@@ -34,61 +34,61 @@ import java.util.Map;
 
 public class GenerateRandomData {
 
-	public static Map<GetNotNullString, App> generateApps(int size) {
+    public static Map<GetNotNullString, App> generateApps(int size) {
 
-		HashMap<GetNotNullString, App> apps = new HashMap<>();
-		for (int i = 0; i < size; i++) {
+        HashMap<GetNotNullString, App> apps = new HashMap<>();
+        for (int i = 0; i < size; i++) {
 
-			App app = generateApp();
+            App app = generateApp();
 
-			GetNotNullString appId = new GetNotNullString();
-			apps.put(appId, app);
-		}
+            GetNotNullString appId = new GetNotNullString();
+            apps.put(appId, app);
+        }
 
-		return apps;
-	}
+        return apps;
+    }
 
-	public static App generateApp() {
+    public static App generateApp() {
 
-		Faker faker = new Faker();
+        Faker faker = new Faker();
 
-		return App.builder()
-				.signOnMode(SignOnMode.OPENID_CONNECT)
-				.name(faker.funnyName().name())
-				.label(faker.name().firstName())
-				.profile(faker.name().lastName())
-				.settings(new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))))
-				.build();
-	}
+        return App.builder()
+                .signOnMode(SignOnMode.OPENID_CONNECT)
+                .name(faker.funnyName().name())
+                .label(faker.name().firstName())
+                .profile(faker.name().lastName())
+                .settings(new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))))
+                .build();
+    }
 
-	public static User generateUser() {
+    public static User generateUser() {
 
-		Faker faker = new Faker();
+        Faker faker = new Faker();
 
-		return new User(
-				new Profile()
-						.setEmail(faker.internet().emailAddress())
-						.setLogin(faker.internet().emailAddress())
-						.setFirstName(faker.name().firstName())
-						.setLastName(faker.name().lastName()),
-				new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
+        return new User(
+                new Profile()
+                        .setEmail(faker.internet().emailAddress())
+                        .setLogin(faker.internet().emailAddress())
+                        .setFirstName(faker.name().firstName())
+                        .setLastName(faker.name().lastName()),
+                new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
 
-	}
+    }
 
-	public static Map<GetNotNullString, User> generateUsers(int size) {
+    public static Map<GetNotNullString, User> generateUsers(int size) {
 
-		Faker faker = new Faker();
+        Faker faker = new Faker();
 
-		Map<GetNotNullString, User> users = new LinkedHashMap<>();
-		for (int i = 0; i < size; i++) {
+        Map<GetNotNullString, User> users = new LinkedHashMap<>();
+        for (int i = 0; i < size; i++) {
 
-			User user = new User(
-					new Profile().setEmail(faker.internet().emailAddress()).setLogin(faker.internet().emailAddress()).setFirstName(faker.name().firstName()).setLastName(faker.name().lastName()),
- 					new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
-			GetNotNullString appId = new GetNotNullString();
-			users.put(appId, user);
-		}
+            User user = new User(
+                    new Profile().setEmail(faker.internet().emailAddress()).setLogin(faker.internet().emailAddress()).setFirstName(faker.name().firstName()).setLastName(faker.name().lastName()),
+                    new Credentials(new Password(faker.lorem().characters(10, 15, true, true))));
+            GetNotNullString appId = new GetNotNullString();
+            users.put(appId, user);
+        }
 
-		return users;
-	}
+        return users;
+    }
 }

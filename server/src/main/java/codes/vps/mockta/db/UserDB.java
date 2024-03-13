@@ -31,104 +31,104 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDB {
 
-	public final static Map<String, OktaUser> users = new ConcurrentHashMap<>();
-	public final static LinkedHashMap<String, OktaUser> usersById = new LinkedHashMap<>();
+    public final static Map<String, OktaUser> users = new ConcurrentHashMap<>();
+    public final static LinkedHashMap<String, OktaUser> usersById = new LinkedHashMap<>();
 
-	@NonNull
-	public static OktaUser authenticate(String userName, String password) {
+    @NonNull
+    public static OktaUser authenticate(String userName, String password) {
 
-		OktaUser forUser = users.get(userName);
-		if (forUser == null || !Objects.equals(password, forUser.getPassword())) {
-			throw ErrorObject.authFailed("wrong password").boom();
-		}
-		return forUser;
+        OktaUser forUser = users.get(userName);
+        if (forUser == null || !Objects.equals(password, forUser.getPassword())) {
+            throw ErrorObject.authFailed("wrong password").boom();
+        }
+        return forUser;
 
-	}
+    }
 
-	public static OktaUser addUser(User user) {
+    public static OktaUser addUser(User user) {
 
-		OktaUser oktaUser = new OktaUser(user);
+        OktaUser oktaUser = new OktaUser(user);
 
-		users.compute(oktaUser.getUserName(), (k, v) -> {
-			if (v != null) {
-				// $TODO: I couldn't find anything in Okta documentation that says
-				// what is to happen in case of an attempt to create a duplicate user.
-				throw ErrorObject.duplicate("username " + k).boom();
-			}
-			return new OktaUser(user);
-		});
+        users.compute(oktaUser.getUserName(), (k, v) -> {
+            if (v != null) {
+                // $TODO: I couldn't find anything in Okta documentation that says
+                // what is to happen in case of an attempt to create a duplicate user.
+                throw ErrorObject.duplicate("username " + k).boom();
+            }
+            return new OktaUser(user);
+        });
 
-		users.put(oktaUser.getUserName(), oktaUser);
-		usersById.put(oktaUser.getId(), oktaUser);
+        users.put(oktaUser.getUserName(), oktaUser);
+        usersById.put(oktaUser.getId(), oktaUser);
 
-		return oktaUser;
+        return oktaUser;
 
-	}
+    }
 
-	@NonNull
-	public static OktaUser getUser(String id) {
+    @NonNull
+    public static OktaUser getUser(String id) {
 
-		OktaUser user = usersById.get(id);
-		if (user == null) {
-			throw ErrorObject.notFound("user id " + id).boom();
-		}
-		user.checkOut();
-		return user;
+        OktaUser user = usersById.get(id);
+        if (user == null) {
+            throw ErrorObject.notFound("user id " + id).boom();
+        }
+        user.checkOut();
+        return user;
 
-	}
+    }
 
-	public static boolean deleteUser(String id) {
+    public static boolean deleteUser(String id) {
 
-		OktaUser user = usersById.get(id);
-		if (user == null) {
-			throw ErrorObject.notFound("user id " + id).boom();
-		}
-		usersById.remove(id);
-		users.remove(user.getUserName());
-		return true;
+        OktaUser user = usersById.get(id);
+        if (user == null) {
+            throw ErrorObject.notFound("user id " + id).boom();
+        }
+        usersById.remove(id);
+        users.remove(user.getUserName());
+        return true;
 
-	}
+    }
 
-	public static Page<OktaUser, String> page(String fromId, int pageSize) {
+    public static Page<OktaUser, String> page(String fromId, int pageSize) {
 
-		boolean recording = false;
-		String next = null;
-		int recorded = 0;
-		List<OktaUser> page = new ArrayList<>();
+        boolean recording = false;
+        String next = null;
+        int recorded = 0;
+        List<OktaUser> page = new ArrayList<>();
 
-		for (Map.Entry<String, OktaUser> me : usersById.entrySet()) {
+        for (Map.Entry<String, OktaUser> me : usersById.entrySet()) {
 
-			String key = me.getKey();
+            String key = me.getKey();
 
-			if (recorded == pageSize) {
-				next = key;
-				break;
-			}
+            if (recorded == pageSize) {
+                next = key;
+                break;
+            }
 
-			if (!recording) {
-				if (fromId == null || Objects.equals(fromId, key)) {
-					recording = true;
-				} else {
-					continue;
-				}
-			}
+            if (!recording) {
+                if (fromId == null || Objects.equals(fromId, key)) {
+                    recording = true;
+                } else {
+                    continue;
+                }
+            }
 
-			page.add(me.getValue());
-			recorded++;
+            page.add(me.getValue());
+            recorded++;
 
-		}
+        }
 
-		return new Page<>(usersById.size(), page, next);
+        return new Page<>(usersById.size(), page, next);
 
-	}
+    }
 
-	public static boolean deleteAllUser() {
+    public static boolean deleteAllUser() {
 
-		usersById.clear();
-		users.clear();
+        usersById.clear();
+        users.clear();
 
-		return true;
+        return true;
 
-	}
+    }
 
 }

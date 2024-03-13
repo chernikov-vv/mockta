@@ -67,12 +67,25 @@ public class AuthNTests extends WebTests {
 
     @SuppressWarnings("CollectionAddedToSelf")
     @Test
-    public void successfulAuth() throws Exception {
+    public void successfulAuthNormal() throws Exception {
+        successfulAuth(false);
+    }
 
-        Profile p = new Profile().setEmail("test1@codes.vps").setLogin("test1@codes.vps").setFirstName("Guy").setLastName("BlueShirt");
+    @Test
+    public void successfulAuthCase() throws Exception {
+        successfulAuth(true);
+    }
+
+    public void successfulAuth(boolean upperCase) throws Exception {
+
+        String login = upperCase ? "tESt2@codes.vps" : "test1@codes.vps";
+
+        Profile p = new Profile().setEmail("test1@codes.vps").setLogin(login).setFirstName("Guy").setLastName("BlueShirt");
         p.put("bestFriend", "Buddy");
         User user = new User(p, new Credentials(new Password("BubbleGumIceCream")));
         GetNotNullString userId = new GetNotNullString();
+
+        login = login.toLowerCase();
 
         adminJson()
                 .body(mapToJson(user))
@@ -80,21 +93,20 @@ public class AuthNTests extends WebTests {
                 .then()
                 .statusCode(200)
                 .body("id", userId)
-                .body("profile.login", is(user.getProfile().getLogin()))
+                .body("profile.login", is(login))
                 .body("profile.email", is(user.getProfile().getEmail()))
                 .body("profile.firstName", is(user.getProfile().getFirstName()))
                 .body("profile.lastName", is(user.getProfile().getLastName()))
                 .body("profile.locale", is("en_US"))
                 .body("profile.timeZone", is("Pacific/Honolulu"))
-                .body("profile.bestFriend", is("Buddy"))
-        ;
+                .body("profile.bestFriend", is("Buddy"));
 
-//        App app = App(SignOnMode.OPENID_CONNECT, "test1.label", "test1", "test1",
-//                new AppSettings(new OAuthClient(Collections.singletonList("http://localhost"))));
+        System.out.println("userId="+userId.getRecorded());
+
         App app = App.builder()
                 .signOnMode(SignOnMode.OPENID_CONNECT)
                 .label("test1.label")
-                .name("test1")
+                .name("test1"+upperCase)
                 .profile("test1")
                 .settings(new AppSettings(new OAuthClient(Collections.singletonList("http://localhost")))).build();
 
@@ -145,7 +157,7 @@ public class AuthNTests extends WebTests {
 
             // OK, we created all the admin objects, now we should try logging in.
 
-            PrimaryAuthentication pa = new PrimaryAuthentication(null, null, null, "BubbleGumIceCream", null, "test1@codes.vps");
+            PrimaryAuthentication pa = new PrimaryAuthentication(null, null, null, "BubbleGumIceCream", null, login);
 
             GetNotNullString sessionToken = new GetNotNullString();
 
@@ -227,7 +239,7 @@ public class AuthNTests extends WebTests {
                 user().get("/api/v1/sessions/me")
                         .then()
                         .statusCode(200)
-                        .body("login", is("test1@codes.vps"));
+                        .body("login", is(login));
             }
 
             // check that the refreshing works.

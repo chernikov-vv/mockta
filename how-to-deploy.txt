@@ -1,2 +1,4 @@
 mvn verify
+mvn release:prepare -DautoVersionSubmodules=true -DpreparationGoals=initialize -Dresume=false -DpreparationGoals= -DpushChanges=false
 mvn -Pmockta.sign -Prelease-sign-artifacts deploy
+# push the tags and the branches if all OK

@@ -32,55 +32,55 @@ import static io.restassured.RestAssured.given;
 
 public abstract class WebTests extends Tests {
 
-	@Autowired
-	private MappingJackson2HttpMessageConverter springMvcJacksonConverter;
+    @Autowired
+    private MappingJackson2HttpMessageConverter springMvcJacksonConverter;
 
-	protected CookieFilter cookies = new CookieFilter();
+    protected CookieFilter cookies = new CookieFilter();
 
-	protected ObjectMapper jacksonObjectMapper;
+    protected ObjectMapper jacksonObjectMapper;
 
-	@BeforeEach
-	protected void setUp() {
-		jacksonObjectMapper = springMvcJacksonConverter.getObjectMapper();
-	}
+    @BeforeEach
+    protected void setUp() {
+        jacksonObjectMapper = springMvcJacksonConverter.getObjectMapper();
+    }
 
-	protected String mapToJson(Object obj) {
-		return Util.reThrow(() -> jacksonObjectMapper.writeValueAsString(obj));
-	}
+    protected String mapToJson(Object obj) {
+        return Util.reThrow(() -> jacksonObjectMapper.writeValueAsString(obj));
+    }
 
-	protected <T> T mapFromJson(String json, Class<T> clazz) throws JsonParseException, IOException {
+    protected <T> T mapFromJson(String json, Class<T> clazz) throws JsonParseException, IOException {
 
-		return jacksonObjectMapper.readValue(json, clazz);
-	}
+        return jacksonObjectMapper.readValue(json, clazz);
+    }
 
-	protected RequestSpecification inJson(RequestSpecification r) {
-		return r.accept("application/json");
-	}
+    protected RequestSpecification inJson(RequestSpecification r) {
+        return r.accept("application/json");
+    }
 
-	protected RequestSpecification request() {
-		return given().when().redirects().follow(false).filter(cookies).port(serverPort).log().ifValidationFails()
-				.then().log().ifValidationFails().given();
-	}
+    protected RequestSpecification request() {
+        return given().when().redirects().follow(false).filter(cookies).port(serverPort).log().ifValidationFails()
+                .then().log().ifValidationFails().given();
+    }
 
-	RequestSpecification admin() {
-		return request().header("Authorization", "SSWS " + app.getApiTokens().get(0));
-	}
+    RequestSpecification admin() {
+        return request().header("Authorization", "SSWS " + app.getApiTokens().get(0));
+    }
 
-	RequestSpecification adminJson() {
-		return admin().contentType("application/json");
-	}
+    RequestSpecification adminJson() {
+        return admin().contentType("application/json");
+    }
 
-	protected RequestSpecification userHtml() {
-		return user().accept("text/html");
-	}
+    protected RequestSpecification userHtml() {
+        return user().accept("text/html");
+    }
 
-	protected RequestSpecification user() {
-		// we set the "Accept" header, otherwise we get application/hal+json
-		return inJson(request());
-	}
+    protected RequestSpecification user() {
+        // we set the "Accept" header, otherwise we get application/hal+json
+        return inJson(request());
+    }
 
-	RequestSpecification userJson() {
-		return user().contentType("application/json");
-	}
+    RequestSpecification userJson() {
+        return user().contentType("application/json");
+    }
 
 }

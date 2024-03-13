@@ -99,18 +99,25 @@
             </plugin>
 
             <!--
+
+            fixing all vulnerabilities is a fool's errand
+            this won't normally serve as a dependency on a exposed code,
+            but rather is only used for tests, and up for short periods of time.
+            As long as Maven Central lets us upload this, we're good.
+
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.1.6</version>
+                <version>9.0.7</version>
                 <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>v-check</id>
                         <configuration>
-                            <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                            <failBuildOnCVSS>0</failBuildOnCVSS>
+                            <nvdApiServerId>nvd-api-key</nvdApiServerId>
                         </configuration>
-                        <phase>deploy</phase>
+                        <phase>site-deploy</phase>
                         <goals>
                             <goal>aggregate</goal>
                         </goals>

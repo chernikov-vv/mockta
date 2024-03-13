@@ -43,90 +43,92 @@ import java.util.List;
 @RequestMapping("/api/v1/users")
 public class UsersController implements AdminService {
 
-	@PostMapping
-	public ResponseEntity<User> createUser(@RequestBody User user) {
-		try (OktaUser oktaUser = UserDB.addUser(user)) {
-			return ResponseEntity.ok(oktaUser.represent());
-		}
-	}
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        try (OktaUser oktaUser = UserDB.addUser(user)) {
+            return ResponseEntity.ok(oktaUser.represent());
+        }
+    }
 
-	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-	public ResponseEntity<User> getUser(@PathVariable String userId) {
-		try (OktaUser oktaUser = UserDB.getUser(userId)) {
-			return ResponseEntity.ok(oktaUser.represent());
-		}
-	}
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    public ResponseEntity<User> getUser(@PathVariable String userId) {
+        try (OktaUser oktaUser = UserDB.getUser(userId)) {
+            return ResponseEntity.ok(oktaUser.represent());
+        }
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<User>> getAllUsers(@RequestParam(required = false) String from, @RequestParam(required = false) Integer limit) {
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<User>> getAllUsers(@RequestParam(required = false) String from, @RequestParam(required = false) Integer limit) {
 
-		HttpHeaders responseHeaders = new HttpHeaders();
-		if (limit == null || limit > 10) { limit = 10; }
+        HttpHeaders responseHeaders = new HttpHeaders();
+        if (limit == null || limit > 10) {
+            limit = 10;
+        }
 
-		var page = UserDB.page(from, limit);
-		boolean hasSelf = !page.data().isEmpty();
-		if (from == null && hasSelf) {
-			from = page.data().get(0).getId();
-		}
-		boolean hasNext = page.next() != null;
+        var page = UserDB.page(from, limit);
+        boolean hasSelf = !page.data().isEmpty();
+        if (from == null && hasSelf) {
+            from = page.data().get(0).getId();
+        }
+        boolean hasNext = page.next() != null;
 
-		if (hasSelf) {
-			ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
-			builder.replaceQueryParam("from", from);
-			builder.replaceQueryParam("limit", limit);
-			responseHeaders.add("link", new MyLinkBuilder(builder.build()).withSelfRel().toString());
-		}
+        if (hasSelf) {
+            ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+            builder.replaceQueryParam("from", from);
+            builder.replaceQueryParam("limit", limit);
+            responseHeaders.add("link", new MyLinkBuilder(builder.build()).withSelfRel().toString());
+        }
 
-		if (hasNext) {
-			ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
-			builder.replaceQueryParam("from", page.next());
-			builder.replaceQueryParam("limit", limit);
-			responseHeaders.add("link", new MyLinkBuilder(builder.build()).withRel(IanaLinkRelations.NEXT).toString());
-		}
+        if (hasNext) {
+            ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+            builder.replaceQueryParam("from", page.next());
+            builder.replaceQueryParam("limit", limit);
+            responseHeaders.add("link", new MyLinkBuilder(builder.build()).withRel(IanaLinkRelations.NEXT).toString());
+        }
 
-		return ResponseEntity.ok()
-				.headers(responseHeaders)
-				.body(page.data().stream().map(OktaUser::represent).toList());
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(page.data().stream().map(OktaUser::represent).toList());
 
-	}
+    }
 
-	@DeleteMapping
-	public ResponseEntity<?> deleteAllUsers() {
+    @DeleteMapping
+    public ResponseEntity<?> deleteAllUsers() {
 
-		boolean isRemoved = UserDB.deleteAllUser();
-		if (isRemoved) {
-			return new ResponseEntity<>(HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-	}
+        boolean isRemoved = UserDB.deleteAllUser();
+        if (isRemoved) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
-	@DeleteMapping(value = "/{userId}")
-	public ResponseEntity<?> deleteUser(@PathVariable String userId) {
+    @DeleteMapping(value = "/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable String userId) {
 
-		boolean isRemoved = UserDB.deleteUser(userId);
-		if (isRemoved) {
-			return new ResponseEntity<>(userId, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-	}
+        boolean isRemoved = UserDB.deleteUser(userId);
+        if (isRemoved) {
+            return new ResponseEntity<>(userId, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
-	static class MyLinkBuilder extends LinkBuilderSupport<MyLinkBuilder> {
+    static class MyLinkBuilder extends LinkBuilderSupport<MyLinkBuilder> {
 
-		protected MyLinkBuilder(UriComponents c) {
-	 		super(c);
-		}
+        protected MyLinkBuilder(UriComponents c) {
+            super(c);
+        }
 
-		@Override
-		protected MyLinkBuilder getThis() {
-			return this;
-		}
+        @Override
+        protected MyLinkBuilder getThis() {
+            return this;
+        }
 
-		@Override
-		protected MyLinkBuilder createNewInstance(UriComponents components, List<Affordance> affordances) {
-			return new MyLinkBuilder(components);
-		}
-	}
+        @Override
+        protected MyLinkBuilder createNewInstance(UriComponents components, List<Affordance> affordances) {
+            return new MyLinkBuilder(components);
+        }
+    }
 
 }
