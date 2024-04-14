@@ -264,7 +264,7 @@ public class AuthNTests extends WebTests {
             String rdr = new DefaultUriBuilderFactory().uriString("https://www.google.com?state=p&fix=in").build().toString();
             String fullLogOutUrl = new DefaultUriBuilderFactory().uriString(logOutUrl.getRecorded()).replaceQueryParam("state", logOutState).replaceQueryParam("post_logout_redirect_uri", rdr).build().toString();
 
-            Matcher<Object> urlCheck = new BaseMatcher<Object>() {
+            Matcher<Object> urlCheck = new BaseMatcher<>() {
                 @Override
                 public boolean matches(Object o) {
                     // https://stackoverflow.com/a/13592324/622266
@@ -284,9 +284,15 @@ public class AuthNTests extends WebTests {
 
             };
 
-            user().when().get(fullLogOutUrl).then().statusCode(302).header("Location", urlCheck);
-
-            user().get("/api/v1/sessions/me").then().statusCode(404);
+            if (i==0) {
+                // SDK logout
+                user().when().get(fullLogOutUrl).then().statusCode(302).header("Location", urlCheck);
+                user().get("/api/v1/sessions/me").then().statusCode(404);
+            } else {
+                // session deletion logout
+                user().delete("/api/v1/sessions/"+sessionId.getRecorded()).then().statusCode(204);
+                user().get("/api/v1/sessions/me").then().statusCode(404);
+            }
 
         }
 

@@ -23,6 +23,7 @@ import codes.vps.mockta.model.SessionToken;
 import codes.vps.mockta.obj.okta.Session;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,5 +53,16 @@ public class SessionController extends UserAuthenticatedService {
         s.refresh();
         return ResponseEntity.ok(s.represent());
     }
+
+
+    @DeleteMapping("/{sessionId}")
+    @IsSkipAuth
+    public HttpEntity<Session> delete(@PathVariable String sessionId) {
+        OktaSession s = SessionDB.getByCookie(sessionId);
+        SessionDB.remove(s);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }
