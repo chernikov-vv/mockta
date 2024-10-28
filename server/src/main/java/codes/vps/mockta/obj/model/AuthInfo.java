@@ -24,13 +24,15 @@ import lombok.Getter;
 public class AuthInfo {
 
     private final String idToken;
+    private final String accessToken;
     private final String state;
     private final String error;
     private final String errorDescription;
     private final String frameUrl;
 
-    private AuthInfo(String idToken, String state, String error, String errorDescription, String frameUrl) {
+    private AuthInfo(String idToken, String accessToken, String state, String error, String errorDescription, String frameUrl) {
         this.idToken = nes(idToken);
+        this.accessToken = nes(accessToken);
         this.state = nes(state);
         this.error = nes(error);
         this.errorDescription = nes(errorDescription);
@@ -45,11 +47,11 @@ public class AuthInfo {
     }
 
     public static AuthInfo onError(String frameUrl, String state, String error, String errorDescription) {
-        return new AuthInfo(null, state, error, errorDescription, frameUrl);
+        return new AuthInfo(null, null, state, error, errorDescription, frameUrl);
     }
 
-    public static AuthInfo onAuth(String frameUrl, String state, String idToken) {
-        return new AuthInfo(idToken, state, null, null, frameUrl);
+    public static AuthInfo onAuth(String frameUrl, String state, String idToken, String accessToken) {
+        return new AuthInfo(idToken, accessToken, state, null, null, frameUrl);
     }
 
 }

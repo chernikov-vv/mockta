@@ -34,7 +34,7 @@ public class Profile extends HashMap<String, String> {
 	}
 
 	public String getLastName() {
-		return get("firstName");
+		return get("lastName");
 	}
 
 	public String getLocale() {

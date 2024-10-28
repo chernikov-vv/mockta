@@ -58,6 +58,10 @@
       data.id_token = '${auth.idToken}';
       </c:if>
 
+      <c:if test="${auth.idToken ne null}">
+      data.access_token = '${auth.accessToken}';
+      </c:if>
+
       return data;
     }
 

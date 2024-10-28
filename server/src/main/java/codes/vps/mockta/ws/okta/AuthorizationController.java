@@ -18,8 +18,6 @@
 package codes.vps.mockta.ws.okta;
 
 import codes.vps.mockta.db.AppsDB;
-import codes.vps.mockta.db.IDPDB;
-import codes.vps.mockta.db.KeysDB;
 import codes.vps.mockta.db.OktaApp;
 import codes.vps.mockta.db.OktaAppUser;
 import codes.vps.mockta.db.OktaSession;
@@ -29,16 +27,11 @@ import codes.vps.mockta.db.UserDB;
 import codes.vps.mockta.obj.model.AuthInfo;
 import codes.vps.mockta.obj.okta.ErrorObject;
 import codes.vps.mockta.obj.okta.OpenIDMetaData;
+import codes.vps.mockta.util.TokenUtil;
 import codes.vps.mockta.util.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.jose4j.jwk.JsonWebKey;
-import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.NumericDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -161,35 +154,11 @@ public class AuthorizationController {
                  */
 
 				OpenIDMetaData metaData = new OpenIDMetaData(request, authServer);
-				JwtClaims claims = new JwtClaims();
-				claims.setSubject(user.getId());
-				claims.setClaim("email", user.getUserName());
-				claims.setClaim("ver", 1);
-				claims.setIssuer(metaData.getIssuer());
-				claims.setAudience(clientId);
-				claims.setIssuedAtToNow();
-				NumericDate expiration = NumericDate.now();
-				expiration.addSeconds(3600);
-				claims.setExpirationTime(expiration);
-				claims.setGeneratedJwtId();
-				claims.setStringListClaim("amr", "pwd"); // password auth
-				claims.setClaim("idp", IDPDB.getIdp().getId());
-				claims.setClaim("nonce", nonce);
-				claims.setClaim("email_verified", true);
-				claims.setClaim("auth_time", session.getCreated().getTime());
 
-				JsonWebSignature jws = new JsonWebSignature();
-				jws.setPayload(claims.toJson());
+				String accessToken = TokenUtil.getAccessToken(user, metaData, clientId);
+				String idToken = TokenUtil.getIdToken(user, metaData, clientId, session, nonce);
 
-				JsonWebKey jwk = KeysDB.getKey();
-
-				jws.setKey(((RsaJsonWebKey)jwk).getRsaPrivateKey());
-				jws.setKeyIdHeaderValue(jwk.getKeyId());
-				jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-
-				String idToken = jws.getCompactSerialization();
-				authInfo = AuthInfo.onAuth(frameUrl, state, idToken);
-
+				authInfo = AuthInfo.onAuth(frameUrl, state, idToken, accessToken);
 				session.setCookie(response);
 
 			} catch (ErrorObject.MyException e) {

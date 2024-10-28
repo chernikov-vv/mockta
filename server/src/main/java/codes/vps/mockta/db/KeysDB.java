@@ -24,6 +24,8 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 
+import java.util.List;
+
 public class KeysDB {
 
 	// we only ever use one key at this point
@@ -38,7 +40,8 @@ public class KeysDB {
 	}
 
 	public static JsonWebKey getKey() {
-		return keys.getJsonWebKeys().get(0);
+		List<JsonWebKey> keyList = keys.getJsonWebKeys();
+		return keyList.get(0);
 	}
 
 }

@@ -217,9 +217,21 @@ public class OpenIDMetaData extends RepresentationModel<OpenIDMetaData> {
 
 		idTokenSigningAlgValuesSupported = Collections.singletonList("RS256");
 
-		tokenEndpoint = ub.replacePath("/oauth2/v1/token").build().toString();
+		ub.replacePath("/oauth2");
+		if (authServer != null) {
+			ub.pathSegment(authServer);
+		}
+		ub.pathSegment("v1", "token");
 
-		userInfoEndpoint = ub.replacePath("/oauth2/v1/userinfo").build().toString();
+		tokenEndpoint = ub.build().toString();
+
+		ub.replacePath("/oauth2");
+		if (authServer != null) {
+			ub.pathSegment(authServer);
+		}
+		ub.pathSegment("v1", "userinfo");
+
+		userInfoEndpoint = ub.build().toString();
 
 		tokenEndpointAuthMethodsSupported = Arrays.asList(    "client_secret_basic",
 				"client_secret_post",
