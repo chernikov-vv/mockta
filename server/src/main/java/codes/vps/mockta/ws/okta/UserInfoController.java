@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping(value = {"/oauth2/v1/userinfo", "oauth2/{authServer}/v1/userinfo"})
 public class UserInfoController {
@@ -20,7 +22,7 @@ public class UserInfoController {
         String header = request.getHeader("authorization");
 
         if (header == null || !header.startsWith("Bearer")) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         String token = header.substring(7);
@@ -32,6 +34,14 @@ public class UserInfoController {
         try {
             JwtClaims claims = jwtConsumer.processToClaims(token);
             String uid = (String) claims.getClaimValue("uid");
+
+            // to support /revoke endpoint
+            TokensDB.Tokens tokens = TokensDB.getTokens(uid);
+            String accessToken = tokens.accessToken;
+            if (!Objects.equals(token, accessToken)) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+
             OktaUser user = UserDB.getUser(uid);
 
             return new ResponseEntity<>(new UserInfo(user.represent()), HttpStatus.OK);
